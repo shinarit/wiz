@@ -15,6 +15,9 @@ CPP_HACK  = $(CPP) $(LDFLAGS)
 
 HACK_LIBS = -lSM -lICE -lXt -lX11 -lXext -lm
 
+default: all
+
+all: wiz
 
 wiz: $(OBJS) drawinterface.h
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
@@ -26,10 +29,6 @@ implementation.o: implementation.cpp drawinterface.h
 %o: %c ; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
 
 %o: %cpp ; 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
-
-default: all
-
-all: wiz
 
 clean:
 	-rm -f *.o wiz core

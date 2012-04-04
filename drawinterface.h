@@ -31,10 +31,13 @@ struct Coordinate
 //use the same struct as size
 typedef Coordinate Size;
 
-void DrawCircle(Coordinate center, int size, Color col);
+void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
 void DrawLine(Coordinate begin, Coordinate end, Color col);
+void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
+
 Size GetSize();
 void ClearScreen(Color col = black);
+
 
 #endif
 
