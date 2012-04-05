@@ -76,7 +76,7 @@ void* wiz_init(Display *dpy, Window window)
 unsigned long wiz_draw(Display* dpy, Window window, void* closure)
 {
   DrawFrame();
-
+/*
   static int sx = 1;
   static int sy = 2;
   static int cx = 0;
@@ -125,7 +125,7 @@ for(int i(0); i<1000; ++i)
   cx += sx;
   cy += sy;
   
-
+*/
   return state.delay;
 }
 
