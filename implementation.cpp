@@ -249,6 +249,128 @@ void ClearScreen(Color col)
 
 #elif defined _WIN32
 
+#include <windows.h>
+
+HWND hWnd;
+LPCTSTR ClsName = "Wiz";
+LPCTSTR WindowCaption = "Wiz";
+LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                   LPSTR lpCmdLine, int nCmdShow)
+{
+  MSG         Msg;
+  WNDCLASSEX  WndClsEx;
+
+  WndClsEx.cbSize        = sizeof(WNDCLASSEX);
+  WndClsEx.style         = CS_HREDRAW | CS_VREDRAW;
+  WndClsEx.lpfnWndProc   = WndProc;
+  WndClsEx.cbClsExtra    = 0;
+  WndClsEx.cbWndExtra    = 0;
+  WndClsEx.hInstance     = hInstance;
+  WndClsEx.hIcon         = LoadIcon(hInstance, IDI_APPLICATION);
+  WndClsEx.hCursor       = LoadCursor(NULL, IDC_ARROW);
+  WndClsEx.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+  WndClsEx.lpszMenuName  = NULL;
+  WndClsEx.lpszClassName = ClsName;
+  WndClsEx.hIconSm       = LoadIcon(hInstance, IDI_APPLICATION);
+
+  RegisterClassEx(&WndClsEx);
+
+/*  hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
+                        ClsName,
+                        WindowCaption,
+                        WS_OVERLAPPEDWINDOW,
+                        100,
+                        120,
+                        640,
+                        480,
+                        NULL,
+                        NULL,
+                        hInstance,
+                        NULL);
+*/
+
+  hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
+                        ClsName,
+                        WindowCaption,
+                        WS_BORDER | WS_MAXIMIZE,
+                        100,
+                        120,
+                        640,
+                        480,
+                        NULL,
+                        NULL,
+                        hInstance,
+                        NULL);
+
+
+  ShowWindow(hWnd, nCmdShow);
+  UpdateWindow(hWnd);
+
+  while( GetMessage(&Msg, NULL, 0, 0) )
+  {
+    TranslateMessage(&Msg);
+    DispatchMessage(&Msg);
+  }
+
+  return 0;
+}
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+{
+  switch(Msg)
+  {
+    case WM_DESTROY:
+    {
+      PostQuitMessage(WM_QUIT);
+      break;
+    }
+    case WM_KEYDOWN:
+    {
+      switch(wParam)
+      {
+        default:
+        {
+          exit(0);
+        }
+      }
+      break;
+    }
+    default:
+    {
+      DrawFrame();
+      return DefWindowProc(hWnd, Msg, wParam, lParam);
+    }
+  }
+  return 0;
+}
+
+//
+// windows implementation part
+//
+
+void DrawCircle(Coordinate center, int size, Color color, bool fill)
+{
+}
+
+void DrawLine(Coordinate begin, Coordinate end, Color color)
+{
+}
+
+void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
+{
+}
+
+
+Size GetSize()
+{
+  return Size(100, 100);
+}
+
+void ClearScreen(Color col)
+{
+}
 
 #endif
 
