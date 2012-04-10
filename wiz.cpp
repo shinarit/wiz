@@ -19,6 +19,7 @@ class Flyer
     Flyer(int team): m_team(team)
     {}
     virtual void Draw() = 0;
+    virtual void Move() = 0;
     virtual ~Flyer()
     {}
 
@@ -36,30 +37,41 @@ class DiskShip: public Flyer
   public:
     static int shipSize;
 
-    DiskShip(Coordinate center, int team = 0): Flyer(team), m_center(center)
+    DiskShip(Coordinate center, Color color, int team = 0): Flyer(team), m_center(center), m_color(color), m_speed(2, 3)
     {}
     virtual void Draw()
     {
+      DrawCircle(m_center, shipSize, m_color, true);
+    }
+    virtual void Move()
+    {
+      Size size = GetSize();
+      m_center.x = (m_center.x + m_speed.x) % size.x;
+      m_center.y = (m_center.y + m_speed.y) % size.y;
     }
 
   private:
-    Coordinate m_center;
+    Coordinate  m_center;
+    Color       m_color;
+    Speed       m_speed;
 };
 
-int DiskShip::shipSize = 15;
+int DiskShip::shipSize = 7;
 
 void DrawFrame()
 {
+  static Flyer* ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
   static int i=0;
 
-  DrawCircle(Coordinate(200, 200), 100, Color(255, 125, 0));
+  DrawCircle(Coordinate(200, 200), 100, Color(255, 125, 0), true);
+  DrawCircle(Coordinate(210, 210), 100, Color(0, 255, 0), false);
 
-  DrawLine(Coordinate(300, 300), Coordinate(400, 500), Color(0, 255, 255));
+  DrawLine(Coordinate(300 + i%100, 300), Coordinate(400, 500), Color(0, 255, 255));
 
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), false);
-
-  if (!(++i % 100))
-    ClearScreen();
+  ++i;
+  ship->Move();
+  ship->Draw();
 }
 

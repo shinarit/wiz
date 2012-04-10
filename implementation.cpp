@@ -1,7 +1,5 @@
 #include "drawinterface.h"
 
-void DrawFrame();
-
 #ifdef __linux__
 
 #include <vector>
@@ -75,6 +73,7 @@ void* wiz_init(Display *dpy, Window window)
 
 unsigned long wiz_draw(Display* dpy, Window window, void* closure)
 {
+  XClearWindow(state.dpy, state.window);
   DrawFrame();
 /*
   static int sx = 1;
@@ -242,19 +241,29 @@ Size GetSize()
 
 void ClearScreen(Color col)
 {
-  XClearWindow(state.dpy, state.window);
 }
 
 
 
 #elif defined _WIN32
 
+#include <iostream>
+
+#define _WIN32_WINNT 0x0500
 #include <windows.h>
+
+const int DrawInterval = 1000/FramePerSecond;
+
+Size size;
+HDC hdc;
+PAINTSTRUCT paint;
 
 HWND hWnd;
 LPCTSTR ClsName = "Wiz";
 LPCTSTR WindowCaption = "Wiz";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+void SetHdc();
+void Draw();
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow)
@@ -277,38 +286,28 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   RegisterClassEx(&WndClsEx);
 
-/*  hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
+  size.x = GetSystemMetrics(SM_CXFULLSCREEN);
+  size.y = GetSystemMetrics(SM_CYFULLSCREEN);
+
+  hWnd = CreateWindowEx(WS_EX_STATICEDGE,
                         ClsName,
                         WindowCaption,
-                        WS_OVERLAPPEDWINDOW,
-                        100,
-                        120,
-                        640,
-                        480,
+                        WS_POPUP,
+                        0,
+                        0,
+                        size.x,
+                        size.y,
                         NULL,
                         NULL,
                         hInstance,
                         NULL);
-*/
-
-  hWnd = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
-                        ClsName,
-                        WindowCaption,
-                        WS_BORDER | WS_MAXIMIZE,
-                        100,
-                        120,
-                        640,
-                        480,
-                        NULL,
-                        NULL,
-                        hInstance,
-                        NULL);
-
 
   ShowWindow(hWnd, nCmdShow);
   UpdateWindow(hWnd);
+  
+  SetTimer(hWnd, 0, DrawInterval, 0);
 
-  while( GetMessage(&Msg, NULL, 0, 0) )
+  while( GetMessage(&Msg, 0, 0, 0) )
   {
     TranslateMessage(&Msg);
     DispatchMessage(&Msg);
@@ -337,9 +336,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
       }
       break;
     }
+    case WM_TIMER:
+    {
+      //fallthrough
+    }
+    case WM_PAINT:
+    {
+      Draw();
+      break;
+    }
     default:
     {
-      DrawFrame();
       return DefWindowProc(hWnd, Msg, wParam, lParam);
     }
   }
@@ -350,22 +357,72 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 // windows implementation part
 //
 
+void SetHdc()
+{
+  hdc = BeginPaint(hWnd, &paint);
+}
+
+void Draw()
+{
+  InvalidateRect(hWnd, 0, true);
+  SetHdc();
+  DrawFrame();
+}
+
+#define TranslateColor(color) RGB(color.red, color.green, color.blue)
+
+//
+// no, really now...
+//
+
 void DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
+  SelectObject(hdc, GetStockObject(DC_PEN));
+  SetDCPenColor(hdc, TranslateColor(color));
+
+  if(fill)
+  {
+    SelectObject(hdc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(hdc, TranslateColor(color));
+    Ellipse(hdc, center.x - size, center.y - size, center.x + size, center.y + size);
+  }
+  else
+  {
+    Arc(hdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
+  }
 }
 
 void DrawLine(Coordinate begin, Coordinate end, Color color)
 {
+  SelectObject(hdc, GetStockObject(DC_PEN));
+  SelectObject(hdc, GetStockObject(DC_BRUSH));
+  SetDCPenColor(hdc, TranslateColor(color));
+
+  MoveToEx(hdc, begin.x, begin.y, 0);
+  LineTo(hdc, end.x, end.y);
 }
 
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
+  SelectObject(hdc, GetStockObject(DC_PEN));
+  SetDCPenColor(hdc, TranslateColor(color));
+
+  if(fill)
+  {
+    SelectObject(hdc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(hdc, TranslateColor(color));
+    //Ellipse(hdc, center.x - size, center.y - size, center.x + size, center.y + size);
+  }
+  else
+  {
+    //Arc(hdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
+  }
 }
 
 
 Size GetSize()
 {
-  return Size(100, 100);
+  return size;
 }
 
 void ClearScreen(Color col)

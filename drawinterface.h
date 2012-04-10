@@ -1,8 +1,10 @@
 #ifndef WIZ_DRAW_H_
 #define WIZ_DRAW_H_
 
+const int FramePerSecond = 25;
+
 //
-// interface file for common ground in drawing
+// interface file for drawing layer functions
 //
 
 typedef unsigned char uchar;
@@ -22,7 +24,7 @@ const Color black(0, 0, 0);
 //simple class containing the x, y coordinates
 struct Coordinate
 {
-  Coordinate(int x, int y): x(x), y(y)
+  Coordinate(int x = 0, int y = 0): x(x), y(y)
   {}
   int x;
   int y;
@@ -30,14 +32,19 @@ struct Coordinate
 
 //use the same struct as size
 typedef Coordinate Size;
+typedef Coordinate Speed;
 
 void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
 void DrawLine(Coordinate begin, Coordinate end, Color col);
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
 
 Size GetSize();
-void ClearScreen(Color col = black);
 
+//
+// interface for the actual logic's functions
+//
+
+void DrawFrame();
 
 #endif
 
