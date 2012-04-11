@@ -16,7 +16,7 @@
 //
 
 //
-// wiz.cpp
+// implementation.cpp
 // modified from greynetic.c, credit see above
 // author: Marton Kovacs, 2012, tetra666@gmail.com
 // license: same as above
@@ -67,6 +67,8 @@ void* wiz_init(Display *dpy, Window window)
   state.delay = get_integer_resource(state.dpy, "delay", "Integer");
   if (state.delay < 0)
     state.delay = 0;
+
+  Init();
 
   return tostore;
 }
@@ -159,6 +161,7 @@ int wiz_event(Display *dpy, Window window, void *closure, XEvent *event)
 
 void wiz_free(Display *dpy, Window window, void *closure)
 {
+  Exit();
 //  delete reinterpret_cast<State*>(closure);
 }
 
@@ -239,11 +242,6 @@ Size GetSize()
   return Size(state.xlim, state.ylim);
 }
 
-void ClearScreen(Color col)
-{
-}
-
-
 
 #elif defined _WIN32
 
@@ -297,10 +295,12 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                         0,
                         size.x,
                         size.y,
-                        NULL,
-                        NULL,
+                        0,
+                        0,
                         hInstance,
-                        NULL);
+                        0);
+
+  Init();
 
   ShowWindow(hWnd, nCmdShow);
   UpdateWindow(hWnd);
@@ -331,6 +331,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
       {
         default:
         {
+          Exit();
           exit(0);
         }
       }
