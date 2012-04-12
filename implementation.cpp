@@ -25,6 +25,7 @@
 extern "C"
 {
 #include "screenhack.h"
+#include "xdbe.h"
 }
 
 struct State
@@ -38,6 +39,12 @@ struct State
   int xlim, ylim;
   bool grey_p;
   Colormap cmap;
+  
+  //double buffer support
+  GC erase_gc;
+  Pixmap b, ba, bb;
+  Bool dbeclear_p;
+  XdbeBackBuffer backb;
 };
 
 State state;
@@ -68,6 +75,29 @@ void* wiz_init(Display *dpy, Window window)
   if (state.delay < 0)
     state.delay = 0;
 
+  //double buffering support
+  //have to understand yet
+  state.dbeclear_p = get_boolean_resource(state.dpy, "useDBEClear", "Boolean");
+  if (state.dbeclear_p)
+    state.b = xdbe_get_backbuffer (state.dpy, state.window, XdbeBackground);
+  else
+    state.b = xdbe_get_backbuffer (state.dpy, state.window, XdbeUndefined);
+  state.backb = state.b;
+
+  if (!state.b)
+  {
+    state.ba = XCreatePixmap (state.dpy, state.window, state.xlim, state.ylim, xgwa.depth);
+    state.bb = XCreatePixmap (state.dpy, state.window, state.xlim, state.ylim, xgwa.depth);
+    state.b = state.ba;
+  }
+
+  state.erase_gc = XCreateGC (state.dpy, state.b, GCForeground, &gcv);
+
+  if (state.ba) XFillRectangle (state.dpy, state.ba, state.erase_gc, 0, 0, state.xlim, state.ylim);
+  if (state.bb) XFillRectangle (state.dpy, state.bb, state.erase_gc, 0, 0, state.xlim, state.ylim);
+
+//end of support
+
   Init();
 
   return tostore;
@@ -75,8 +105,21 @@ void* wiz_init(Display *dpy, Window window)
 
 unsigned long wiz_draw(Display* dpy, Window window, void* closure)
 {
+  if (!state.dbeclear_p || !state.backb)
+  {
+    XFillRectangle(state.dpy, state.b, state.erase_gc, 0, 0, state.xlim, state.ylim);
+  }
+
   XClearWindow(state.dpy, state.window);
   DrawFrame();
+
+  if (state.backb)
+  {
+    XdbeSwapInfo info[1];
+    info[0].swap_window = state.window;
+    info[0].swap_action = (state.dbeclear_p ? XdbeBackground : XdbeUndefined);
+    XdbeSwapBuffers (state.dpy, info, 1);
+  }
 /*
   static int sx = 1;
   static int sy = 2;
@@ -137,6 +180,8 @@ const char* wiz_defaults[] =
   "*fpsSolid:	true",
   "*delay:	10000",
   "*grey:	false",
+  "*useDBE:		True",
+  "*useDBEClear:	True",
   0
 };
 
