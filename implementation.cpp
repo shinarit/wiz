@@ -1,5 +1,9 @@
 #include "drawinterface.h"
 
+//debug tool
+#include <iostream>
+//
+
 #ifdef __linux__
 
 #include <vector>
@@ -79,6 +83,8 @@ void* wiz_init(Display *dpy, Window window)
 
   Init();
 
+std::cout << state.delay << '\n';
+
   return tostore;
 }
 
@@ -102,7 +108,7 @@ const char* wiz_defaults[] =
   ".background:	black",
   ".foreground:	white",
   "*fpsSolid:	true",
-  "*delay:	10000",
+  "*delay:	40000", //40.000 msec == 25 fps
   "*grey:	false",
   "*useDBE:		True",
   "*useDBEClear:	True",
@@ -231,8 +237,6 @@ Size GetSize()
 
 
 #elif defined _WIN32
-
-#include <iostream>
 
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
