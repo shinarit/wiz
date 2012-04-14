@@ -254,13 +254,21 @@ void ClearScreen(Color col)
 
 const int DrawInterval = 1000/FramePerSecond;
 
+// nasty global variables
 Size size;
+
 HDC hdc;
+HDC bufferhdc;
+HBITMAP bitmap;
 PAINTSTRUCT paint;
+
+//the pointer to the hdc to draw to
+HDC drawhdc;
 
 HWND hWnd;
 LPCTSTR ClsName = "Wiz";
 LPCTSTR WindowCaption = "Wiz";
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 void SetHdc();
 void Draw();
@@ -279,7 +287,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   WndClsEx.hInstance     = hInstance;
   WndClsEx.hIcon         = LoadIcon(hInstance, IDI_APPLICATION);
   WndClsEx.hCursor       = LoadCursor(NULL, IDC_ARROW);
-  WndClsEx.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+  WndClsEx.hbrBackground = 0;//(HBRUSH)GetStockObject(BLACK_BRUSH);
   WndClsEx.lpszMenuName  = NULL;
   WndClsEx.lpszClassName = ClsName;
   WndClsEx.hIconSm       = LoadIcon(hInstance, IDI_APPLICATION);
@@ -338,7 +346,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER:
     {
-      //fallthrough
+      InvalidateRect(hWnd, 0, true);
+      break;
     }
     case WM_PAINT:
     {
@@ -360,13 +369,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 void SetHdc()
 {
   hdc = BeginPaint(hWnd, &paint);
+  bufferhdc = CreateCompatibleDC(hdc);
+  bitmap = CreateCompatibleBitmap(hdc, size.x, size.y);
+  SelectObject(bufferhdc, bitmap);
+  drawhdc = bufferhdc;
+}
+
+void ReleaseHdc()
+{
+  BitBlt(hdc, 0, 0, size.x, size.y, bufferhdc, 0, 0, SRCCOPY);
+  DeleteObject(bitmap);
+  DeleteDC(bufferhdc);
+  DeleteDC(hdc);
+  EndPaint(hWnd, &paint);
 }
 
 void Draw()
 {
-  InvalidateRect(hWnd, 0, true);
   SetHdc();
   DrawFrame();
+  ReleaseHdc();
 }
 
 #define TranslateColor(color) RGB(color.red, color.green, color.blue)
@@ -377,45 +399,45 @@ void Draw()
 
 void DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
-  SelectObject(hdc, GetStockObject(DC_PEN));
-  SetDCPenColor(hdc, TranslateColor(color));
+  SelectObject(drawhdc, GetStockObject(DC_PEN));
+  SetDCPenColor(drawhdc, TranslateColor(color));
 
   if(fill)
   {
-    SelectObject(hdc, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(hdc, TranslateColor(color));
-    Ellipse(hdc, center.x - size, center.y - size, center.x + size, center.y + size);
+    SelectObject(drawhdc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(drawhdc, TranslateColor(color));
+    Ellipse(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size);
   }
   else
   {
-    Arc(hdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
+    Arc(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
   }
 }
 
 void DrawLine(Coordinate begin, Coordinate end, Color color)
 {
-  SelectObject(hdc, GetStockObject(DC_PEN));
-  SelectObject(hdc, GetStockObject(DC_BRUSH));
-  SetDCPenColor(hdc, TranslateColor(color));
+  SelectObject(drawhdc, GetStockObject(DC_PEN));
+  SelectObject(drawhdc, GetStockObject(DC_BRUSH));
+  SetDCPenColor(drawhdc, TranslateColor(color));
 
-  MoveToEx(hdc, begin.x, begin.y, 0);
-  LineTo(hdc, end.x, end.y);
+  MoveToEx(drawhdc, begin.x, begin.y, 0);
+  LineTo(drawhdc, end.x, end.y);
 }
 
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
-  SelectObject(hdc, GetStockObject(DC_PEN));
-  SetDCPenColor(hdc, TranslateColor(color));
+  SelectObject(drawhdc, GetStockObject(DC_PEN));
+  SetDCPenColor(drawhdc, TranslateColor(color));
 
   if(fill)
   {
-    SelectObject(hdc, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(hdc, TranslateColor(color));
-    //Ellipse(hdc, center.x - size, center.y - size, center.x + size, center.y + size);
+    SelectObject(drawhdc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(drawhdc, TranslateColor(color));
+    //Ellipse(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size);
   }
   else
   {
-    //Arc(hdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
+    //Arc(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
   }
 }
 
