@@ -58,9 +58,15 @@ class DiskShip: public Flyer
 
 int DiskShip::shipSize = 7;
 
+Flyer* ship;
+
+void Init()
+{
+  ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
+}
+
 void DrawFrame()
 {
-  static Flyer* ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
   static int i=0;
 
   DrawCircle(Coordinate(200, 200), 100, Color(255, 125, 0), true);
@@ -75,3 +81,7 @@ void DrawFrame()
   ship->Draw();
 }
 
+void Exit()
+{
+  delete ship;
+}

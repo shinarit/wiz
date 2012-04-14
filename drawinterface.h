@@ -44,7 +44,9 @@ Size GetSize();
 // interface for the actual logic's functions
 //
 
+void Init();
 void DrawFrame();
+void Exit();
 
 #endif
 
