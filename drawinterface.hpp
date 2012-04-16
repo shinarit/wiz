@@ -43,6 +43,9 @@ Coordinate operator-(const Coordinate& op);
 Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator*(const Coordinate& lhs, const int rhs);
+Coordinate operator/(const Coordinate& lhs, const int rhs);
+
+int Length(const Coordinate& vektor);
 
 typedef Coordinate Size;
 

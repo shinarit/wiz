@@ -408,6 +408,7 @@ void DrawLine(Coordinate begin, Coordinate end, Color color)
   SelectObject(drawhdc, GetStockObject(DC_PEN));
   SelectObject(drawhdc, GetStockObject(DC_BRUSH));
   SetDCPenColor(drawhdc, TranslateColor(color));
+  SetDCBrushColor(drawhdc, TranslateColor(color));
 
   MoveToEx(drawhdc, begin.x, begin.y, 0);
   LineTo(drawhdc, end.x, end.y);

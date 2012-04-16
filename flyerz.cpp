@@ -26,8 +26,26 @@ void DiskShip::Shoot()
 {
   if (m_bulletNum < DiskShip::bulletLimit)
   {
+    ++m_bulletNum;
     //add projectile
   }
+}
+
+void PulseLaser::Draw()
+{
+  DrawLine(m_front, m_back, m_color);
+}
+#include <iostream>
+
+void PulseLaser::Move()
+{
+  std::cout << m_front.x << ':' << m_front.y << '\n';
+  std::cout << m_back.x << ':' << m_back.y << '\n';
+  std::cout << m_speed.x << ':' << m_speed.y << '\n';
+
+  m_front += m_speed;
+  //collision check
+  m_back += m_speed;
 }
 
 

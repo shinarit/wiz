@@ -30,6 +30,7 @@ CFLAGS		= -O2
 HACK_OBJS	= screenhack.o fps.o resources.o visual.o usleep.o yarandom.o xmu.o
 CPP_HACK  = $(CPP) $(LDFLAGS)
 
+HEADERS = $(wildcard *.hpp)
 
 default: all
 
@@ -38,13 +39,9 @@ all: wiz
 wiz: $(OBJS) drawinterface.hpp
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
 
-wiz.o: wiz.cpp drawinterface.hpp
+%o: %c; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
 
-implementation.o: implementation.cpp drawinterface.hpp
-
-%o: %c ; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
-
-%o: %cpp ; 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
+%o: %cpp $(HEADERS); 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
 clean:
 	$(RM) *.o $(EXE) core

@@ -8,7 +8,7 @@ class Wiz;
 class Flyer
 {
   public:
-    Flyer(int team, Wiz* frame):m_frame(frame),  m_team(team)
+    Flyer(int team, Wiz* frame): m_frame(frame),  m_team(team)
     {}
     virtual void Draw() = 0;
     virtual void Move() = 0;
@@ -47,23 +47,22 @@ class DiskShip: public Flyer
 
     int         m_bulletNum;
 };
+#include <iostream>
 
 class PulseLaser: public Flyer
 {
   public:
     static int pulseLaserSpeed;
-    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz* frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)*pulseLaserSpeed), m_color(color)
-    {}
-    virtual void Draw()
+    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz* frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
     {
-      DrawLine(m_front, m_back, m_color);
+      m_speed = (m_speed * pulseLaserSpeed) / Length(m_speed);
+
+      std::cout << m_front.x << ':' << m_front.y << '\n';
+      std::cout << m_back.x << ':' << m_back.y << '\n';
+      std::cout << m_speed.x << ':' << m_speed.y << '\n';
     }
-    virtual void Move()
-    {
-      m_front += m_speed;
-      //collision check
-      m_back += m_speed;
-    }
+    virtual void Draw();
+    virtual void Move();
 
   private:
     Coordinate  m_front;
