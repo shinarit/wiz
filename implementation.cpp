@@ -1,4 +1,5 @@
-#include "drawinterface.h"
+#include "drawinterface.hpp"
+#include "wiz.hpp"
 
 #ifdef __linux__
 
@@ -25,7 +26,6 @@
 extern "C"
 {
 #include "screenhack.h"
-#include "xdbe.h"
 }
 
 struct State
@@ -36,31 +36,33 @@ struct State
   GC gc;
   int delay;
   unsigned long fg, bg;
-  int xlim, ylim;
+  int width, height;
   bool grey_p;
   Colormap cmap;
-  
-  //double buffer support
-  GC erase_gc;
-  Pixmap b, ba, bb;
-  Bool dbeclear_p;
-  XdbeBackBuffer backb;
+
+  Drawable draw;
+
+  //double buffering support
+  Wiz* wiz;
+  Pixmap double_buffer;
 };
 
-State state;
+State* stateptr = 0;
 
 void* wiz_init(Display *dpy, Window window)
 {
-//maybe we will need to re-calloc it, dont know who should free this closure
   State* tostore = new State();
+  State& state = *tostore;
+
+  state.wiz = new Wiz();
 
   state.dpy = dpy;
   state.window = window;
 
   XWindowAttributes xgwa;
   XGetWindowAttributes(state.dpy, state.window, &xgwa);
-  state.xlim = xgwa.width;
-  state.ylim = xgwa.height;
+  state.width = xgwa.width;
+  state.height = xgwa.height;
   state.cmap = xgwa.colormap;
   state.grey_p = get_boolean_resource(state.dpy, "grey", "Boolean");
 
@@ -75,101 +77,24 @@ void* wiz_init(Display *dpy, Window window)
   if (state.delay < 0)
     state.delay = 0;
 
-  //double buffering support
-  //have to understand yet
-  state.dbeclear_p = get_boolean_resource(state.dpy, "useDBEClear", "Boolean");
-  if (state.dbeclear_p)
-    state.b = xdbe_get_backbuffer (state.dpy, state.window, XdbeBackground);
-  else
-    state.b = xdbe_get_backbuffer (state.dpy, state.window, XdbeUndefined);
-  state.backb = state.b;
-
-  if (!state.b)
-  {
-    state.ba = XCreatePixmap (state.dpy, state.window, state.xlim, state.ylim, xgwa.depth);
-    state.bb = XCreatePixmap (state.dpy, state.window, state.xlim, state.ylim, xgwa.depth);
-    state.b = state.ba;
-  }
-
-  state.erase_gc = XCreateGC (state.dpy, state.b, GCForeground, &gcv);
-
-  if (state.ba) XFillRectangle (state.dpy, state.ba, state.erase_gc, 0, 0, state.xlim, state.ylim);
-  if (state.bb) XFillRectangle (state.dpy, state.bb, state.erase_gc, 0, 0, state.xlim, state.ylim);
-
-//end of support
-
-  Init();
+  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, xgwa.depth);
+  state.draw = state.double_buffer;
 
   return tostore;
 }
 
 unsigned long wiz_draw(Display* dpy, Window window, void* closure)
 {
-  if (!state.dbeclear_p || !state.backb)
-  {
-    XFillRectangle(state.dpy, state.b, state.erase_gc, 0, 0, state.xlim, state.ylim);
-  }
-
-  XClearWindow(state.dpy, state.window);
-  DrawFrame();
-
-  if (state.backb)
-  {
-    XdbeSwapInfo info[1];
-    info[0].swap_window = state.window;
-    info[0].swap_action = (state.dbeclear_p ? XdbeBackground : XdbeUndefined);
-    XdbeSwapBuffers (state.dpy, info, 1);
-  }
-/*
-  static int sx = 1;
-  static int sy = 2;
-  static int cx = 0;
-  static int cy = 0;
-  int w=0, h=0, i;
-
-  XGCValues gcv;
-
-  XColor fgc, bgc;
-
-  fgc.flags = bgc.flags = DoRed | DoGreen | DoBlue;
-  fgc.red = random();
-  fgc.green = random();
-  fgc.blue = random();
-  bgc.red = random();
-  bgc.green = random();
-  bgc.blue = random();
-
-  if (state.grey_p)
-  {
-    fgc.green = fgc.blue = fgc.red;
-    bgc.green = bgc.blue = bgc.red;
-  }
+  State& state = *static_cast<State*>(closure);
+  stateptr = &state;
   
-  fgc.green = fgc.blue = fgc.red = 65535;
+  XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
+  XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
   
-  if ((!XAllocColor (state.dpy, state.cmap, &fgc)) || (!XAllocColor (state.dpy, state.cmap, &bgc)))
-  {
-    state.grey_p = true;
-    return state.delay;
-  }
-
-  gcv.foreground = fgc.pixel;
-  gcv.background = bgc.pixel;
-
-  XChangeGC (state.dpy, state.gc, GCForeground, &gcv);
-//  XFillRectangle (state.dpy, state.window, state.gc, cx, cy, w, h);
-//  XClearWindow(state.dpy, state.window);
-
-for(int i(0); i<1000; ++i)
-{
-  XDrawArc (state.dpy, state.window, state.gc, (cx + i) % state.xlim, cy % state.ylim, 10, 10, 0, 360*64);
-  XFillArc (state.dpy, state.window, state.gc, state.xlim - cx % state.xlim, state.ylim - (cy + i) % state.ylim, 10, 10, 0, 360*64);
-}
-//  XDrawArc (state.dpy, state.window, state.gc, 10, 10, 10, 10, 0, 360*64);
-  cx += sx;
-  cy += sy;
+  state.wiz->DrawFrame();
   
-*/
+  XCopyArea(state.dpy, state.double_buffer, state.window, state.gc, 0, 0, state.width, state.height, 0, 0);
+
   return state.delay;
 }
 
@@ -178,7 +103,7 @@ const char* wiz_defaults[] =
   ".background:	black",
   ".foreground:	white",
   "*fpsSolid:	true",
-  "*delay:	10000",
+  "*delay:	40000", //40.000 msec == 25 fps
   "*grey:	false",
   "*useDBE:		True",
   "*useDBEClear:	True",
@@ -195,19 +120,24 @@ XrmOptionDescRec wiz_options[] =
 void wiz_reshape(Display *dpy, Window window, void *closure, 
                  unsigned int w, unsigned int h)
 {
-  state.xlim = w;
-  state.ylim = h;
+  State& state = *static_cast<State*>(closure);
+
+  state.width = w;
+  state.height = h;
 }
 
 int wiz_event(Display *dpy, Window window, void *closure, XEvent *event)
 {
+//  State& state = *static_cast<State*>(closure);
+
   return false;
 }
 
 void wiz_free(Display *dpy, Window window, void *closure)
 {
-  Exit();
-//  delete reinterpret_cast<State*>(closure);
+  State& state = *static_cast<State*>(closure);
+
+  delete &state;
 }
 
 XSCREENSAVER_MODULE ("Wiz", wiz)
@@ -219,6 +149,8 @@ XSCREENSAVER_MODULE ("Wiz", wiz)
 
 unsigned long TranslateColor(Color color)
 {
+  State& state = *stateptr;
+
   XColor xcol = {0, 257*color.red, 257*color.green, 257*color.blue, DoRed | DoGreen | DoBlue, 0};
   XAllocColor(state.dpy, state.cmap, &xcol);
   return xcol.pixel;
@@ -226,6 +158,8 @@ unsigned long TranslateColor(Color color)
 
 void SetColor(Color color)
 {
+  State& state = *stateptr;
+
   XSetForeground(state.dpy, state.gc, TranslateColor(color));
 }
 
@@ -249,48 +183,54 @@ std::vector<XPoint> ConvertPoints(const Coordinate* const begin, const Coordinat
 
 void DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
+  State& state = *stateptr;
+
   SetColor(color);
   if(fill)
   {
-    XFillArc(state.dpy, state.window, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
+    XFillArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
   }
   else
   {
-    XDrawArc(state.dpy, state.window, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
+    XDrawArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
   }
 }
 
 void DrawLine(Coordinate begin, Coordinate end, Color color)
 {
+  State& state = *stateptr;
+
   SetColor(color);
-  XDrawLine(state.dpy, state.window, state.gc, begin.x, begin.y, end.x, end.y);
+  XDrawLine(state.dpy, state.draw, state.gc, begin.x, begin.y, end.x, end.y);
 }
 
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
+  State& state = *stateptr;
+
   SetColor(color);
   std::vector<XPoint> points = ConvertPoints(begin, end);
   points.push_back(points.front());
   if(fill)
   {
-    XFillPolygon(state.dpy, state.window, state.gc, &(points[0]), points.size(), Convex, CoordModeOrigin);
+    XFillPolygon(state.dpy, state.draw, state.gc, &(points[0]), points.size(), Convex, CoordModeOrigin);
   }
   else
   {
-    XDrawLines(state.dpy, state.window, state.gc, &(points[0]), points.size(), CoordModeOrigin);
+    XDrawLines(state.dpy, state.draw, state.gc, &(points[0]), points.size(), CoordModeOrigin);
   }
 }
 
 
 Size GetSize()
 {
-  return Size(state.xlim, state.ylim);
+  State& state = *stateptr;
+
+  return Size(state.width, state.height);
 }
 
 
 #elif defined _WIN32
-
-#include <iostream>
 
 #define _WIN32_WINNT 0x0500
 #include <windows.h>

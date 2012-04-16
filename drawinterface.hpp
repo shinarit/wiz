@@ -19,7 +19,14 @@ struct Color
   uchar blue;
 };
 
-const Color black(0, 0, 0);
+namespace Colors
+{
+  const Color black(0, 0, 0);
+  const Color white(255, 255, 255);
+  const Color red(255, 0, 0);
+  const Color green(0, 255, 0);
+  const Color blue(0, 0, 255);
+}
 
 //simple class containing the x, y coordinates
 struct Coordinate
@@ -28,11 +35,16 @@ struct Coordinate
   {}
   int x;
   int y;
+
+  Coordinate& operator+=(const Coordinate& rhs);
 };
 
-//use the same struct as size
+Coordinate operator-(const Coordinate& op);
+Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs);
+Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs);
+Coordinate operator*(const Coordinate& lhs, const int rhs);
+
 typedef Coordinate Size;
-typedef Coordinate Speed;
 
 void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
 void DrawLine(Coordinate begin, Coordinate end, Color col);
@@ -43,10 +55,5 @@ Size GetSize();
 //
 // interface for the actual logic's functions
 //
-
-void Init();
-void DrawFrame();
-void Exit();
-
 #endif
 
