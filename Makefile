@@ -3,7 +3,7 @@
 
 CC = gcc -pedantic -Wall -Wstrict-prototypes -Wnested-externs -Wmissing-prototypes -Wno-overlength-strings -Wdeclaration-after-statement -std=c89 -U__STRICT_ANSI__
 CPP = g++ -pedantic -Wall -U__STRICT_ANSI__
-COMMON_OBJS = wiz.o implementation.o utility.o
+COMMON_OBJS = wiz.o implementation.o utility.o flyerz.o
 
 ifdef SystemRoot
   RM = del /Q
@@ -35,12 +35,12 @@ default: all
 
 all: wiz
 
-wiz: $(OBJS) drawinterface.h
+wiz: $(OBJS) drawinterface.hpp
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
 
-wiz.o: wiz.cpp drawinterface.h
+wiz.o: wiz.cpp drawinterface.hpp
 
-implementation.o: implementation.cpp drawinterface.h
+implementation.o: implementation.cpp drawinterface.hpp
 
 %o: %c ; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
 
