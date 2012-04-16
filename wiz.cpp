@@ -23,7 +23,7 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10));
+  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), this));
 }
 
 Wiz::~Wiz()
