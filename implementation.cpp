@@ -233,12 +233,15 @@ Size GetSize()
 #elif defined _WIN32
 
 #define _WIN32_WINNT 0x0500
+
 #include <windows.h>
 
 const int DrawInterval = 1000/FramePerSecond;
 
 // nasty global variables
 Size size;
+
+Wiz wiz;
 
 HDC hdc;
 HDC bufferhdc;
@@ -251,6 +254,7 @@ HDC drawhdc;
 HWND hWnd;
 LPCTSTR ClsName = "Wiz";
 LPCTSTR WindowCaption = "Wiz";
+bool quit = false;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 void SetHdc();
@@ -293,14 +297,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                         hInstance,
                         0);
 
-  Init();
 
   ShowWindow(hWnd, nCmdShow);
   UpdateWindow(hWnd);
   
   SetTimer(hWnd, 0, DrawInterval, 0);
 
-  while( GetMessage(&Msg, 0, 0, 0) )
+  while( !quit && GetMessage(&Msg, 0, 0, 0) )
   {
     TranslateMessage(&Msg);
     DispatchMessage(&Msg);
@@ -324,8 +327,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
       {
         default:
         {
-          Exit();
-          exit(0);
+          quit = true;
+          break;
         }
       }
       break;
@@ -373,7 +376,7 @@ void ReleaseHdc()
 void Draw()
 {
   SetHdc();
-  DrawFrame();
+  wiz.DrawFrame();
   ReleaseHdc();
 }
 
