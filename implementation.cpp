@@ -1,4 +1,5 @@
 #include "drawinterface.h"
+#include "wiz.hpp"
 
 //debug tool
 #include <iostream>
@@ -29,7 +30,6 @@
 extern "C"
 {
 #include "screenhack.h"
-#include "xdbe.h"
 }
 
 struct State
@@ -43,10 +43,11 @@ struct State
   int width, height;
   bool grey_p;
   Colormap cmap;
-  
+
   Drawable draw;
-  
+
   //double buffering support
+  Wiz wiz;
   Pixmap double_buffer;
 };
 
@@ -81,10 +82,6 @@ void* wiz_init(Display *dpy, Window window)
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, xgwa.depth);
   state.draw = state.double_buffer;
 
-  Init();
-
-std::cout << state.delay << '\n';
-
   return tostore;
 }
 
@@ -96,7 +93,7 @@ unsigned long wiz_draw(Display* dpy, Window window, void* closure)
   XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
   XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
   
-  DrawFrame();
+  state.wiz.DrawFrame();
   
   XCopyArea(state.dpy, state.double_buffer, state.window, state.gc, 0, 0, state.width, state.height, 0, 0);
 
@@ -142,7 +139,6 @@ void wiz_free(Display *dpy, Window window, void *closure)
 {
   State& state = *static_cast<State*>(closure);
 
-  Exit();
   delete &state;
 }
 

@@ -1,3 +1,4 @@
+#include "wiz.hpp"
 #include "drawinterface.h"
 
 //
@@ -12,6 +13,7 @@
 //                            better(?) AI
 //                            
 //
+
 
 //
 // ship : ammo color theme for teams, 0 for default
@@ -69,7 +71,7 @@ class DiskShip: public Flyer
   private:
     Coordinate  m_center;
     Color       m_color;
-    Coordinate      m_speed;
+    Coordinate  m_speed;
 
     int         m_bulletNum;
 };
@@ -101,22 +103,33 @@ class PulseLaser: public Flyer
 int DiskShip::shipSize          = 7;
 int DiskShip::bulletLimit       = 7;
 int PulseLaser::pulseLaserSpeed = 15;
+/*
+Datas* Init()
+{
+  Datas* ptr = new Datas();
+  ptr->ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
+  return ptr;
+}
+*/
 
-Flyer* ship;
-
-void Init()
+Wiz::Wiz()
 {
   ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
 }
 
-void DrawFrame()
+Wiz::~Wiz()
+{
+  delete ship;
+}
+
+void Wiz::DrawFrame()
 {
   static int i=0;
 
   DrawCircle(Coordinate(200, 200), 100, Color(255, 125, 0), true);
   DrawCircle(Coordinate(210, 210), 100, Color(0, 255, 0), false);
 
-  DrawLine(Coordinate(300 + i%100, 300), Coordinate(400, 500), Color(0, 255, 255));
+  DrawLine(Coordinate(300 + i % 100, 300), Coordinate(400, 500), Color(0, 255, 255));
 
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), false);
@@ -124,8 +137,10 @@ void DrawFrame()
   ship->Move();
   ship->Draw();
 }
-
-void Exit()
+/*
+void Exit(Datas* data)
 {
-  delete ship;
+  delete data->ship;
+  delete data;
 }
+*/
