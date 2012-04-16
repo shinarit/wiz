@@ -1,4 +1,4 @@
-#include "drawinterface.h"
+#include "drawinterface.hpp"
 
 Coordinate operator-(const Coordinate& op)
 {

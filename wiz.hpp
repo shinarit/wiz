@@ -1,6 +1,8 @@
 #ifndef WIZ_HPP
 #define WIZ_HPP
 
+#include <vector>
+
 class Flyer;
 
 class Wiz
@@ -10,7 +12,10 @@ class Wiz
     ~Wiz();
     void DrawFrame();
   private:
-    Flyer* ship;
+    void MoveAll();
+
+    typedef std::vector<Flyer*> ShipList;
+    ShipList ships;
 };
 
 #endif // WIZ_HPP

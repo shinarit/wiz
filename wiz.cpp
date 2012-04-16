@@ -23,12 +23,12 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ship = new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10);
+  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), 10));
 }
 
 Wiz::~Wiz()
 {
-  delete ship;
+  delete ships[0];
 }
 
 void Wiz::DrawFrame()
@@ -43,6 +43,16 @@ void Wiz::DrawFrame()
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), false);
   ++i;
-  ship->Move();
-  ship->Draw();
+
+  MoveAll();
+}
+
+void Wiz::MoveAll()
+{
+  //TODO: C++11 feature
+  for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
+  {
+    (*it)->Move();
+    (*it)->Draw();
+  }
 }

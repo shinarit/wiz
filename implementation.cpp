@@ -1,10 +1,6 @@
 #include "drawinterface.hpp"
 #include "wiz.hpp"
 
-//debug tool
-#include <iostream>
-//
-
 #ifdef __linux__
 
 #include <vector>
@@ -47,7 +43,7 @@ struct State
   Drawable draw;
 
   //double buffering support
-  Wiz wiz;
+  Wiz* wiz;
   Pixmap double_buffer;
 };
 
@@ -57,6 +53,8 @@ void* wiz_init(Display *dpy, Window window)
 {
   State* tostore = new State();
   State& state = *tostore;
+
+  state.wiz = new Wiz();
 
   state.dpy = dpy;
   state.window = window;
@@ -93,7 +91,7 @@ unsigned long wiz_draw(Display* dpy, Window window, void* closure)
   XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
   XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
   
-  state.wiz.DrawFrame();
+  state.wiz->DrawFrame();
   
   XCopyArea(state.dpy, state.double_buffer, state.window, state.gc, 0, 0, state.width, state.height, 0, 0);
 
