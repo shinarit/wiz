@@ -17,12 +17,12 @@ Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs)
   return lhs + -rhs;
 }
 
-Coordinate operator*(const Coordinate& lhs, const int rhs)
+Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType rhs)
 {
   return Coordinate(lhs.x * rhs, lhs.y * rhs);
 }
 
-Coordinate operator/(const Coordinate& lhs, const int rhs)
+Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType rhs)
 {
   return Coordinate(lhs.x / rhs, lhs.y / rhs);
 }
@@ -34,13 +34,18 @@ Coordinate& Coordinate::operator+=(const Coordinate& rhs)
   return *this;
 }
 
-inline int Sqr(int x)
+inline Coordinate::CoordType Sqr(Coordinate::CoordType x)
 {
   return x*x;
 }
 
-int Length(const Coordinate& vektor)
+Coordinate::CoordType Length(const Coordinate& vektor)
 {
   return std::sqrt(Sqr(vektor.x) + Sqr(vektor.y));
+}
+
+Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs)
+{
+  return Length(lhs - rhs);
 }
 

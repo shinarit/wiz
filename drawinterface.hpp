@@ -31,10 +31,11 @@ namespace Colors
 //simple class containing the x, y coordinates
 struct Coordinate
 {
-  Coordinate(int x = 0, int y = 0): x(x), y(y)
+  typedef double CoordType;
+  Coordinate(CoordType x = CoordType(), CoordType y = CoordType()): x(x), y(y)
   {}
-  int x;
-  int y;
+  CoordType x;
+  CoordType y;
 
   Coordinate& operator+=(const Coordinate& rhs);
 };
@@ -42,10 +43,11 @@ struct Coordinate
 Coordinate operator-(const Coordinate& op);
 Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs);
-Coordinate operator*(const Coordinate& lhs, const int rhs);
-Coordinate operator/(const Coordinate& lhs, const int rhs);
+Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType rhs);
+Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType rhs);
 
-int Length(const Coordinate& vektor);
+Coordinate::CoordType Length(const Coordinate& vektor);
+Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs);
 
 typedef Coordinate Size;
 

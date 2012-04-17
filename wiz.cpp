@@ -25,7 +25,7 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), *this));
+  ships.push_back(new DiskShip(Coordinate(100, 0), Color(255, 0, 0), *this, 5));
   //projectiles.push_back(new PulseLaser(Coordinate(150, 150), Coordinate(100, 100), Colors::green, *this));
 }
 
@@ -51,9 +51,23 @@ void Wiz::DrawFrame()
   Clean();
 }
 
-bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end)
+bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team)
 {
-
+  Coordinate vektor = end - begin;
+  double len = Length(vektor);
+  int steps = len / 2;
+  for (int i = 0; i < steps; ++i)
+  {
+    Coordinate point = begin + vektor * 2 * steps / len;
+    for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
+    {
+      if ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
+      {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 void Wiz::AddProjectile(Flyer* projectile)
@@ -66,7 +80,6 @@ void Wiz::RemoveProjectile(Flyer* projectile)
   ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
   if (projectiles.end() != iter)
   {
-    //projectiles.erase(iter);
     deads.push_back(projectile);
   }
 }

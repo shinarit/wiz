@@ -8,10 +8,10 @@ void DiskShip::Draw()
 
 void DiskShip::Move()
 {
-  Size screenSize = GetSize();
+  Size screenSize = ::GetSize();
 
-  m_center.x = (m_center.x + m_speed.x) % screenSize.x;
-  m_center.y = (m_center.y + m_speed.y) % screenSize.y;
+  m_center.x = (m_center.x + m_speed.x);
+  m_center.y = (m_center.y + m_speed.y);
 
   if(m_center.x + shipSize > screenSize.x)
     m_center.x = screenSize.x - shipSize;
@@ -37,8 +37,20 @@ void DiskShip::Shoot()
   if (m_bulletNum < DiskShip::bulletLimit)
   {
     ++m_bulletNum;
-    m_frame.AddProjectile(new PulseLaser(Coordinate(m_center.x - 50, m_center.y - 50), m_center, Colors::green, m_frame));
+    Coordinate target(20, 20);
+    Coordinate targetvector = target - m_center;
+    m_frame.AddProjectile(new PulseLaser((targetvector * laserLength / Length(targetvector)) + m_center, m_center, Colors::green, m_frame, GetTeam()));
   }
+}
+
+Coordinate DiskShip::GetCenter()
+{
+  return m_center;
+}
+
+Coordinate::CoordType DiskShip::GetSize()
+{
+  return shipSize;
 }
 
 void PulseLaser::Draw()
@@ -49,7 +61,12 @@ void PulseLaser::Draw()
 void PulseLaser::Move()
 {
   m_front += m_speed;
-  //collision check
+
+  if (m_frame.CheckCollision(m_front, m_back, GetTeam()))
+  {
+    m_frame.RemoveProjectile(this);
+  }
+
   m_back += m_speed;
 
   Size screenSize = GetSize();
@@ -65,5 +82,6 @@ void PulseLaser::Move()
 int DiskShip::shipSize          = 7;
 int DiskShip::bulletLimit       = 7;
 int DiskShip::cooldownInterval  = 4;
-int PulseLaser::pulseLaserSpeed = 15;
+int DiskShip::laserLength       = 25;
+int PulseLaser::speed = 15;
 

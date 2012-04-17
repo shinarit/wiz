@@ -8,12 +8,12 @@ class Wiz;
 class Flyer
 {
   public:
-    Flyer(int team, Wiz& frame): m_frame(frame),  m_team(team)
+    Flyer(int team, Wiz& frame): m_frame(frame), m_ticker(0), m_team(team)
+    {}
+    virtual ~Flyer()
     {}
     virtual void Draw() = 0;
     virtual void Move() = 0;
-    virtual ~Flyer()
-    {}
 
     int GetTeam() const
     {
@@ -21,25 +21,39 @@ class Flyer
     }
 
   protected:
-    Wiz& m_frame;
+    Wiz&        m_frame;
+    int         m_ticker;
 
   private:
-    const int m_team;
+    const int   m_team;
 };
 
-class DiskShip: public Flyer
+class Hitable: public Flyer
+{
+  public:
+    Hitable(int team, Wiz& frame): Flyer(team, frame)
+    {}
+    virtual Coordinate GetCenter() = 0;
+    virtual Coordinate::CoordType GetSize() = 0;
+};
+
+class DiskShip: public Hitable
 {
   public:
     static int shipSize;
     static int bulletLimit;
     static int cooldownInterval;
+    static int laserLength;
 
-    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0), m_ticker(0)
+    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0)
     {}
     virtual void Draw();
     virtual void Move();
+    virtual Coordinate GetCenter();
+    virtual Coordinate::CoordType GetSize();
 
   private:
+    friend class Wiz;
     void Shoot();
 
     Coordinate  m_center;
@@ -47,16 +61,16 @@ class DiskShip: public Flyer
     Coordinate  m_speed;
 
     int         m_bulletNum;
-    int         m_ticker;
 };
 
 class PulseLaser: public Flyer
 {
   public:
-    static int pulseLaserSpeed;
+    static int speed;
+
     PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
     {
-      m_speed = (m_speed * pulseLaserSpeed) / Length(m_speed);
+      m_speed = (m_speed * speed) / Length(m_speed);
     }
     virtual void Draw();
     virtual void Move();

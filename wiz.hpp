@@ -4,6 +4,7 @@
 #include <vector>
 
 class Flyer;
+class Hitable;
 class Coordinate;
 
 class Wiz
@@ -12,7 +13,7 @@ class Wiz
     Wiz();
     ~Wiz();
     void DrawFrame();
-    bool CheckCollision(const Coordinate& begin, const Coordinate& end);
+    bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0);
     void AddProjectile(Flyer*);
     void RemoveProjectile(Flyer*);
 
@@ -21,7 +22,7 @@ class Wiz
     void Clean();
     void KillProjectile(Flyer*);
 
-    typedef std::vector<Flyer*> ShipList;
+    typedef std::vector<Hitable*> ShipList;
     ShipList ships;
 
     typedef std::vector<Flyer*> ProjectileList;
