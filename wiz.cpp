@@ -51,6 +51,11 @@ void Wiz::DrawFrame()
   Clean();
 }
 
+bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end)
+{
+
+}
+
 void Wiz::AddProjectile(Flyer* projectile)
 {
   projectiles.push_back(projectile);

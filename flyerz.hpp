@@ -32,6 +32,7 @@ class DiskShip: public Flyer
   public:
     static int shipSize;
     static int bulletLimit;
+    static int cooldownInterval;
 
     DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0), m_ticker(0)
     {}

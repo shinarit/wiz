@@ -4,6 +4,7 @@
 #include <vector>
 
 class Flyer;
+class Coordinate;
 
 class Wiz
 {
@@ -11,6 +12,7 @@ class Wiz
     Wiz();
     ~Wiz();
     void DrawFrame();
+    bool CheckCollision(const Coordinate& begin, const Coordinate& end);
     void AddProjectile(Flyer*);
     void RemoveProjectile(Flyer*);
 

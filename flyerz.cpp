@@ -22,8 +22,12 @@ void DiskShip::Move()
   if(m_center.y - shipSize < 0)
     m_center.y = 0 + shipSize;
 
-  if (0 == ((++m_ticker) % 4))
+  if (0 == ((++m_ticker) % cooldownInterval))
   {
+    if (m_bulletNum > 0)
+    {
+      --m_bulletNum;
+    }
     Shoot();
   }
 }
@@ -60,5 +64,6 @@ void PulseLaser::Move()
 
 int DiskShip::shipSize          = 7;
 int DiskShip::bulletLimit       = 7;
+int DiskShip::cooldownInterval  = 4;
 int PulseLaser::pulseLaserSpeed = 15;
 
