@@ -25,8 +25,8 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), this));
-  projectiles.push_back(new PulseLaser(Coordinate(150, 150), Coordinate(100, 100), Colors::green, this));
+  ships.push_back(new DiskShip(Coordinate(500, 500), Color(255, 0, 0), *this));
+  //projectiles.push_back(new PulseLaser(Coordinate(150, 150), Coordinate(100, 100), Colors::green, *this));
 }
 
 Wiz::~Wiz()
@@ -48,6 +48,7 @@ void Wiz::DrawFrame()
   ++i;
 
   MoveAll();
+  Clean();
 }
 
 void Wiz::AddProjectile(Flyer* projectile)
@@ -60,7 +61,8 @@ void Wiz::RemoveProjectile(Flyer* projectile)
   ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
   if (projectiles.end() != iter)
   {
-    projectiles.erase(iter);
+    //projectiles.erase(iter);
+    deads.push_back(projectile);
   }
 }
 
@@ -79,3 +81,23 @@ void Wiz::MoveAll()
     (*it)->Draw();
   }
 }
+
+void Wiz::Clean()
+{
+  for (ProjectileList::iterator it = deads.begin(); deads.end() != it; ++it)
+  {
+    KillProjectile(*it);
+  }
+  deads.clear();
+}
+
+void Wiz::KillProjectile(Flyer* projectile)
+{
+  ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
+  if (projectiles.end() != iter)
+  {
+    delete *iter;
+    projectiles.erase(iter);
+  }
+}
+

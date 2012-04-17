@@ -16,12 +16,16 @@ class Wiz
 
   private:
     void MoveAll();
+    void Clean();
+    void KillProjectile(Flyer*);
 
     typedef std::vector<Flyer*> ShipList;
     ShipList ships;
 
     typedef std::vector<Flyer*> ProjectileList;
     ProjectileList projectiles;
+
+    ProjectileList deads;
 };
 
 #endif // WIZ_HPP

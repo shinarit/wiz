@@ -8,7 +8,7 @@ class Wiz;
 class Flyer
 {
   public:
-    Flyer(int team, Wiz* frame): m_frame(frame),  m_team(team)
+    Flyer(int team, Wiz& frame): m_frame(frame),  m_team(team)
     {}
     virtual void Draw() = 0;
     virtual void Move() = 0;
@@ -21,7 +21,7 @@ class Flyer
     }
 
   protected:
-    Wiz* m_frame;
+    Wiz& m_frame;
 
   private:
     const int m_team;
@@ -33,7 +33,7 @@ class DiskShip: public Flyer
     static int shipSize;
     static int bulletLimit;
 
-    DiskShip(Coordinate center, Color color, Wiz* frame, int team = 0): Flyer(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0)
+    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0), m_ticker(0)
     {}
     virtual void Draw();
     virtual void Move();
@@ -46,20 +46,16 @@ class DiskShip: public Flyer
     Coordinate  m_speed;
 
     int         m_bulletNum;
+    int         m_ticker;
 };
-#include <iostream>
 
 class PulseLaser: public Flyer
 {
   public:
     static int pulseLaserSpeed;
-    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz* frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
+    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
     {
       m_speed = (m_speed * pulseLaserSpeed) / Length(m_speed);
-
-      std::cout << m_front.x << ':' << m_front.y << '\n';
-      std::cout << m_back.x << ':' << m_back.y << '\n';
-      std::cout << m_speed.x << ':' << m_speed.y << '\n';
     }
     virtual void Draw();
     virtual void Move();

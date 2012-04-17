@@ -1,4 +1,5 @@
 #include "flyerz.hpp"
+#include "wiz.hpp"
 
 void DiskShip::Draw()
 {
@@ -20,6 +21,11 @@ void DiskShip::Move()
     m_center.x = 0 + shipSize;
   if(m_center.y - shipSize < 0)
     m_center.y = 0 + shipSize;
+
+  if (0 == ((++m_ticker) % 4))
+  {
+    Shoot();
+  }
 }
 
 void DiskShip::Shoot()
@@ -27,7 +33,7 @@ void DiskShip::Shoot()
   if (m_bulletNum < DiskShip::bulletLimit)
   {
     ++m_bulletNum;
-    //add projectile
+    m_frame.AddProjectile(new PulseLaser(Coordinate(m_center.x - 50, m_center.y - 50), m_center, Colors::green, m_frame));
   }
 }
 
@@ -35,17 +41,19 @@ void PulseLaser::Draw()
 {
   DrawLine(m_front, m_back, m_color);
 }
-#include <iostream>
 
 void PulseLaser::Move()
 {
-  std::cout << m_front.x << ':' << m_front.y << '\n';
-  std::cout << m_back.x << ':' << m_back.y << '\n';
-  std::cout << m_speed.x << ':' << m_speed.y << '\n';
-
   m_front += m_speed;
   //collision check
   m_back += m_speed;
+
+  Size screenSize = GetSize();
+
+  if (m_back.x > screenSize.x || m_back.x < 0 || m_back.y > screenSize.y || m_back.y < 0)
+  {
+    m_frame.RemoveProjectile(this);
+  }
 }
 
 
