@@ -16,6 +16,7 @@ class Wiz
     bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0);
     void AddProjectile(Flyer*);
     void RemoveProjectile(Flyer*);
+    Coordinate PlaceMe(int team);
 
   private:
     void MoveAll();

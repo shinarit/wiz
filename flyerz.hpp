@@ -35,6 +35,7 @@ class Hitable: public Flyer
     {}
     virtual Coordinate GetCenter() = 0;
     virtual Coordinate::CoordType GetSize() = 0;
+    virtual void Hit() = 0;
 };
 
 class DiskShip: public Hitable
@@ -45,7 +46,7 @@ class DiskShip: public Hitable
     static int cooldownInterval;
     static int laserLength;
 
-    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_speed(2, 3), m_bulletNum(0)
+    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0)
     {}
     virtual void Draw();
     virtual void Move();

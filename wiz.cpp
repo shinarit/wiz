@@ -25,8 +25,8 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(100, 0), Color(255, 0, 0), *this, 5));
-  //projectiles.push_back(new PulseLaser(Coordinate(150, 150), Coordinate(100, 100), Colors::green, *this));
+  ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 0));
+  ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 0));
 }
 
 Wiz::~Wiz()
@@ -51,6 +51,8 @@ void Wiz::DrawFrame()
   Clean();
 }
 
+#include <iostream>
+
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team)
 {
   Coordinate vektor = end - begin;
@@ -63,6 +65,7 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
     {
       if ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
       {
+        std::cout << "ouch!\n";
         return true;
       }
     }

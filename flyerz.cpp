@@ -37,7 +37,7 @@ void DiskShip::Shoot()
   if (m_bulletNum < DiskShip::bulletLimit)
   {
     ++m_bulletNum;
-    Coordinate target(20, 20);
+    Coordinate target(0, 0);
     Coordinate targetvector = target - m_center;
     m_frame.AddProjectile(new PulseLaser((targetvector * laserLength / Length(targetvector)) + m_center, m_center, Colors::green, m_frame, GetTeam()));
   }
