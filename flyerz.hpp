@@ -48,10 +48,13 @@ class DiskShip: public Hitable
 
     DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0)
     {}
+    //from Flyer
     virtual void Draw();
     virtual void Move();
+    //from Hitable
     virtual Coordinate GetCenter();
     virtual Coordinate::CoordType GetSize();
+    virtual void Hit();
 
   private:
     friend class Wiz;
@@ -73,6 +76,7 @@ class PulseLaser: public Flyer
     {
       m_speed = (m_speed * speed) / Length(m_speed);
     }
+    //from Flyer
     virtual void Draw();
     virtual void Move();
 

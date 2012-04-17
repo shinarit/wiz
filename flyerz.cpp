@@ -53,6 +53,11 @@ Coordinate::CoordType DiskShip::GetSize()
   return shipSize;
 }
 
+void DiskShip::Hit()
+{
+  ;
+}
+
 void PulseLaser::Draw()
 {
   DrawLine(m_front, m_back, m_color);
