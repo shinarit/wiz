@@ -1,6 +1,23 @@
 #include "flyerz.hpp"
 #include "wiz.hpp"
 
+#include <algorithm>
+
+const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me);
+void RemoveMe(Wiz::ShipTravel& list, Hitable* me);
+
+struct DistanceComparer
+{
+  DistanceComparer(Hitable* toCompare): m_comp(toCompare->GetCenter())
+  {}
+  bool operator()(const Hitable* lhs, const Hitable* rhs)
+  {
+    return Distance(lhs->GetCenter(), m_comp) < Distance(rhs->GetCenter(), m_comp);
+  }
+
+  Coordinate m_comp;
+};
+
 void DiskShip::Draw()
 {
   if (!m_dead)
@@ -11,6 +28,14 @@ void DiskShip::Draw()
 
 void DiskShip::Move()
 {
+  if (0 == ((++m_ticker) % cooldownInterval))
+  {
+    if (m_bulletNum > 0)
+    {
+      --m_bulletNum;
+    }
+  }
+
   if (!m_dead)
   {
     Size screenSize = ::GetSize();
@@ -27,13 +52,13 @@ void DiskShip::Move()
     if(m_center.y - shipSize < 0)
       m_center.y = 0 + shipSize;
 
-    if (0 == ((++m_ticker) % cooldownInterval))
+    Wiz::ShipTravel enemies = m_frame.GetEnemies(GetTeam());
+    RemoveMe(enemies, this);
+
+    if (!enemies.empty())
     {
-      if (m_bulletNum > 0)
-      {
-        --m_bulletNum;
-      }
-      Shoot();
+      const Hitable* enemy = FindClosest(enemies, this);
+      Shoot(enemy->GetCenter());
     }
   }
   else
@@ -45,23 +70,25 @@ void DiskShip::Move()
   }
 }
 
-void DiskShip::Shoot()
+void DiskShip::Shoot(const Coordinate& target)
 {
   if (m_bulletNum < DiskShip::bulletLimit)
   {
     ++m_bulletNum;
-    Coordinate target(0, 0);
     Coordinate targetvector = target - m_center;
-    m_frame.AddProjectile(new PulseLaser((targetvector * laserLength / Length(targetvector)) + m_center, m_center, Colors::green, m_frame, GetTeam()));
+    Coordinate offset = targetvector * laserLength / (Length(targetvector) - shipSize - 1);
+    Coordinate begin = (targetvector * laserLength / Length(targetvector)) + m_center + offset;
+    Coordinate end = m_center + offset;
+    m_frame.AddProjectile(new PulseLaser(begin, end, Colors::green, m_frame, GetTeam()));
   }
 }
 
-Coordinate DiskShip::GetCenter()
+Coordinate DiskShip::GetCenter() const
 {
   return m_center;
 }
 
-Coordinate::CoordType DiskShip::GetSize()
+Coordinate::CoordType DiskShip::GetSize() const
 {
   return shipSize;
 }
@@ -70,6 +97,11 @@ void DiskShip::Hit()
 {
   m_dead = deadInterval;
   m_center = deadPos;
+}
+
+bool DiskShip::Alive()
+{
+  return 0 == m_dead;
 }
 
 void PulseLaser::Draw()
@@ -96,10 +128,23 @@ void PulseLaser::Move()
   }
 }
 
+const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me)
+{
+  return *min_element(list.begin(), list.end(), DistanceComparer(me));
+}
+
+void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
+{
+  Wiz::ShipTravel::iterator iter = find(list.begin(), list.end(), me);
+  if (list.end() != iter)
+  {
+    list.erase(iter);
+  }
+}
 
 
 int DiskShip::shipSize          = 7;
-int DiskShip::bulletLimit       = 7;
+int DiskShip::bulletLimit       = 1;
 int DiskShip::cooldownInterval  = 4;
 int DiskShip::laserLength       = 25;
 int DiskShip::deadInterval      = 25;

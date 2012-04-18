@@ -13,10 +13,13 @@ class Wiz
     Wiz();
     ~Wiz();
     void DrawFrame();
-    bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0);
+    bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0) const;
     void AddProjectile(Flyer*);
     void RemoveProjectile(Flyer*);
-    Coordinate PlaceMe(int team);
+    Coordinate PlaceMe(int team) const;
+
+    typedef std::vector<const Hitable*> ShipTravel;
+    ShipTravel GetEnemies(int team) const;
 
   private:
     void MoveAll();

@@ -73,9 +73,7 @@ void* wiz_init(Display *dpy, Window window)
 
   state.gc = XCreateGC (state.dpy, state.window, GCForeground | GCBackground | GCFillStyle, &gcv);
 
-  state.delay = get_integer_resource(state.dpy, "delay", "Integer");
-  if (state.delay < 0)
-    state.delay = 0;
+  state.delay = 1000000 / FramePerSecond; //1000000 == 1 second
 
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, xgwa.depth);
   state.draw = state.double_buffer;
@@ -103,7 +101,6 @@ const char* wiz_defaults[] =
   ".background:	black",
   ".foreground:	white",
   "*fpsSolid:	true",
-  "*delay:	40000", //40.000 msec == 25 fps
   "*grey:	false",
   "*useDBE:		True",
   "*useDBEClear:	True",

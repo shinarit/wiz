@@ -1,6 +1,6 @@
-#include "wiz.hpp"
 #include "drawinterface.hpp"
 #include "flyerz.hpp"
+#include "wiz.hpp"
 
 #include <algorithm>
 
@@ -25,8 +25,8 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 1));
-  ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 2));
+  ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 0));
+  ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 0));
 }
 
 Wiz::~Wiz()
@@ -53,7 +53,7 @@ void Wiz::DrawFrame()
 
 #include <iostream>
 
-bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team)
+bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
 {
   Coordinate vektor = end - begin;
   double len = Length(vektor);
@@ -61,7 +61,7 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
   for (int i = 0; i < steps; ++i)
   {
     Coordinate point = begin + vektor * 2 * steps / len;
-    for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
+    for(ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
     {
       if ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
       {
@@ -88,9 +88,34 @@ void Wiz::RemoveProjectile(Flyer* projectile)
   }
 }
 
-Coordinate Wiz::PlaceMe(int team)
+const int Margin = 70;
+
+Coordinate Wiz::PlaceMe(int team) const
 {
-  return Coordinate(70, 70);
+  Size screenSize = GetSize();
+  if (1 == team)
+  {
+    return Coordinate(Margin + Random(100) - 50, Margin + Random(screenSize.y - 2 * Margin));
+  }
+  if (2 == team)
+  {
+    return Coordinate(screenSize.x - 70 + Random(100) - 50, screenSize.y - 70 + Random(screenSize.y - 2 * Margin));
+  }
+  return Coordinate(Margin + Random(screenSize.x - 2 * Margin), 70 + Random(screenSize.y - 2 * Margin));
+}
+
+Wiz::ShipTravel Wiz::GetEnemies(int team) const
+{
+  ShipTravel res;
+  for (ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
+  {
+    const int cteam = (*it)->GetTeam();
+    if ((*it)->Alive() && (0 == team || cteam != team))
+    {
+      res.push_back(*it);
+    }
+  }
+  return res;
 }
 
 void Wiz::MoveAll()
@@ -98,14 +123,14 @@ void Wiz::MoveAll()
   //TODO: C++11 feature
   for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
   {
-    (*it)->Move();
     (*it)->Draw();
+    (*it)->Move();
   }
 
   for(ProjectileList::iterator it = projectiles.begin(); projectiles.end() != it; ++it)
   {
-    (*it)->Move();
     (*it)->Draw();
+    (*it)->Move();
   }
 }
 

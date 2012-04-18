@@ -5,6 +5,7 @@
 
 class Wiz;
 
+
 class Flyer
 {
   public:
@@ -33,9 +34,10 @@ class Hitable: public Flyer
   public:
     Hitable(int team, Wiz& frame): Flyer(team, frame)
     {}
-    virtual Coordinate GetCenter() = 0;
-    virtual Coordinate::CoordType GetSize() = 0;
+    virtual Coordinate GetCenter() const = 0;
+    virtual Coordinate::CoordType GetSize() const = 0;
     virtual void Hit() = 0;
+    virtual bool Alive() = 0;
 };
 
 class DiskShip: public Hitable
@@ -54,13 +56,14 @@ class DiskShip: public Hitable
     virtual void Draw();
     virtual void Move();
     //from Hitable
-    virtual Coordinate GetCenter();
-    virtual Coordinate::CoordType GetSize();
+    virtual Coordinate GetCenter() const;
+    virtual Coordinate::CoordType GetSize() const;
     virtual void Hit();
+    virtual bool Alive();
 
   private:
     friend class Wiz;
-    void Shoot();
+    void Shoot(const Coordinate& target);
 
     Coordinate  m_center;
     Color       m_color;
