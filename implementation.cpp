@@ -245,7 +245,7 @@ const int DrawInterval = 1000/FramePerSecond;
 // nasty global variables
 Size size;
 
-Wiz wiz;
+Wiz* wizptr;
 
 HDC hdc;
 HDC bufferhdc;
@@ -307,6 +307,9 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   UpdateWindow(hWnd);
   
   SetTimer(hWnd, 0, DrawInterval, 0);
+
+  Wiz wiz;
+  wizptr = &wiz;
 
   while( !quit && GetMessage(&Msg, 0, 0, 0) )
   {
@@ -381,7 +384,7 @@ void ReleaseHdc()
 void Draw()
 {
   SetHdc();
-  wiz.DrawFrame();
+  wizptr->DrawFrame();
   ReleaseHdc();
 }
 
