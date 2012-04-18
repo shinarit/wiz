@@ -3,32 +3,45 @@
 
 void DiskShip::Draw()
 {
-  DrawCircle(m_center, shipSize, m_color, true);
+  if (!m_dead)
+  {
+    DrawCircle(m_center, shipSize, m_color, true);
+  }
 }
 
 void DiskShip::Move()
 {
-  Size screenSize = ::GetSize();
-
-  m_center.x = (m_center.x + m_speed.x);
-  m_center.y = (m_center.y + m_speed.y);
-
-  if(m_center.x + shipSize > screenSize.x)
-    m_center.x = screenSize.x - shipSize;
-  if(m_center.y + shipSize > screenSize.y)
-    m_center.y = screenSize.y - shipSize;
-  if(m_center.x - shipSize < 0)
-    m_center.x = 0 + shipSize;
-  if(m_center.y - shipSize < 0)
-    m_center.y = 0 + shipSize;
-
-  if (0 == ((++m_ticker) % cooldownInterval))
+  if (!m_dead)
   {
-    if (m_bulletNum > 0)
+    Size screenSize = ::GetSize();
+
+    m_center.x = (m_center.x + m_speed.x);
+    m_center.y = (m_center.y + m_speed.y);
+
+    if(m_center.x + shipSize > screenSize.x)
+      m_center.x = screenSize.x - shipSize;
+    if(m_center.y + shipSize > screenSize.y)
+      m_center.y = screenSize.y - shipSize;
+    if(m_center.x - shipSize < 0)
+      m_center.x = 0 + shipSize;
+    if(m_center.y - shipSize < 0)
+      m_center.y = 0 + shipSize;
+
+    if (0 == ((++m_ticker) % cooldownInterval))
     {
-      --m_bulletNum;
+      if (m_bulletNum > 0)
+      {
+        --m_bulletNum;
+      }
+      Shoot();
     }
-    Shoot();
+  }
+  else
+  {
+    if(!(--m_dead))
+    {
+      m_center = m_frame.PlaceMe(GetTeam());
+    }
   }
 }
 
@@ -55,7 +68,8 @@ Coordinate::CoordType DiskShip::GetSize()
 
 void DiskShip::Hit()
 {
-  ;
+  m_dead = deadInterval;
+  m_center = deadPos;
 }
 
 void PulseLaser::Draw()
@@ -88,5 +102,7 @@ int DiskShip::shipSize          = 7;
 int DiskShip::bulletLimit       = 7;
 int DiskShip::cooldownInterval  = 4;
 int DiskShip::laserLength       = 25;
-int PulseLaser::speed = 15;
+int DiskShip::deadInterval      = 25;
+Coordinate DiskShip::deadPos    = Coordinate(-100, 150);
+int PulseLaser::speed           = 15;
 

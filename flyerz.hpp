@@ -45,8 +45,10 @@ class DiskShip: public Hitable
     static int bulletLimit;
     static int cooldownInterval;
     static int laserLength;
+    static int deadInterval;
+    static Coordinate deadPos;
 
-    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0)
+    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_dead(0)
     {}
     //from Flyer
     virtual void Draw();
@@ -65,6 +67,7 @@ class DiskShip: public Hitable
     Coordinate  m_speed;
 
     int         m_bulletNum;
+    int         m_dead;
 };
 
 class PulseLaser: public Flyer
