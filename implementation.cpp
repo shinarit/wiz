@@ -237,6 +237,9 @@ Size GetSize()
 
 #include <windows.h>
 
+#include <cstdlib>
+#include <ctime>
+
 const int DrawInterval = 1000/FramePerSecond;
 
 // nasty global variables
@@ -298,6 +301,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                         hInstance,
                         0);
 
+  std::srand(std::time(0));
 
   ShowWindow(hWnd, nCmdShow);
   UpdateWindow(hWnd);
@@ -434,7 +438,7 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 
 int Random(int sup)
 {
-
+  return std::rand() % sup;
 }
 
 Size GetSize()
