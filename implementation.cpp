@@ -221,6 +221,10 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
   }
 }
 
+int Random(int sup)
+{
+  return random() % sup;
+}
 
 Size GetSize()
 {
@@ -431,6 +435,10 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
   }
 }
 
+int Random(int sup)
+{
+
+}
 
 Size GetSize()
 {
