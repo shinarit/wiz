@@ -23,10 +23,13 @@
 //
 Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::white}};
 
+#include <iostream>
+
 Wiz::Wiz()
 {
   ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 0));
   ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 0));
+  ships.push_back(new DiskShip(Coordinate(500, 500), Colors::yellow, *this, 0));
 }
 
 Wiz::~Wiz()
@@ -50,8 +53,6 @@ void Wiz::DrawFrame()
   MoveAll();
   Clean();
 }
-
-#include <iostream>
 
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
 {
