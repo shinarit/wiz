@@ -40,18 +40,19 @@ class Hitable: public Flyer
     virtual bool Alive() = 0;
 };
 
+class DiskShipAi;
+
 class DiskShip: public Hitable
 {
   public:
     static int shipSize;
+    static int maxSpeed;
     static int bulletLimit;
     static int cooldownInterval;
     static int laserLength;
     static int deadInterval;
-    static Coordinate deadPos;
 
-    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_dead(0)
-    {}
+    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0);
     //from Flyer
     virtual void Draw();
     virtual void Move();
@@ -62,7 +63,7 @@ class DiskShip: public Hitable
     virtual bool Alive();
 
   private:
-    friend class Wiz;
+    friend class DiskShipAi;
     void Shoot(const Coordinate& target);
 
     Coordinate  m_center;
@@ -71,6 +72,21 @@ class DiskShip: public Hitable
 
     int         m_bulletNum;
     int         m_dead;
+
+    DiskShipAi* m_ai;
+};
+
+class DiskShipAi
+{
+  public:
+    static int minDistance;
+    static int maxDistance;
+
+    DiskShipAi(DiskShip* toLead): m_ship(toLead)
+    {}
+    void Do();
+  private:
+    DiskShip* m_ship;
 };
 
 class PulseLaser: public Flyer

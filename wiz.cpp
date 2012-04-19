@@ -27,9 +27,9 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 0));
-  ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 0));
-  ships.push_back(new DiskShip(Coordinate(500, 500), Colors::yellow, *this, 0));
+  ships.push_back(new DiskShip(Coordinate(330, 300), Colors::red, *this, 1));
+  ships.push_back(new DiskShip(Coordinate(70, 70), Colors::blue, *this, 2));
+  ships.push_back(new DiskShip(Coordinate(500, 500), Colors::yellow, *this, 3));
 }
 
 Wiz::~Wiz()
@@ -64,7 +64,7 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
     Coordinate point = begin + vektor * 2 * steps / len;
     for(ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
     {
-      if ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
+      if ((*it)->Alive() && ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize()))
       {
         std::cout << "ouch!\n";
         (*it)->Hit();
@@ -133,6 +133,7 @@ void Wiz::MoveAll()
     (*it)->Draw();
     (*it)->Move();
   }
+  std::cout << '\n';
 }
 
 void Wiz::Clean()

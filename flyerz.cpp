@@ -2,6 +2,7 @@
 #include "wiz.hpp"
 
 #include <algorithm>
+#include <cmath>
 
 const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me);
 void RemoveMe(Wiz::ShipTravel& list, Hitable* me);
@@ -17,6 +18,13 @@ struct DistanceComparer
 
   Coordinate m_comp;
 };
+
+//
+// DiskShip functions
+//
+
+DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_dead(0), m_ai(new DiskShipAi(this))
+{}
 
 void DiskShip::Draw()
 {
@@ -52,14 +60,7 @@ void DiskShip::Move()
     if(m_center.y - shipSize < 0)
       m_center.y = 0 + shipSize;
 
-    Wiz::ShipTravel enemies = m_frame.GetEnemies(GetTeam());
-    RemoveMe(enemies, this);
-
-    if (!enemies.empty())
-    {
-      const Hitable* enemy = FindClosest(enemies, this);
-      Shoot(enemy->GetCenter());
-    }
+    m_ai->Do();
   }
   else
   {
@@ -96,13 +97,58 @@ Coordinate::CoordType DiskShip::GetSize() const
 void DiskShip::Hit()
 {
   m_dead = deadInterval;
-  m_center = deadPos;
 }
 
 bool DiskShip::Alive()
 {
   return 0 == m_dead;
 }
+
+//
+// DiskShipAi functions
+//
+
+#include <iostream>
+
+void DiskShipAi::Do()
+{
+  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
+  RemoveMe(enemies, m_ship);
+
+  if (!enemies.empty())
+  {
+    const Hitable* enemy = FindClosest(enemies, m_ship);
+
+    //found enemy. so shoot
+    m_ship->Shoot(enemy->GetCenter());
+
+    std::cout << "orig speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
+    //and move
+    Coordinate modVector;
+    int distance = Distance(enemy->GetCenter(), m_ship->m_center);
+    std::cout << "distance " << distance << '\n';
+    if (distance < minDistance)
+    {
+      modVector = enemy->GetCenter() - m_ship->m_center;
+    }
+    else if (distance > maxDistance)
+    {
+      modVector = m_ship->m_center - enemy->GetCenter();
+    }
+    std::cout << "modvector " << modVector.x << ':' << modVector.y << '\n';
+    if (std::abs(modVector.x * modVector.y) > 1)
+    {
+      m_ship->m_speed += modVector;
+      std::cout << "modified speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
+      m_ship->m_speed = m_ship->m_speed * DiskShip::maxSpeed / Length(m_ship->m_speed);
+      std::cout << "normalized speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
+    }
+  }
+}
+
+//
+// PulseLaser functions
+//
 
 void PulseLaser::Draw()
 {
@@ -144,10 +190,14 @@ void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
 
 
 int DiskShip::shipSize          = 7;
+int DiskShip::maxSpeed          = 5;
 int DiskShip::bulletLimit       = 1;
 int DiskShip::cooldownInterval  = 4;
 int DiskShip::laserLength       = 25;
 int DiskShip::deadInterval      = 25;
-Coordinate DiskShip::deadPos    = Coordinate(-100, 150);
+
+int DiskShipAi::minDistance     = 50;
+int DiskShipAi::maxDistance     = 150;
+
 int PulseLaser::speed           = 15;
 
