@@ -39,6 +39,15 @@ all: wiz
 wiz: $(OBJS) drawinterface.hpp
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
 
+wiz.cpp: wiz.hpp flyerz.hpp drawinterface.hpp
+
+flyerz.cpp: wiz.hpp flyerz.hpp
+
+implementation.cpp: wiz.hpp drawinterface.hpp
+
+utility.cpp: drawinterface.hpp
+	
+
 %o: %c; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
 
 %o: %cpp $(HEADERS); 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
