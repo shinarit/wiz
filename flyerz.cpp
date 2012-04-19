@@ -127,11 +127,11 @@ void DiskShipAi::Do()
     Coordinate modVector;
     int distance = Distance(enemy->GetCenter(), m_ship->m_center);
     std::cout << "distance " << distance << '\n';
-    if (distance < minDistance)
+    if (distance > maxDistance)
     {
       modVector = enemy->GetCenter() - m_ship->m_center;
     }
-    else if (distance > maxDistance)
+    else if (distance < minDistance)
     {
       modVector = m_ship->m_center - enemy->GetCenter();
     }
