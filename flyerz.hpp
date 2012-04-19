@@ -48,7 +48,7 @@ class DiskShip: public Hitable
     static int shipSize;
     static int maxSpeed;
     static int bulletLimit;
-    static int cooldownInterval;
+    static int cooldown;
     static int laserLength;
     static int deadInterval;
 
@@ -71,7 +71,7 @@ class DiskShip: public Hitable
     Coordinate  m_speed;
 
     int         m_bulletNum;
-    bool        m_cooldown;
+    int         m_cooldown;
     int         m_dead;
 
     DiskShipAi* m_ai;

@@ -23,7 +23,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_cooldown(false), m_dead(0), m_ai(new DiskShipAi(this))
+DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAi(this))
 {}
 
 void DiskShip::Draw()
@@ -36,15 +36,9 @@ void DiskShip::Draw()
 
 void DiskShip::Move()
 {
-  if (0 == ((++m_ticker) % cooldownInterval))
+  if (0 < m_cooldown)
   {
-    if (m_cooldown)
-    {
-      if (0 == --m_bulletNum)
-      {
-        m_cooldown = false;
-      }
-    }
+    --m_cooldown;
   }
 
   if (!m_dead)
@@ -76,11 +70,12 @@ void DiskShip::Move()
 
 void DiskShip::Shoot(const Coordinate& target)
 {
-  if (!m_cooldown)
+  if (0 == m_cooldown)
   {
     if (++m_bulletNum == DiskShip::bulletLimit)
     {
-      m_cooldown = true;
+      m_cooldown = cooldown;
+      m_bulletNum = 0;
     }
 
     Coordinate targetvector = target - m_center;
@@ -194,12 +189,12 @@ void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
 int DiskShip::shipSize          = 7;
 int DiskShip::maxSpeed          = 5;
 int DiskShip::bulletLimit       = 7;
-int DiskShip::cooldownInterval  = 4;
+int DiskShip::cooldown          = 40;
 int DiskShip::laserLength       = 25;
 int DiskShip::deadInterval      = 25;
 
-int DiskShipAi::minDistance     = 50;
-int DiskShipAi::maxDistance     = 150;
+int DiskShipAi::minDistance     = 250;
+int DiskShipAi::maxDistance     = 350;
 
 int PulseLaser::speed           = 15;
 
