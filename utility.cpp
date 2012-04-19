@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// utility.cpp
+//
+// implementation of some operations on the common stuff
+//
+
 #include "drawinterface.hpp"
 
 #include <cmath>

@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// wiz.hpp
+//
+// the main class that represents and moves the draw logic
+//
+
 #ifndef WIZ_HPP
 #define WIZ_HPP
 

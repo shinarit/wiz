@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// implementation.cpp
+//
+// the drawing implementation with conditional compiling for different OSs
+//
+
 #include "drawinterface.hpp"
 #include "wiz.hpp"
 #include <iostream>

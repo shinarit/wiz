@@ -9,6 +9,10 @@
 // email: tetra666@gmail.com
 // license: whatever. note my name
 //
+// wiz.cpp
+//
+// the main class that represents and moves the draw logic
+//
 // remake of the great blaster screensaver, with more features i missed when watching it
 // list of planned features:
 //                            teams (so that red and green actually means something)

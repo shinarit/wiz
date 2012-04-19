@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// flyerz.hpp
+//
+// anything that can be animated or collided with
+//
+
 #ifndef FLYERZ_H
 #define FLYERZ_H
 

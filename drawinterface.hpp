@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// drawinterface.hpp
+//
+// common stuff, and the function declarations needed by the drawing logic
+//
+
 #ifndef WIZ_DRAW_H_
 #define WIZ_DRAW_H_
 
@@ -56,15 +66,14 @@ Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs);
 
 typedef Coordinate Size;
 
+//
+// implementation.cpp's interface
+//
+
 void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
 void DrawLine(Coordinate begin, Coordinate end, Color col);
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
 int Random(int sup);
-
 Size GetSize();
 
-//
-// interface for the actual logic's functions
-//
 #endif
-
