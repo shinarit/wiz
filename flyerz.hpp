@@ -71,6 +71,7 @@ class DiskShip: public Hitable
     Coordinate  m_speed;
 
     int         m_bulletNum;
+    bool        m_cooldown;
     int         m_dead;
 
     DiskShipAi* m_ai;

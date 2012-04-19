@@ -23,7 +23,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_dead(0), m_ai(new DiskShipAi(this))
+DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_cooldown(false), m_dead(0), m_ai(new DiskShipAi(this))
 {}
 
 void DiskShip::Draw()
@@ -38,9 +38,12 @@ void DiskShip::Move()
 {
   if (0 == ((++m_ticker) % cooldownInterval))
   {
-    if (m_bulletNum > 0)
+    if (m_cooldown)
     {
-      --m_bulletNum;
+      if (0 == --m_bulletNum)
+      {
+        m_cooldown = false;
+      }
     }
   }
 
@@ -73,9 +76,13 @@ void DiskShip::Move()
 
 void DiskShip::Shoot(const Coordinate& target)
 {
-  if (m_bulletNum < DiskShip::bulletLimit)
+  if (!m_cooldown)
   {
-    ++m_bulletNum;
+    if (++m_bulletNum == DiskShip::bulletLimit)
+    {
+      m_cooldown = true;
+    }
+
     Coordinate targetvector = target - m_center;
     Coordinate offset = targetvector * laserLength / (Length(targetvector) - shipSize - 1);
     Coordinate begin = (targetvector * laserLength / Length(targetvector)) + m_center + offset;
@@ -122,11 +129,9 @@ void DiskShipAi::Do()
     //found enemy. so shoot
     m_ship->Shoot(enemy->GetCenter());
 
-    std::cout << "orig speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
     //and move
     Coordinate modVector;
     int distance = Distance(enemy->GetCenter(), m_ship->m_center);
-    std::cout << "distance " << distance << '\n';
     if (distance > maxDistance)
     {
       modVector = enemy->GetCenter() - m_ship->m_center;
@@ -135,13 +140,10 @@ void DiskShipAi::Do()
     {
       modVector = m_ship->m_center - enemy->GetCenter();
     }
-    std::cout << "modvector " << modVector.x << ':' << modVector.y << '\n';
     if (std::abs(modVector.x * modVector.y) > 1)
     {
       m_ship->m_speed += modVector;
-      std::cout << "modified speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
       m_ship->m_speed = m_ship->m_speed * DiskShip::maxSpeed / Length(m_ship->m_speed);
-      std::cout << "normalized speed " << m_ship->m_speed.x << ':' << m_ship->m_speed.y << '\n';
     }
   }
 }
@@ -191,7 +193,7 @@ void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
 
 int DiskShip::shipSize          = 7;
 int DiskShip::maxSpeed          = 5;
-int DiskShip::bulletLimit       = 1;
+int DiskShip::bulletLimit       = 7;
 int DiskShip::cooldownInterval  = 4;
 int DiskShip::laserLength       = 25;
 int DiskShip::deadInterval      = 25;

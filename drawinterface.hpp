@@ -12,7 +12,7 @@ typedef unsigned char uchar;
 //simple RGB structure, [0 - 255] range
 struct Color
 {
-  Color(uchar red, uchar green, uchar blue): red(red), green(green), blue(blue)
+  explicit Color(uchar red, uchar green, uchar blue): red(red), green(green), blue(blue)
   {}
   uchar red;
   uchar green;
@@ -35,19 +35,21 @@ namespace Colors
 struct Coordinate
 {
   typedef double CoordType;
-  Coordinate(CoordType x = CoordType(), CoordType y = CoordType()): x(x), y(y)
+  explicit Coordinate(CoordType x = CoordType(), CoordType y = CoordType()): x(x), y(y)
   {}
   CoordType x;
   CoordType y;
 
   Coordinate& operator+=(const Coordinate& rhs);
+  Coordinate& operator*=(const Coordinate::CoordType& rhs);
+  Coordinate& operator/=(const Coordinate::CoordType& rhs);
 };
 
 Coordinate operator-(const Coordinate& op);
 Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs);
-Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType rhs);
-Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType rhs);
+Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType& rhs);
+Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs);
 
 Coordinate::CoordType Length(const Coordinate& vektor);
 Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs);

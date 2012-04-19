@@ -1,5 +1,6 @@
 #include "drawinterface.hpp"
 #include "wiz.hpp"
+#include <iostream>
 
 #ifdef __linux__
 
@@ -37,6 +38,7 @@ struct State
   int delay;
   unsigned long fg, bg;
   int width, height;
+  int depth;
   bool grey_p;
   Colormap cmap;
 
@@ -63,6 +65,7 @@ void* wiz_init(Display *dpy, Window window)
   XGetWindowAttributes(state.dpy, state.window, &xgwa);
   state.width = xgwa.width;
   state.height = xgwa.height;
+  state.depth = xgwa.depth;
   state.cmap = xgwa.colormap;
   state.grey_p = get_boolean_resource(state.dpy, "grey", "Boolean");
 
@@ -75,7 +78,7 @@ void* wiz_init(Display *dpy, Window window)
 
   state.delay = 1000000 / FramePerSecond; //1000000 == 1 second
 
-  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, xgwa.depth);
+  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
 
   return tostore;
@@ -102,8 +105,6 @@ const char* wiz_defaults[] =
   ".foreground:	white",
   "*fpsSolid:	true",
   "*grey:	false",
-  "*useDBE:		True",
-  "*useDBEClear:	True",
   0
 };
 
@@ -113,7 +114,6 @@ XrmOptionDescRec wiz_options[] =
   { "-grey",		".grey",	XrmoptionNoArg, "True" },
   { 0, 0, XrmoptionNoArg, 0 }
 };
-
 void wiz_reshape(Display *dpy, Window window, void *closure, 
                  unsigned int w, unsigned int h)
 {
@@ -121,6 +121,11 @@ void wiz_reshape(Display *dpy, Window window, void *closure,
 
   state.width = w;
   state.height = h;
+  state.dpy = dpy;
+  state.window = window;
+
+  //XFreePixmap(dpy, state.double_buffer);
+//  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
 }
 
 int wiz_event(Display *dpy, Window window, void *closure, XEvent *event)

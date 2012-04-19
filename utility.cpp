@@ -17,12 +17,12 @@ Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs)
   return lhs + -rhs;
 }
 
-Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType rhs)
+Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType& rhs)
 {
   return Coordinate(lhs.x * rhs, lhs.y * rhs);
 }
 
-Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType rhs)
+Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs)
 {
   return Coordinate(lhs.x / rhs, lhs.y / rhs);
 }
@@ -31,6 +31,20 @@ Coordinate& Coordinate::operator+=(const Coordinate& rhs)
 {
   x += rhs.x;
   y += rhs.y;
+  return *this;
+}
+
+Coordinate& Coordinate::operator*=(const Coordinate::CoordType& rhs)
+{
+  x *= rhs;
+  y *= rhs;
+  return *this;
+}
+
+Coordinate& Coordinate::operator/=(const Coordinate::CoordType& rhs)
+{
+  x /= rhs;
+  y /= rhs;
   return *this;
 }
 
