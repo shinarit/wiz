@@ -39,6 +39,7 @@ namespace Colors
   const Color teal(0, 255, 255);
   const Color yellow(255, 255, 0);
   const Color pink(255, 0, 255);
+  const Color orange(255, 0xA5, 0);
 }
 
 //simple class containing the x, y coordinates

@@ -61,6 +61,8 @@ class DiskShip: public Hitable
     static int cooldown;
     static int laserLength;
     static int deadInterval;
+    static int explosionInterval;
+    static int explosionSize;
 
     DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0);
     //from Flyer
@@ -83,6 +85,7 @@ class DiskShip: public Hitable
     int         m_bulletNum;
     int         m_cooldown;
     int         m_dead;
+    int         m_explode;
 
     DiskShipAi* m_ai;
 };

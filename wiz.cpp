@@ -74,7 +74,7 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
     {
       if ((*it)->Alive() && ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize()))
       {
-        std::cout << "ouch!\n";
+        //std::cout << "ouch!\n";
         (*it)->Hit();
         return true;
       }
@@ -141,7 +141,6 @@ void Wiz::MoveAll()
     (*it)->Draw();
     (*it)->Move();
   }
-  std::cout << '\n';
 }
 
 void Wiz::Clean()

@@ -200,11 +200,11 @@ void DrawCircle(Coordinate center, int size, Color color, bool fill)
   SetColor(color);
   if(fill)
   {
-    XFillArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
+    XFillArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, 2 * size, 2 * size, 0, 360*64);
   }
   else
   {
-    XDrawArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, size, size, 0, 360*64);
+    XDrawArc(state.dpy, state.draw, state.gc, center.x - size, center.y - size, 2 * size, 2 * size, 0, 360*64);
   }
 }
 
