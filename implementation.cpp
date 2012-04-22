@@ -403,6 +403,21 @@ void Draw()
   ReleaseHdc();
 }
 
+std::vector<POINT> ConvertPoints(const Coordinate* const begin, const Coordinate* const end)
+{
+  std::vector<POINT> result;
+
+  const Coordinate* runptr = begin;
+  while(end != runptr)
+  {
+    POINT p = {runptr->x, runptr->y};
+    result.push_back(p);
+    ++runptr;
+  }
+  return result;
+}
+
+
 #define TranslateColor(color) RGB(color.red, color.green, color.blue)
 
 //
@@ -442,15 +457,18 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
   SelectObject(drawhdc, GetStockObject(DC_PEN));
   SetDCPenColor(drawhdc, TranslateColor(color));
 
+  std::vector<POINT> points = ConvertPoints(begin, end);
+  points.push_back(points.front());
+
   if(fill)
   {
     SelectObject(drawhdc, GetStockObject(DC_BRUSH));
     SetDCBrushColor(drawhdc, TranslateColor(color));
-    //Ellipse(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size);
+    Polygon(drawhdc, &points[0], points.size());
   }
   else
   {
-    //Arc(drawhdc, center.x - size, center.y - size, center.x + size, center.y + size, center.x, center.y - size, center.x, center.y - size);
+    Polyline(drawhdc, &points[0], points.size());
   }
 }
 
