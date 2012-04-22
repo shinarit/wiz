@@ -73,3 +73,9 @@ Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs)
   return Length(lhs - rhs);
 }
 
+Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length)
+{
+  return vektor * length / Length(vektor);
+}
+
+

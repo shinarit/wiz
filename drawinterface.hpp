@@ -64,6 +64,7 @@ Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs);
 
 Coordinate::CoordType Length(const Coordinate& vektor);
 Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs);
+Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length);
 
 typedef Coordinate Size;
 

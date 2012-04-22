@@ -167,6 +167,7 @@ void DiskShipAi::Do()
     }
     if (std::abs(modVector.x * modVector.y) > 1)
     {
+      modVector = Normalize(modVector, DiskShip::maxSpeed);
       m_ship->m_speed += modVector;
       m_ship->m_speed = m_ship->m_speed * DiskShip::maxSpeed / Length(m_ship->m_speed);
     }
