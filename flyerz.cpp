@@ -37,7 +37,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_color(color), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAi(this))
+DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAi(this))
 {}
 
 const Color ExplosionColors[] = {Colors::yellow, Colors::orange};
@@ -61,12 +61,13 @@ void DiskShip::Draw()
   }
   else
   {
-    DrawCircle(m_center, shipSize, m_color, true);
+    DrawCircle(m_center, shipSize, m_shipColor, true);
   }
 }
 
 void DiskShip::Move()
 {
+  ++m_ticker;
   if (0 < m_cooldown)
   {
     --m_cooldown;
@@ -113,7 +114,7 @@ void DiskShip::Shoot(const Coordinate& target)
     Coordinate offset = targetvector * laserLength / (Length(targetvector) - shipSize - 1);
     Coordinate begin = (targetvector * laserLength / Length(targetvector)) + m_center + offset;
     Coordinate end = m_center + offset;
-    m_frame.AddProjectile(new PulseLaser(begin, end, Colors::green, m_frame, GetTeam()));
+    m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam()));
   }
 }
 
@@ -147,6 +148,12 @@ void DiskShipAi::Do()
   Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
   RemoveMe(enemies, m_ship);
 
+  if (!(m_ship->m_ticker % 10))
+  {
+    m_randum = Normalize(Coordinate(Random(1000) - 500, Random(1000) - 500), DiskShip::maxSpeed);
+  }
+  m_ship->m_speed += m_randum;
+
   if (!enemies.empty())
   {
     const Hitable* enemy = FindClosest(enemies, m_ship);
@@ -169,8 +176,11 @@ void DiskShipAi::Do()
     {
       modVector = Normalize(modVector, DiskShip::maxSpeed);
       m_ship->m_speed += modVector;
-      m_ship->m_speed = m_ship->m_speed * DiskShip::maxSpeed / Length(m_ship->m_speed);
     }
+  }
+  if (Length(m_ship->m_speed) > DiskShip::maxSpeed)
+  {
+    m_ship->m_speed = Normalize(m_ship->m_speed, DiskShip::maxSpeed);
   }
 }
 
@@ -221,7 +231,7 @@ int DiskShip::shipSize          = 5;
 int DiskShip::maxSpeed          = 5;
 int DiskShip::bulletLimit       = 7;
 int DiskShip::cooldown          = 40;
-int DiskShip::laserLength       = 25;
+int DiskShip::laserLength       = 13;
 int DiskShip::deadInterval      = 25;
 int DiskShip::explosionInterval = 8;
 int DiskShip::explosionSize     = 10;

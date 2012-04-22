@@ -64,7 +64,7 @@ class DiskShip: public Hitable
     static int explosionInterval;
     static int explosionSize;
 
-    DiskShip(Coordinate center, Color color, Wiz& frame, int team = 0);
+    DiskShip(Coordinate center, Color shipColor, Color laserColor, Wiz& frame, int team = 0);
     //from Flyer
     virtual void Draw();
     virtual void Move();
@@ -79,7 +79,8 @@ class DiskShip: public Hitable
     void Shoot(const Coordinate& target);
 
     Coordinate  m_center;
-    Color       m_color;
+    Color       m_shipColor;
+    Color       m_laserColor;
     Coordinate  m_speed;
 
     int         m_bulletNum;
@@ -96,11 +97,14 @@ class DiskShipAi
     static int minDistance;
     static int maxDistance;
 
-    DiskShipAi(DiskShip* toLead): m_ship(toLead)
+    DiskShipAi(DiskShip* toLead): m_ship(toLead), m_randum(0, 0)
     {}
     void Do();
+
   private:
     DiskShip* m_ship;
+
+    Coordinate m_randum;
 };
 
 class PulseLaser: public Flyer
