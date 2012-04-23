@@ -75,7 +75,10 @@ class DiskShip: public Hitable
     virtual bool Alive();
 
   private:
-    friend class DiskShipAi;
+    friend class DiskShipAiRandom;
+    friend class DiskShipAiRanger;
+    friend class DiskShipAiTeam;
+
     void Shoot(const Coordinate& target);
 
     Coordinate  m_center;
@@ -94,17 +97,48 @@ class DiskShip: public Hitable
 class DiskShipAi
 {
   public:
+    DiskShipAi(DiskShip* toLead): m_ship(toLead)
+    {}
+    virtual ~DiskShipAi()
+    {}
+    virtual void Do() = 0;
+
+  protected:
+    DiskShip* m_ship;
+};
+
+class DiskShipAiRandom: public DiskShipAi
+{
+  public:
+    static int changeDirectionInterval;
+    static int changeTargetInterval;
+
+    DiskShipAiRandom(DiskShip* toLead): DiskShipAi(toLead), m_randum(0, 0), m_target(0)
+    {}
+    virtual void Do();
+
+  private:
+    Coordinate      m_randum;
+    const Hitable*  m_target;
+};
+
+class DiskShipAiRanger: public DiskShipAi
+{
+  public:
     static int minDistance;
     static int maxDistance;
 
-    DiskShipAi(DiskShip* toLead): m_ship(toLead), m_randum(0, 0)
+    DiskShipAiRanger(DiskShip* toLead): DiskShipAi(toLead)
     {}
-    void Do();
+    virtual void Do();
+};
 
-  private:
-    DiskShip* m_ship;
-
-    Coordinate m_randum;
+class DiskShipAiTeam: public DiskShipAi
+{
+  public:
+    DiskShipAiTeam(DiskShip* toLead): DiskShipAi(toLead)
+    {}
+    virtual void Do();
 };
 
 class PulseLaser: public Flyer

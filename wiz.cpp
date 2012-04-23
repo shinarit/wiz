@@ -25,7 +25,7 @@
 //
 // (ship : ammo) color theme for teams, 0 for default
 //
-Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::white}};
+Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}};
 
 #include <iostream>
 

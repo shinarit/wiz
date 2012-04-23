@@ -37,7 +37,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAi(this))
+DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAiRandom(this))
 {}
 
 const Color ExplosionColors[] = {Colors::yellow, Colors::orange};
@@ -140,19 +140,49 @@ bool DiskShip::Alive()
 }
 
 //
-// DiskShipAi functions
+// DiskShipAiRandom functions
 //
 
-void DiskShipAi::Do()
+void DiskShipAiRandom::Do()
 {
-  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
-  RemoveMe(enemies, m_ship);
-
-  if (!(m_ship->m_ticker % 10))
+  //random movement
+  if (!(m_ship->m_ticker % changeDirectionInterval))
   {
     m_randum = Normalize(Coordinate(Random(1000) - 500, Random(1000) - 500), DiskShip::maxSpeed);
   }
   m_ship->m_speed += m_randum;
+
+  //shooting if feasible
+  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
+  RemoveMe(enemies, m_ship);
+  if (!enemies.empty())
+  {
+    const Hitable* enemy = 0;
+    if (!m_target || (!(m_ship->m_ticker % changeTargetInterval)))
+    {
+      enemy = enemies[Random(enemies.size())];
+    }
+    //found enemy. so shoot
+    if (enemy)
+    {
+      m_ship->Shoot(enemy->GetCenter());
+    }
+  }
+
+  if (Length(m_ship->m_speed) > DiskShip::maxSpeed)
+  {
+    m_ship->m_speed = Normalize(m_ship->m_speed, DiskShip::maxSpeed);
+  }
+}
+
+//
+// DiskShipAiRanger functions
+//
+
+void DiskShipAiRanger::Do()
+{
+  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
+  RemoveMe(enemies, m_ship);
 
   if (!enemies.empty())
   {
@@ -227,17 +257,20 @@ void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
 }
 
 
-int DiskShip::shipSize          = 5;
-int DiskShip::maxSpeed          = 5;
-int DiskShip::bulletLimit       = 7;
-int DiskShip::cooldown          = 40;
-int DiskShip::laserLength       = 13;
-int DiskShip::deadInterval      = 25;
-int DiskShip::explosionInterval = 8;
-int DiskShip::explosionSize     = 10;
+int DiskShip::shipSize                        = 5;
+int DiskShip::maxSpeed                        = 5;
+int DiskShip::bulletLimit                     = 7;
+int DiskShip::cooldown                        = 40;
+int DiskShip::laserLength                     = 13;
+int DiskShip::deadInterval                    = 25;
+int DiskShip::explosionInterval               = 8;
+int DiskShip::explosionSize                   = 10;
 
-int DiskShipAi::minDistance     = 250;
-int DiskShipAi::maxDistance     = 350;
+int DiskShipAiRandom::changeDirectionInterval = 10;
+int DiskShipAiRandom::changeTargetInterval    = 3;
 
-int PulseLaser::speed           = 15;
+int DiskShipAiRanger::minDistance             = 250;
+int DiskShipAiRanger::maxDistance             = 350;
+
+int PulseLaser::speed                         = 15;
 
