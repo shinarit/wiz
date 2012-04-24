@@ -18,12 +18,11 @@
 
 #include <iostream>
 
-const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me);
-void RemoveMe(Wiz::ShipTravel& list, Hitable* me);
-
 struct DistanceComparer
 {
   DistanceComparer(Hitable* toCompare): m_comp(toCompare->GetCenter())
+  {}
+  DistanceComparer(Coordinate toCompare): m_comp(toCompare)
   {}
   bool operator()(const Hitable* lhs, const Hitable* rhs)
   {
@@ -97,6 +96,11 @@ void DiskShip::Move()
       m_center.y = 0 + shipSize;
 
     m_ai->Do();
+
+    if (Length(m_speed) > DiskShip::maxSpeed)
+    {
+      m_speed = Normalize(m_speed, DiskShip::maxSpeed);
+    }
   }
 }
 
@@ -146,33 +150,28 @@ bool DiskShip::Alive()
 void DiskShipAiRandom::Do()
 {
   //random movement
-  if (!(m_ship->m_ticker % changeDirectionInterval))
+  if (!(GetTicker() % changeDirectionInterval))
   {
     m_randum = Normalize(Coordinate(Random(1000) - 500, Random(1000) - 500), DiskShip::maxSpeed);
   }
-  m_ship->m_speed += m_randum;
+  GetSpeed() += m_randum;
 
   //shooting if feasible
-  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
-  RemoveMe(enemies, m_ship);
+  Wiz::ShipTravel enemies = GetEnemies();
   if (!enemies.empty())
   {
     const Hitable* enemy = 0;
-    if (!m_target || (!(m_ship->m_ticker % changeTargetInterval)))
+    if (!m_target || (!(GetTicker() % changeTargetInterval)))
     {
       enemy = enemies[Random(enemies.size())];
     }
     //found enemy. so shoot
     if (enemy)
     {
-      m_ship->Shoot(enemy->GetCenter());
+      Shoot(enemy->GetCenter());
     }
   }
 
-  if (Length(m_ship->m_speed) > DiskShip::maxSpeed)
-  {
-    m_ship->m_speed = Normalize(m_ship->m_speed, DiskShip::maxSpeed);
-  }
 }
 
 //
@@ -181,36 +180,31 @@ void DiskShipAiRandom::Do()
 
 void DiskShipAiRanger::Do()
 {
-  Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
-  RemoveMe(enemies, m_ship);
+  Wiz::ShipTravel enemies = GetEnemies();
 
   if (!enemies.empty())
   {
-    const Hitable* enemy = FindClosest(enemies, m_ship);
+    const Hitable* enemy = FindClosest(enemies, GetCenter());
 
     //found enemy. so shoot
-    m_ship->Shoot(enemy->GetCenter());
+    Shoot(enemy->GetCenter());
 
     //and move
     Coordinate modVector;
-    int distance = Distance(enemy->GetCenter(), m_ship->m_center);
+    int distance = Distance(enemy->GetCenter(), GetCenter());
     if (distance > maxDistance)
     {
-      modVector = enemy->GetCenter() - m_ship->m_center;
+      modVector = enemy->GetCenter() - GetCenter();
     }
     else if (distance < minDistance)
     {
-      modVector = m_ship->m_center - enemy->GetCenter();
+      modVector = GetCenter() - enemy->GetCenter();
     }
     if (std::abs(modVector.x * modVector.y) > 1)
     {
       modVector = Normalize(modVector, DiskShip::maxSpeed);
-      m_ship->m_speed += modVector;
+      GetSpeed() += modVector;
     }
-  }
-  if (Length(m_ship->m_speed) > DiskShip::maxSpeed)
-  {
-    m_ship->m_speed = Normalize(m_ship->m_speed, DiskShip::maxSpeed);
   }
 }
 
@@ -245,6 +239,11 @@ void PulseLaser::Move()
 const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me)
 {
   return *min_element(list.begin(), list.end(), DistanceComparer(me));
+}
+
+const Hitable* FindClosest(const Wiz::ShipTravel& list, const Coordinate& center)
+{
+  return *min_element(list.begin(), list.end(), DistanceComparer(center));
 }
 
 void RemoveMe(Wiz::ShipTravel& list, Hitable* me)

@@ -13,8 +13,11 @@
 
 #include "drawinterface.hpp"
 
-class Wiz;
+#include "wiz.hpp"
 
+const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me);
+const Hitable* FindClosest(const Wiz::ShipTravel& list, const Coordinate& center);
+void RemoveMe(Wiz::ShipTravel& list, Hitable* me);
 
 class Flyer
 {
@@ -75,9 +78,7 @@ class DiskShip: public Hitable
     virtual bool Alive();
 
   private:
-    friend class DiskShipAiRandom;
-    friend class DiskShipAiRanger;
-    friend class DiskShipAiTeam;
+    friend class DiskShipAi;
 
     void Shoot(const Coordinate& target);
 
@@ -104,6 +105,34 @@ class DiskShipAi
     virtual void Do() = 0;
 
   protected:
+    int GetTicker() const
+    {
+      return m_ship->m_ticker;
+    }
+    Coordinate& GetSpeed()
+    {
+      return m_ship->m_speed;
+    }
+    Coordinate GetCenter() const
+    {
+      return m_ship->m_center;
+    }
+    int GetTeam() const
+    {
+      return m_ship->GetTeam();
+    }
+    void Shoot(const Coordinate& target)
+    {
+      m_ship->Shoot(target);
+    }
+
+    Wiz::ShipTravel GetEnemies() const
+    {
+      Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
+      RemoveMe(enemies, m_ship);
+      return enemies;
+    }
+
     DiskShip* m_ship;
 };
 
