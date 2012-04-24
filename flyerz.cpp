@@ -14,8 +14,6 @@
 #include <algorithm>
 #include <cmath>
 
-
-
 #include <iostream>
 
 struct DistanceComparer
@@ -36,7 +34,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(new DiskShipAiRandom(this))
+DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(0)
 {}
 
 const Color ExplosionColors[] = {Colors::yellow, Colors::orange};
@@ -134,6 +132,7 @@ Coordinate::CoordType DiskShip::GetSize() const
 
 void DiskShip::Hit()
 {
+  m_speed = Coordinate();
   m_dead = deadInterval;
   m_explode = explosionInterval;
 }
@@ -187,20 +186,20 @@ void DiskShipAiRanger::Do()
     const Hitable* enemy = FindClosest(enemies, GetCenter());
 
     //found enemy. so shoot
-    Shoot(enemy->GetCenter());
+    Coordinate miss = Rotate90Cw(Normalize(enemy->GetCenter() - GetCenter(), missFactor));
+    miss = (miss * Random(100)) / 50 - miss;
+    Shoot(enemy->GetCenter() + miss);
 
     //and move
-    Coordinate modVector;
-    int distance = Distance(enemy->GetCenter(), GetCenter());
-    if (distance > maxDistance)
+    int minDistance = minDistanceRatio * std::min(GetSize().x, GetSize().y);
+    Coordinate modVector = GetCenter() - enemy->GetCenter();
+    //if far enough, we move sideways to make it harder to hit
+    if (Length(modVector) > minDistance)
     {
-      modVector = enemy->GetCenter() - GetCenter();
+      modVector = Rotate90Cw(modVector);
     }
-    else if (distance < minDistance)
-    {
-      modVector = GetCenter() - enemy->GetCenter();
-    }
-    if (std::abs(modVector.x * modVector.y) > 1)
+
+    if (std::abs(modVector.x) + std::abs(modVector.y) > 1)
     {
       modVector = Normalize(modVector, DiskShip::maxSpeed);
       GetSpeed() += modVector;
@@ -268,8 +267,9 @@ int DiskShip::explosionSize                   = 10;
 int DiskShipAiRandom::changeDirectionInterval = 10;
 int DiskShipAiRandom::changeTargetInterval    = 3;
 
-int DiskShipAiRanger::minDistance             = 250;
-int DiskShipAiRanger::maxDistance             = 350;
+double DiskShipAiRanger::minDistanceRatio     = 0.2;
+int DiskShipAiRanger::maxDistance             = 450;
+int DiskShipAiRanger::missFactor              = 30;
 
 int PulseLaser::speed                         = 15;
 

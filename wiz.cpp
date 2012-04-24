@@ -31,19 +31,46 @@ Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::gr
 
 Wiz::Wiz()
 {
-  ships.push_back(new DiskShip(Coordinate(330, 300), teamColors[1][0], teamColors[1][1], *this, 1));
-  ships.push_back(new DiskShip(Coordinate(70, 70), teamColors[1][0], teamColors[1][1], *this, 1));
-  ships.push_back(new DiskShip(Coordinate(500, 500), teamColors[1][0], teamColors[1][1], *this, 1));
-  ships.push_back(new DiskShip(Coordinate(550, 450), teamColors[2][0], teamColors[2][1], *this, 2));
-  ships.push_back(new DiskShip(Coordinate(600, 300), teamColors[2][0], teamColors[2][1], *this, 2));
-  ships.push_back(new DiskShip(Coordinate(50, 200), teamColors[2][0], teamColors[2][1], *this, 2));
-//  ships.push_back(new DiskShip(Coordinate(300, 20), Colors::white, *this, 0));
 }
 
 Wiz::~Wiz()
 {
   delete ships[0];
 }
+
+void Wiz::Init()
+{
+  DiskShip* shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
+  DiskShipAi* aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
+  aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
+  aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
+  aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
+  aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
+  aiptr = new DiskShipAiRanger(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+}
+
 
 void Wiz::DrawFrame()
 {
@@ -96,8 +123,6 @@ void Wiz::RemoveProjectile(Flyer* projectile)
     deads.push_back(projectile);
   }
 }
-
-const int Margin = 70;
 
 Coordinate Wiz::PlaceMe(int team) const
 {

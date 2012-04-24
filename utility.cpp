@@ -78,4 +78,15 @@ Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length)
   return vektor * length / Length(vektor);
 }
 
+Coordinate Rotate90Cw(const Coordinate& vektor)
+{
+  return Coordinate(vektor.y, -vektor.x);
+}
+
+Coordinate Rotate90Ccw(const Coordinate& vektor)
+{
+  return Coordinate(-vektor.y, vektor.x);
+}
+
+
 

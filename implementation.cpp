@@ -64,6 +64,7 @@ State* stateptr = 0;
 void* wiz_init(Display *dpy, Window window)
 {
   State* tostore = new State();
+  stateptr = tostore;
   State& state = *tostore;
 
   state.wiz = new Wiz();
@@ -91,6 +92,7 @@ void* wiz_init(Display *dpy, Window window)
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
 
+  state.wiz->Init();
   return tostore;
 }
 
@@ -324,6 +326,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   SetTimer(hWnd, 0, DrawInterval, 0);
 
   Wiz wiz;
+  wiz.Init();
   wizptr = &wiz;
 
   while( !quit && GetMessage(&Msg, 0, 0, 0) )

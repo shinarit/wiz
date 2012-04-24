@@ -68,6 +68,13 @@ class DiskShip: public Hitable
     static int explosionSize;
 
     DiskShip(Coordinate center, Color shipColor, Color laserColor, Wiz& frame, int team = 0);
+    DiskShipAi* SetAi(DiskShipAi* ai)
+    {
+      DiskShipAi* old = m_ai;
+      m_ai = ai;
+      return old;
+    }
+
     //from Flyer
     virtual void Draw();
     virtual void Move();
@@ -154,8 +161,9 @@ class DiskShipAiRandom: public DiskShipAi
 class DiskShipAiRanger: public DiskShipAi
 {
   public:
-    static int minDistance;
+    static double minDistanceRatio;
     static int maxDistance;
+    static int missFactor;
 
     DiskShipAiRanger(DiskShip* toLead): DiskShipAi(toLead)
     {}

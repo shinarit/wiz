@@ -22,6 +22,7 @@ class Wiz
   public:
     Wiz();
     ~Wiz();
+    void Init();
     void DrawFrame();
     bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0) const;
     void AddProjectile(Flyer*);
@@ -32,6 +33,7 @@ class Wiz
     ShipTravel GetEnemies(int team) const;
 
   private:
+    static const int Margin = 70;
     void MoveAll();
     void Clean();
     void KillProjectile(Flyer*);
