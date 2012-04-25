@@ -12,6 +12,27 @@
 #include "wiz.hpp"
 #include <iostream>
 
+#include <fstream>
+#include <string>
+struct printer
+{
+  printer(const std::string& print, std::ostream& out): print(print), out(out)
+  {
+    out << "BEGIN " << print << '\n';
+    out.flush();
+  }
+  ~printer()
+  {
+    out << "END " << print << '\n';
+    out.flush();
+  }
+
+  std::ostream& out;
+  std::string print;
+};
+
+std::ofstream wizlog("/home/tetra/wizlog");
+
 #ifdef __linux__
 
 #include <vector>
@@ -54,15 +75,18 @@ struct State
 
   Drawable draw;
 
-  //double buffering support
   Wiz* wiz;
+
+  //double buffering support
   Pixmap double_buffer;
 };
 
 State* stateptr = 0;
 
-void* wiz_init(Display *dpy, Window window)
+void* wiz_init(Display* dpy, Window window)
 {
+//  printer a("init", wizlog);
+
   State* tostore = new State();
   stateptr = tostore;
   State& state = *tostore;
@@ -91,6 +115,7 @@ void* wiz_init(Display *dpy, Window window)
 
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
+  //state.draw = state.window;
 
   state.wiz->Init();
   return tostore;
@@ -98,6 +123,8 @@ void* wiz_init(Display *dpy, Window window)
 
 unsigned long wiz_draw(Display* dpy, Window window, void* closure)
 {
+//  printer a("draw", wizlog);
+
   State& state = *static_cast<State*>(closure);
   stateptr = &state;
   
@@ -129,6 +156,8 @@ XrmOptionDescRec wiz_options[] =
 void wiz_reshape(Display* dpy, Window window, void* closure,
                  unsigned int w, unsigned int h)
 {
+  printer a("reshape", wizlog);
+
   State& state = *static_cast<State*>(closure);
 
   XWindowAttributes xgwa;
@@ -136,16 +165,23 @@ void wiz_reshape(Display* dpy, Window window, void* closure,
 
   state.width = xgwa.width;
   state.height = xgwa.height;
-  state.dpy = dpy;
-  state.window = window;
+  state.depth = xgwa.depth;
+  state.cmap = xgwa.colormap;
+  //state.dpy = dpy;
+  //state.window = window;
+
+  wizlog << state.width << " : " << state.height << '\n';
+
 
   XFreePixmap(dpy, state.double_buffer);
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
+  //state.draw = state.window;
 }
 
 int wiz_event(Display* dpy, Window window, void* closure, XEvent *event)
 {
+  //printer a("event", wizlog);
 //  State& state = *static_cast<State*>(closure);
 
   return false;
