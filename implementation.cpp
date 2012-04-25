@@ -126,21 +126,25 @@ XrmOptionDescRec wiz_options[] =
   { "-grey",		".grey",	XrmoptionNoArg, "True" },
   { 0, 0, XrmoptionNoArg, 0 }
 };
-void wiz_reshape(Display *dpy, Window window, void *closure, 
+void wiz_reshape(Display* dpy, Window window, void* closure,
                  unsigned int w, unsigned int h)
 {
   State& state = *static_cast<State*>(closure);
 
-  state.width = w;
-  state.height = h;
+  XWindowAttributes xgwa;
+  XGetWindowAttributes (dpy, window, &xgwa);
+
+  state.width = xgwa.width;
+  state.height = xgwa.height;
   state.dpy = dpy;
   state.window = window;
 
-  //XFreePixmap(dpy, state.double_buffer);
-//  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
+  XFreePixmap(dpy, state.double_buffer);
+  state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
+  state.draw = state.double_buffer;
 }
 
-int wiz_event(Display *dpy, Window window, void *closure, XEvent *event)
+int wiz_event(Display* dpy, Window window, void* closure, XEvent *event)
 {
 //  State& state = *static_cast<State*>(closure);
 
