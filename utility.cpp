@@ -9,6 +9,7 @@
 //
 
 #include "drawinterface.hpp"
+#include "flyerz.hpp"
 
 #include <cmath>
 
@@ -87,6 +88,38 @@ Coordinate Rotate90Ccw(const Coordinate& vektor)
 {
   return Coordinate(-vektor.y, vektor.x);
 }
+//#include <unistd.h>
+#include <getopt.h>
+//
+// usage: argv[0] --mode/-m {fullscreen, demo} [--size/-s WIDTHxHEIGHT] [--teamnum/-n N n1 n2 n3...]
+//
+bool ParseCommandline(int argc, char* argv[])
+{
+  option longOptions[] = {
+    {"mode", required_argument, 0, 'm'},
+    {"size", required_argument, 0, 's'},
+    {"teamnum", required_argument, 0, 'n'}
+  };
+  int optionIndex;
+  int c;
+  while (-1 != (c = getopt_long(argc, argv, "m:s:n:", longOptions, &optionIndex)))
+  {
+    switch (c)
+    {
+      case 'm':
+      {
 
-
+        break;
+      }
+      case 's':
+      {
+        break;
+      }
+      case 'n':
+      {
+        break;
+      }
+    }
+  }
+}
 

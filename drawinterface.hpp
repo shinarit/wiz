@@ -70,6 +70,8 @@ Coordinate Rotate90Ccw(const Coordinate& vektor);
 
 typedef Coordinate Size;
 
+bool ParseCommandline(int argc, char* argv[]);
+
 //
 // implementation.cpp's interface
 //
