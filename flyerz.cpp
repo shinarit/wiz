@@ -186,23 +186,24 @@ void DiskShipAiRanger::Do()
     const Hitable* enemy = FindClosest(enemies, GetCenter());
 
     //found enemy. so shoot
-    Coordinate miss = Rotate90Cw(Normalize(enemy->GetCenter() - GetCenter(), missFactor));
-    miss = (miss * Random(100)) / 50 - miss;
+    Coordinate targetVector = GetCenter() - enemy->GetCenter();
+    Coordinate::CoordType distance = Length(targetVector);
+    Coordinate miss = Rotate90Cw(Normalize(targetVector, missFactor));
+    miss = ((miss * Random(100)) / 50 - miss) * distance / 100;
     Shoot(enemy->GetCenter() + miss);
 
     //and move
     int minDistance = minDistanceRatio * std::min(GetSize().x, GetSize().y);
-    Coordinate modVector = GetCenter() - enemy->GetCenter();
     //if far enough, we move sideways to make it harder to hit
-    if (Length(modVector) > minDistance)
+    if (distance > minDistance)
     {
-      modVector = Rotate90Cw(modVector);
+      targetVector = Rotate90Cw(targetVector);
     }
 
-    if (std::abs(modVector.x) + std::abs(modVector.y) > 1)
+    if (std::abs(targetVector.x) + std::abs(targetVector.y) > 1)
     {
-      modVector = Normalize(modVector, DiskShip::maxSpeed);
-      GetSpeed() += modVector;
+      targetVector = Normalize(targetVector, DiskShip::maxSpeed);
+      GetSpeed() += targetVector;
     }
   }
 }
