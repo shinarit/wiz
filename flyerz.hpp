@@ -178,6 +178,14 @@ class DiskShipAiTeam: public DiskShipAi
     virtual void Do();
 };
 
+class DiskShipAiTest: public DiskShipAi
+{
+  public:
+    DiskShipAiTest(DiskShip* toLead): DiskShipAi(toLead)
+    {}
+    virtual void Do();
+};
+
 class PulseLaser: public Flyer
 {
   public:

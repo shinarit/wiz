@@ -113,9 +113,9 @@ void DiskShip::Shoot(const Coordinate& target)
     }
 
     Coordinate targetvector = target - m_center;
-    Coordinate offset = targetvector * laserLength / (Length(targetvector) - shipSize - 1);
-    Coordinate begin = (targetvector * laserLength / Length(targetvector)) + m_center + offset;
-    Coordinate end = m_center + offset;
+    Coordinate step = Normalize(targetvector, 1.0);
+    Coordinate end = m_center + step * (shipSize + 1);
+    Coordinate begin = end + step * laserLength;
     m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam()));
   }
 }
@@ -209,6 +209,21 @@ void DiskShipAiRanger::Do()
 }
 
 //
+// DiskShipAiTest functions
+//
+
+void DiskShipAiTest::Do()
+{
+  Wiz::ShipTravel enemies = GetEnemies();
+  if (!enemies.empty())
+  {
+    const Hitable* enemy = FindClosest(enemies, GetCenter());
+    Shoot(enemy->GetCenter());
+  }
+  GetSpeed() = Coordinate();
+}
+
+//
 // PulseLaser functions
 //
 
@@ -255,7 +270,6 @@ void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
   }
 }
 
-
 int DiskShip::shipSize                        = 5;
 int DiskShip::maxSpeed                        = 5;
 int DiskShip::bulletLimit                     = 7;
@@ -273,4 +287,3 @@ int DiskShipAiRanger::maxDistance             = 450;
 int DiskShipAiRanger::missFactor              = 30;
 
 int PulseLaser::speed                         = 15;
-
