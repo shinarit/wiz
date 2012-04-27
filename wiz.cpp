@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <iostream>
+
 //
 // author: Kovacs Marton
 // email: tetra666@gmail.com
@@ -51,7 +53,7 @@ void Wiz::Init()
   ships.push_back(shipptr);
 
   shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
-  aiptr = new DiskShipAiRanger(shipptr);
+  aiptr = new DiskShipAiRandom(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
 
@@ -61,7 +63,7 @@ void Wiz::Init()
   ships.push_back(shipptr);
 
   shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
-  aiptr = new DiskShipAiRanger(shipptr);
+  aiptr = new DiskShipAiRandom(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
 
@@ -92,11 +94,12 @@ void Wiz::DrawFrame()
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
 {
   Coordinate vektor = end - begin;
-  double len = Length(vektor);
-  int steps = len / 2;
+  Coordinate::CoordType len = Length(vektor);
+  int steps = len;
+  Coordinate step = vektor / len;
   for (int i = 0; i < steps; ++i)
   {
-    Coordinate point = begin + vektor * 2 * steps / len;
+    Coordinate point = begin + step * i;
     for(ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
     {
       if ((*it)->Alive() && ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize()))
