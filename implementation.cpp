@@ -339,7 +339,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   argv[argc] = 0;
   LocalFree(argvw);
 
-
+  Options options;
+  if (!ParseCommandline(argc, argv, options))
+  {
+    return 0;
+  }
 
   MSG         Msg;
   WNDCLASSEX  WndClsEx;
