@@ -293,6 +293,7 @@ Size GetSize()
 #define _WIN32_WINNT 0x0500
 
 #include <windows.h>
+//#include <scrnsave.h>
 
 #include <cstdlib>
 #include <ctime>
@@ -324,9 +325,26 @@ void Draw();
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow)
 {
+  int argc;
+  wchar_t** argvw = CommandLineToArgvW(GetCommandLineW(), &argc);
+  char** argv = new char*[argc + 1];
+
+  for (int i(0); i < argc; ++i)
+  {
+    int len = WideCharToMultiByte(CP_ACP, 0, argvw[i], -1, 0, 0, 0, 0);
+    argv[i] = new char[len];
+    WideCharToMultiByte(CP_ACP, 0, argvw[i], -1, argv[i], len, 0, 0);
+    std::cout << argv[i] << '\n';
+  }
+  argv[argc] = 0;
+  LocalFree(argvw);
+
+
+
   MSG         Msg;
   WNDCLASSEX  WndClsEx;
 
+  WndClsEx.hCursor       = 0; //LoadCursor(NULL, IDC_ARROW);
   WndClsEx.cbSize        = sizeof(WNDCLASSEX);
   WndClsEx.style         = CS_HREDRAW | CS_VREDRAW;
   WndClsEx.lpfnWndProc   = WndProc;
@@ -334,7 +352,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   WndClsEx.cbWndExtra    = 0;
   WndClsEx.hInstance     = hInstance;
   WndClsEx.hIcon         = LoadIcon(hInstance, IDI_APPLICATION);
-  WndClsEx.hCursor       = LoadCursor(NULL, IDC_ARROW);
   WndClsEx.hbrBackground = 0;//(HBRUSH)GetStockObject(BLACK_BRUSH);
   WndClsEx.lpszMenuName  = NULL;
   WndClsEx.lpszClassName = ClsName;
