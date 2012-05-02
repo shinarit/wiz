@@ -14,6 +14,7 @@
 const int FramePerSecond = 25;
 
 #include <vector>
+#include <string>
 
 //
 // interface file for drawing layer functions
@@ -90,5 +91,17 @@ void DrawLine(Coordinate begin, Coordinate end, Color col);
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
 int Random(int sup);
 Size GetSize();
+
+class IpcImplementation;
+
+class Ipc
+{
+  public:
+    void Send(const std::string& );
+    std::string Receive();
+
+  private:
+    IpcImplementation* m_impl;
+};
 
 #endif
