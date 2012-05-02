@@ -13,6 +13,8 @@
 
 const int FramePerSecond = 25;
 
+#include <vector>
+
 //
 // interface file for drawing layer functions
 //
@@ -70,7 +72,14 @@ Coordinate Rotate90Ccw(const Coordinate& vektor);
 
 typedef Coordinate Size;
 
-bool ParseCommandline(int argc, char* argv[]);
+struct Options
+{
+  bool demo;
+  Size size;
+  std::vector<int> teams;
+};
+
+bool ParseCommandline(int argc, char* argv[], Options& options);
 
 //
 // implementation.cpp's interface

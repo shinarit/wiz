@@ -197,7 +197,13 @@ void DiskShipAiRanger::Do()
     //if far enough, we move sideways to make it harder to hit
     if (distance > minDistance)
     {
-      targetVector = Rotate90Cw(targetVector);
+      if (distance > minDistance + maxDistance)
+      {
+        targetVector = -targetVector;
+      }
+
+      Coordinate evadeVector = Rotate90Cw(targetVector);
+      targetVector += evadeVector;
     }
 
     if (std::abs(targetVector.x) + std::abs(targetVector.y) > 1)
@@ -283,7 +289,7 @@ int DiskShipAiRandom::changeDirectionInterval = 10;
 int DiskShipAiRandom::changeTargetInterval    = 3;
 
 double DiskShipAiRanger::minDistanceRatio     = 0.2;
-int DiskShipAiRanger::maxDistance             = 450;
+int DiskShipAiRanger::maxDistance             = 300;
 int DiskShipAiRanger::missFactor              = 30;
 
 int PulseLaser::speed                         = 15;
