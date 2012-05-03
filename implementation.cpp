@@ -276,6 +276,21 @@ Size GetSize()
   return Size(state.width, state.height);
 }
 
+struct IpcImplementation
+{
+
+};
+
+void Ipc::Send(const std::string& )
+{
+
+}
+
+std::string Ipc::Receive()
+{
+  return "";
+}
+
 
 #elif defined _WIN32
 
