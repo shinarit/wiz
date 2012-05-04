@@ -31,11 +31,11 @@ struct printer
   std::string print;
 };
 
-std::ofstream wizlog("/home/tetra/wizlog");
-
 #ifdef __linux__
 
 #include <vector>
+
+std::ofstream wizlog("/home/tetra/wizlog");
 
 // xscreensaver, Copyright (c) 1992-2008 Jamie Zawinski <jwz@jwz.org>
 //
@@ -278,6 +278,8 @@ Size GetSize()
 
 
 #elif defined _WIN32
+
+std::ofstream wizlog("wizlog");
 
 #define _WIN32_WINNT 0x0500
 
