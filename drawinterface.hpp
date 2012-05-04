@@ -97,7 +97,13 @@ class IpcImplementation;
 class Ipc
 {
   public:
-    void Send(const std::string& );
+    Ipc(const std::string& name);
+    ~Ipc();
+
+    //
+    // msg SHOULD include \n
+    //
+    void Send(const std::string& msg);
     std::string Receive();
 
   private:
