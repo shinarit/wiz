@@ -101,7 +101,7 @@ class Ipc
     ~Ipc();
 
     //
-    // msg SHOULD include \n
+    // msg should NOT include \n
     //
     void Send(const std::string& msg);
     std::string Receive();
