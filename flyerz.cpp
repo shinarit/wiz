@@ -13,6 +13,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
+#include <sstream>
 
 #include <iostream>
 
@@ -227,6 +229,31 @@ void DiskShipAiTest::Do()
     Shoot(enemy->GetCenter());
   }
   GetSpeed() = Coordinate();
+}
+
+//
+// DiskShipAiRemote functions
+//
+
+void DiskShipAiRemote::Do()
+{
+  m_communication.Send(RemoteProtocol::BEGIN);
+  std::string str = m_communication.Receive();
+  std::istringstream istr(str);
+  while (RemoteProtocol::END != str)
+  {
+    istr >> str;
+    if (RemoteProtocol::COMMAND_SPEED == str)
+    {
+      int x, y;
+      istr >> x >> y;
+      GetSpeed() = Coordinate(x, y);
+
+      m_communication.Send(RemoteProtocol::ACK);
+    }
+
+    str = m_communication.Receive();
+  }
 }
 
 //
