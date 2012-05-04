@@ -1,0 +1,17 @@
+This document describes the protocol with which the remote AI ("AI") and the controller communicates.
+
+Every message is a line, with \n at the end.
+
+Every turn begins with controller -> AI "BEGIN" and ends with AI -> controller "END".
+Communication is always happens by one line alternating query/command and reply/ack.
+
+AI -> controller
+commands:
+  speed x y   #sets the speed vector, will be limited with max speed if larger, x and y are integers
+  shoot x y   #x and y are integers
+  END
+
+controller -> AI
+  ack
+  BEGIN
+
