@@ -92,6 +92,15 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = fals
 int Random(int sup);
 Size GetSize();
 
+namespace RemoteProtocol
+{
+  const std::string BEGIN = "BEGIN";
+  const std::string COMMAND_SPEED = "speed";
+
+  const std::string ACK = "ack";
+  const std::string END = "END";
+}
+
 class IpcImplementation;
 
 class Ipc
