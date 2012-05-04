@@ -278,17 +278,55 @@ Size GetSize()
 
 struct IpcImplementation
 {
+  IpcImplementation(const std::string& name): outName(name + "_info"), inName(name + "_command")
+  {
+    if (-1 == mkfifo(outName.c_str(), 0666))
+    {
+      throw "Could not open " + outName;
+    }
+    if (-1 == mkfifo(inName.c_str(), 0666))
+    {
+      throw "Could not open " + inName;
+    }
 
+    m_out = new std::ofstream(outName.c_str());
+    m_in = new std::ifstream(inName.c_str());
+  }
+
+  ~IpcImplementation()
+  {
+    delete m_out;
+    delete m_in;
+
+    std::remove(outName.c_str());
+    std::remove(inName.c_str());
+  }
+
+  const std::string outName;
+  const std::string inName;
+
+  std::ostream* m_out;
+  std::istream* m_in;
 };
 
-void Ipc::Send(const std::string& )
-{
+Ipc::Ipc(const std::string& name): m_impl(new IpcImplementation(name))
+{ }
 
+Ipc::~Ipc()
+{
+  delete m_impl;
+}
+
+void Ipc::Send(const std::string& msg)
+{
+  *m_impl->m_out << msg;
 }
 
 std::string Ipc::Receive()
 {
-  return "";
+  std::string res;
+  std::getline(*m_impl->m_in, res);
+  return res;
 }
 
 
