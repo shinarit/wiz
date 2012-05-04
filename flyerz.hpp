@@ -166,7 +166,7 @@ class DiskShipAiRanger: public DiskShipAi
     static int missFactor;
 
     DiskShipAiRanger(DiskShip* toLead): DiskShipAi(toLead)
-    {}
+    { }
     virtual void Do();
 };
 
@@ -174,7 +174,7 @@ class DiskShipAiTeam: public DiskShipAi
 {
   public:
     DiskShipAiTeam(DiskShip* toLead): DiskShipAi(toLead)
-    {}
+    { }
     virtual void Do();
 };
 
@@ -182,8 +182,18 @@ class DiskShipAiTest: public DiskShipAi
 {
   public:
     DiskShipAiTest(DiskShip* toLead): DiskShipAi(toLead)
-    {}
+    { }
     virtual void Do();
+};
+
+class DiskShipAiRemote: public DiskShipAi
+{
+  public:
+    DiskShipAiRemote(DiskShip* toLead, Ipc ipc): DiskShipAi(toLead), m_communication(ipc)
+    { }
+    virtual void Do();
+  private:
+    Ipc m_communication;
 };
 
 class PulseLaser: public Flyer
