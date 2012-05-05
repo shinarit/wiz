@@ -590,8 +590,21 @@ Size GetSize()
   return size;
 }
 
-void ClearScreen(Color col)
+struct IpcImplementation
+{ };
+
+Ipc::Ipc(const std::string& name): m_impl(0)
+{ }
+
+Ipc::~Ipc()
+{ }
+
+void Ipc::Send(const std::string& msg)
+{ }
+
+std::string Ipc::Receive()
 {
+  return "";
 }
 
 #endif
