@@ -42,11 +42,12 @@ Wiz::~Wiz()
 
 void Wiz::Init()
 {
+  Ipc ipc("test");
   DiskShip* shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
-  DiskShipAi* aiptr = new DiskShipAiRanger(shipptr);
+  DiskShipAi* aiptr = new DiskShipAiRemote(shipptr, ipc);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
-
+/*
   shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
   aiptr = new DiskShipAiRanger(shipptr);
   shipptr->SetAi(aiptr);
@@ -70,7 +71,7 @@ void Wiz::Init()
   shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
   aiptr = new DiskShipAiRanger(shipptr);
   shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
+  ships.push_back(shipptr);*/
 }
 
 

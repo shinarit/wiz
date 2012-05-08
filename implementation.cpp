@@ -34,6 +34,7 @@ struct printer
 #ifdef __linux__
 
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 std::ofstream wizlog("/home/tetra/wizlog");
 
@@ -289,33 +290,31 @@ struct IpcImplementation
       throw "Could not open " + inName;
     }
 
-    m_out = new std::ofstream(outName.c_str());
-    m_in = new std::ifstream(inName.c_str());
+    m_out.reset(new std::ofstream(outName.c_str()));
+    m_in.reset(new std::ifstream(inName.c_str()));
   }
 
   ~IpcImplementation()
   {
-    delete m_out;
-    delete m_in;
-
-    std::remove(outName.c_str());
-    std::remove(inName.c_str());
+    if (m_out.unique())
+    {
+      std::remove(outName.c_str());
+      std::remove(inName.c_str());
+    }
   }
 
   const std::string outName;
   const std::string inName;
 
-  std::ostream* m_out;
-  std::istream* m_in;
+  boost::shared_ptr<std::ostream> m_out;
+  boost::shared_ptr<std::istream> m_in;
 };
 
 Ipc::Ipc(const std::string& name): m_impl(new IpcImplementation(name))
 { }
 
 Ipc::~Ipc()
-{
-  delete m_impl;
-}
+{ }
 
 void Ipc::Send(const std::string& msg)
 {
