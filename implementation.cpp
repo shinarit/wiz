@@ -319,6 +319,7 @@ Ipc::~Ipc()
 void Ipc::Send(const std::string& msg)
 {
   *m_impl->m_out << msg << '\n';
+  (*m_impl->m_out).flush();
 }
 
 std::string Ipc::Receive()
