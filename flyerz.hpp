@@ -50,7 +50,7 @@ class Hitable: public Flyer
     virtual Coordinate GetCenter() const = 0;
     virtual Coordinate::CoordType GetSize() const = 0;
     virtual void Hit() = 0;
-    virtual bool Alive() = 0;
+    virtual bool Alive() const = 0;
 };
 
 class DiskShipAi;
@@ -82,7 +82,7 @@ class DiskShip: public Hitable
     virtual Coordinate GetCenter() const;
     virtual Coordinate::CoordType GetSize() const;
     virtual void Hit();
-    virtual bool Alive();
+    virtual bool Alive() const;
 
   private:
     friend class DiskShipAi;

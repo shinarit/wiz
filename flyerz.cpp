@@ -139,7 +139,7 @@ void DiskShip::Hit()
   m_explode = explosionInterval;
 }
 
-bool DiskShip::Alive()
+bool DiskShip::Alive() const
 {
   return 0 == m_dead;
 }

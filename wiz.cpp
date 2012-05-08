@@ -3,6 +3,7 @@
 #include "wiz.hpp"
 
 #include <algorithm>
+#include <iterator>
 
 #include <iostream>
 
@@ -27,9 +28,7 @@
 //
 // (ship : ammo) color theme for teams, 0 for default
 //
-Color teamColors[3][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}};
-
-#include <iostream>
+Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}};
 
 Wiz::Wiz()
 {
@@ -43,25 +42,27 @@ Wiz::~Wiz()
 void Wiz::Init()
 {
   Ipc ipc("test");
-  DiskShip* shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
+  DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], *this, 3);
   DiskShipAi* aiptr = new DiskShipAiRemote(shipptr, ipc);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
+  aiptr = new DiskShipAiRandom(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
+  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
+  aiptr = new DiskShipAiRandom(shipptr);
+  shipptr->SetAi(aiptr);
+  ships.push_back(shipptr);
+
 /*
   shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
-  aiptr = new DiskShipAiRanger(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-
-  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
   aiptr = new DiskShipAiRandom(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
 
-  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
-  aiptr = new DiskShipAiRanger(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
 
   shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
   aiptr = new DiskShipAiRandom(shipptr);
@@ -71,7 +72,8 @@ void Wiz::Init()
   shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
   aiptr = new DiskShipAiRanger(shipptr);
   shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);*/
+  ships.push_back(shipptr);
+*/
 }
 
 
@@ -142,17 +144,22 @@ Coordinate Wiz::PlaceMe(int team) const
   return Coordinate(Margin + Random(screenSize.x - 2 * Margin), 70 + Random(screenSize.y - 2 * Margin));
 }
 
+struct EnemyPredicate
+{
+  EnemyPredicate(int team): m_team(team)
+  { }
+  bool operator()(const Hitable* ship)
+  {
+    return  (0 != ship->GetTeam() && ship->GetTeam() == m_team) || !ship->Alive();
+  }
+
+  int m_team;
+};
+
 Wiz::ShipTravel Wiz::GetEnemies(int team) const
 {
   ShipTravel res;
-  for (ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
-  {
-    const int cteam = (*it)->GetTeam();
-    if ((*it)->Alive() && (0 == team || cteam != team))
-    {
-      res.push_back(*it);
-    }
-  }
+  std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), EnemyPredicate(team));
   return res;
 }
 
