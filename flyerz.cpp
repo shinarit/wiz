@@ -242,12 +242,21 @@ void DiskShipAiRemote::Do()
   std::istringstream istr(str);
   while (RemoteProtocol::END != str)
   {
+std::cerr << "DO: " << str << "\n";
     istr >> str;
     if (RemoteProtocol::COMMAND_SPEED == str)
     {
       int x, y;
       istr >> x >> y;
       GetSpeed() = Coordinate(x, y);
+
+      m_communication.Send(RemoteProtocol::ACK);
+    }
+    else if (RemoteProtocol::COMMAND_SHOOT == str)
+    {
+      int x, y;
+      istr >> x >> y;
+      Shoot(Coordinate(x, y));
 
       m_communication.Send(RemoteProtocol::ACK);
     }

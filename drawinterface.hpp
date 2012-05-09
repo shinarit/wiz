@@ -96,6 +96,7 @@ namespace RemoteProtocol
 {
   const std::string BEGIN = "BEGIN";
   const std::string COMMAND_SPEED = "speed";
+  const std::string COMMAND_SHOOT = "shoot";
 
   const std::string ACK = "ack";
   const std::string END = "END";
