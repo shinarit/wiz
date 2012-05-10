@@ -242,7 +242,6 @@ void DiskShipAiRemote::Do()
   std::istringstream istr(str);
   while (RemoteProtocol::END != str)
   {
-std::cerr << "DO: " << str << "\n";
     istr >> str;
     if (RemoteProtocol::COMMAND_SPEED == str)
     {
@@ -260,8 +259,14 @@ std::cerr << "DO: " << str << "\n";
 
       m_communication.Send(RemoteProtocol::ACK);
     }
+    else
+    {
+      m_communication.Send(RemoteProtocol::ACK);
+    }
 
     str = m_communication.Receive();
+    istr.clear();
+    istr.str(str);
   }
 }
 

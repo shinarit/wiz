@@ -12,8 +12,10 @@
 #include "wiz.hpp"
 #include <iostream>
 
+#include <cstdlib>
 #include <fstream>
 #include <string>
+
 struct printer
 {
   printer(const std::string& print, std::ostream& out): print(print), out(out)
@@ -281,6 +283,8 @@ struct IpcImplementation
 {
   IpcImplementation(const std::string& name): outName(name + "_info"), inName(name + "_command")
   {
+    std::remove(outName.c_str());
+    std::remove(inName.c_str());
     if (-1 == mkfifo(outName.c_str(), 0666))
     {
       throw "Could not open " + outName;
