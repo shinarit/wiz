@@ -608,7 +608,7 @@ void Ipc::Send(const std::string& msg)
 
 std::string Ipc::Receive()
 {
-  return "";
+  return "END";
 }
 
 #endif
