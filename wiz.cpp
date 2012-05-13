@@ -56,7 +56,6 @@ void Wiz::Init()
   aiptr = new DiskShipAiRandom(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
-
 /*
   shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
   aiptr = new DiskShipAiRandom(shipptr);
@@ -94,33 +93,17 @@ void Wiz::DrawFrame()
   Clean();
 }
 
-struct PotentialityChecker
-{
-  PotentialityChecker(Coordinate center, int dist): m_center(center), m_dist(dist)
-  { }
-  bool operator()(const Hitable* ship)
-  {
-    return Distance(ship->GetCenter(), m_center) > m_dist;
-  }
-
-  Coordinate m_center;
-  int m_dist;
-};
-
-
-
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
 {
   Coordinate vektor = begin - end;
   Coordinate::CoordType len = Length(vektor);
 
   //get the potential guys
-  ShipList potentials = GetPotentials(team);
-  ShipList::const_iterator checkUntil = std::remove_if(potentials.begin(), potentials.end(), PotentialityChecker(end + vektor / 2, DiskShip::shipSize + (DiskShip::laserLength + 1) / 2));
+  ShipList potentials = GetPotentials(team, end + vektor / 2, DiskShip::shipSize + (DiskShip::laserLength + 1) / 2);
 
   //calculating the step
   Coordinate step = vektor * CheckDistance / len;
-  for (ShipList::const_iterator it = potentials.begin(); checkUntil != it; ++it)
+  for (ShipList::const_iterator it = potentials.begin(); potentials.end() != it; ++it)
   {
     Coordinate point = end;
     for(int i(0); i < len / CheckDistance; ++i)
@@ -218,10 +201,25 @@ void Wiz::KillProjectile(Flyer* projectile)
   }
 }
 
-Wiz::ShipList Wiz::GetPotentials(int team) const
+struct PotentialityChecker
+{
+  PotentialityChecker(int team, Coordinate center, int dist): m_subpred(team), m_center(center), m_dist(dist)
+  { }
+  bool operator()(const Hitable* ship)
+  {
+    return m_subpred(ship) || Distance(ship->GetCenter(), m_center) > m_dist;
+  }
+
+  EnemyPredicate m_subpred;
+  Coordinate m_center;
+  int m_dist;
+};
+
+
+Wiz::ShipList Wiz::GetPotentials(int team, Coordinate center, int dist) const
 {
   ShipList res;
-  std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), EnemyPredicate(team));
+  std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), PotentialityChecker(team, center, dist));
   return res;
 }
 

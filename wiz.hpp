@@ -46,7 +46,7 @@ class Wiz
     void MoveAll();
     void Clean();
     void KillProjectile(Flyer*);
-    ShipList GetPotentials(int team) const;
+    ShipList GetPotentials(int team, Coordinate center, int dist) const;
 
 };
 
