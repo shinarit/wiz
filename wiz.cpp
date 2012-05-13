@@ -94,23 +94,43 @@ void Wiz::DrawFrame()
   Clean();
 }
 
+struct PotentialityChecker
+{
+  PotentialityChecker(Coordinate center, int dist): m_center(center), m_dist(dist)
+  { }
+  bool operator()(const Hitable* ship)
+  {
+    return Distance(ship->GetCenter(), m_center) > m_dist;
+  }
+
+  Coordinate m_center;
+  int m_dist;
+};
+
+
+
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
 {
-  Coordinate vektor = end - begin;
+  Coordinate vektor = begin - end;
   Coordinate::CoordType len = Length(vektor);
-  int steps = len;
-  Coordinate step = vektor / len;
-  for (int i = 0; i < steps; ++i)
+
+  //get the potential guys
+  ShipList potentials = GetPotentials(team);
+  ShipList::const_iterator checkUntil = std::remove_if(potentials.begin(), potentials.end(), PotentialityChecker(end + vektor / 2, DiskShip::shipSize + (DiskShip::laserLength + 1) / 2));
+
+  //calculating the step
+  Coordinate step = vektor * CheckDistance / len;
+  for (ShipList::const_iterator it = potentials.begin(); checkUntil != it; ++it)
   {
-    Coordinate point = begin + step * i;
-    for(ShipList::const_iterator it = ships.begin(); ships.end() != it; ++it)
+    Coordinate point = end;
+    for(int i(0); i < len / CheckDistance; ++i)
     {
-      if ((*it)->Alive() && ((0 == team || team != (*it)->GetTeam()) && Distance((*it)->GetCenter(), point) <= (*it)->GetSize()))
+      if (Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
       {
-        //std::cout << "ouch!\n";
         (*it)->Hit();
         return true;
       }
+      point += step;
     }
   }
   return false;
@@ -196,5 +216,12 @@ void Wiz::KillProjectile(Flyer* projectile)
     delete *iter;
     projectiles.erase(iter);
   }
+}
+
+Wiz::ShipList Wiz::GetPotentials(int team) const
+{
+  ShipList res;
+  std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), EnemyPredicate(team));
+  return res;
 }
 

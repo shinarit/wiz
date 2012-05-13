@@ -33,18 +33,21 @@ class Wiz
     ShipTravel GetEnemies(int team) const;
 
   private:
+    static const int CheckDistance = 4;
     static const int Margin = 70;
-    void MoveAll();
-    void Clean();
-    void KillProjectile(Flyer*);
 
     typedef std::vector<Hitable*> ShipList;
     ShipList ships;
-
     typedef std::vector<Flyer*> ProjectileList;
     ProjectileList projectiles;
 
     ProjectileList deads;
+
+    void MoveAll();
+    void Clean();
+    void KillProjectile(Flyer*);
+    ShipList GetPotentials(int team) const;
+
 };
 
 #endif // WIZ_HPP
