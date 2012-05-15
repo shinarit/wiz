@@ -32,6 +32,8 @@ class Wiz
     typedef std::vector<const Hitable*> ShipTravel;
     ShipTravel GetEnemies(int team) const;
 
+    ShipTravel GetTeam(int team) const;
+
   private:
     static const int CheckDistance = 4;
     static const int Margin = 70;

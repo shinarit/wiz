@@ -195,7 +195,7 @@ void DiskShipAiRanger::Do()
     Shoot(enemy->GetCenter() + miss);
 
     //and move
-    int minDistance = minDistanceRatio * std::min(GetSize().x, GetSize().y);
+    Coordinate::CoordType minDistance = minDistanceRatio * std::min(GetSize().x, GetSize().y);
     //if far enough, we move sideways to make it harder to hit
     if (distance > minDistance)
     {
@@ -242,27 +242,70 @@ void DiskShipAiRemote::Do()
   std::istringstream istr(str);
   while (RemoteProtocol::END != str)
   {
+    std::string response;
     istr >> str;
     if (RemoteProtocol::COMMAND_SPEED == str)
     {
-      int x, y;
+      double x, y;
       istr >> x >> y;
       GetSpeed() = Coordinate(x, y);
 
-      m_communication.Send(RemoteProtocol::ACK);
+      response = RemoteProtocol::ACK;
     }
     else if (RemoteProtocol::COMMAND_SHOOT == str)
     {
-      int x, y;
+      double x, y;
       istr >> x >> y;
       Shoot(Coordinate(x, y));
 
-      m_communication.Send(RemoteProtocol::ACK);
+      response = RemoteProtocol::ACK;
+    }
+    else if (RemoteProtocol::QUERY == str)
+    {
+      istr >> str;
+      std::ostringstream ostr;
+      if (RemoteProtocol::QUERY_POSITION == str)
+      {
+        Coordinate coords = GetCenter();
+        ostr << RemoteProtocol::RESPONSE_POSITION << ' ' << coords.x << ' ' << coords.y;
+      }
+      else if (RemoteProtocol::QUERY_SPEED == str)
+      {
+        ostr << RemoteProtocol::RESPONSE_SPEED << ' ' << GetSpeed().x << ' ' << GetSpeed().y;
+      }
+      else if (RemoteProtocol::QUERY_TEAM == str)
+      {
+        ostr << RemoteProtocol::RESPONSE_TEAM << ' ' << GetTeam();
+      }
+      else if (RemoteProtocol::QUERY_ENEMIES == str)
+      {
+        ostr << RemoteProtocol::RESPONSE_ENEMIES << ' ';
+        Wiz::ShipTravel enemies = GetEnemies();
+        for (Wiz::ShipTravel::iterator it = enemies.begin(); enemies.end() != it; ++it)
+        {
+          const Hitable& enemy = *(*it);
+          Coordinate center = enemy.GetCenter();
+          ostr << enemy.GetTeam() << ' ' << center.x << ' ' << center.y << ' ';
+        }
+      }
+      else if (RemoteProtocol::QUERY_FRIENDS == str)
+      {
+        ostr << RemoteProtocol::RESPONSE_FRIENDS << ' ';
+        Wiz::ShipTravel team = GetTeammates();
+        for (Wiz::ShipTravel::iterator it = team.begin(); team.end() != it; ++it)
+        {
+          Coordinate center = (*it)->GetCenter();
+          ostr << center.x << ' ' << center.y << ' ';
+        }
+      }
+      response = ostr.str();
     }
     else
     {
-      m_communication.Send(RemoteProtocol::ACK);
+      response = RemoteProtocol::ACK;
     }
+
+    m_communication.Send(response);
 
     str = m_communication.Receive();
     istr.clear();

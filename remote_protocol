@@ -7,11 +7,25 @@ Communication is always happens by one line alternating query/command and reply/
 
 AI -> controller
 commands:
-  speed x y   #sets the speed vector, will be limited with max speed if larger, x and y are integers
-  shoot x y   #x and y are integers
-  END
+  get speed
+  get coords
+  get team
+  get enemies
+  get friends
+
+  speed x y   #sets the speed vector, will be limited with max speed if larger, x and y are floating point numbers
+  shoot x y   #x and y are floating point numbers
+
+  end
 
 controller -> AI
+  speed x y   #x and y are floating point numbers
+  coords x y  #x and y are floating point numbers
+  team n      #n is int, 0 means everyone is enemy
+  enemies [team x y]*
+  friends [x y]*
+
   ack
-  BEGIN
+
+  begin
 

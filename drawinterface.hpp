@@ -94,12 +94,25 @@ Size GetSize();
 
 namespace RemoteProtocol
 {
-  const std::string BEGIN = "BEGIN";
-  const std::string COMMAND_SPEED = "speed";
-  const std::string COMMAND_SHOOT = "shoot";
+  const std::string BEGIN               = "begin";
+  const std::string COMMAND_SPEED       = "speed";
+  const std::string COMMAND_SHOOT       = "shoot";
 
-  const std::string ACK = "ack";
-  const std::string END = "END";
+  const std::string QUERY               = "get";
+  const std::string QUERY_SPEED         = "speed";
+  const std::string QUERY_POSITION      = "coords";
+  const std::string QUERY_TEAM          = "team";
+  const std::string QUERY_ENEMIES       = "enemies";
+  const std::string QUERY_FRIENDS       = "friends";
+
+  const std::string RESPONSE_SPEED      = QUERY_SPEED;
+  const std::string RESPONSE_POSITION   = QUERY_POSITION;
+  const std::string RESPONSE_TEAM       = QUERY_TEAM;
+  const std::string RESPONSE_ENEMIES    = QUERY_ENEMIES;
+  const std::string RESPONSE_FRIENDS    = QUERY_FRIENDS;
+
+  const std::string ACK                 = "ack";
+  const std::string END                 = "end";
 }
 
 class IpcImplementation;

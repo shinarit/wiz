@@ -149,14 +149,15 @@ Coordinate Wiz::PlaceMe(int team) const
 
 struct EnemyPredicate
 {
-  EnemyPredicate(int team): m_team(team)
+  EnemyPredicate(int team, bool negate = false): m_team(team), m_negate(negate)
   { }
   bool operator()(const Hitable* ship)
   {
-    return  (0 != ship->GetTeam() && ship->GetTeam() == m_team) || !ship->Alive();
+    return  (m_negate ^ (0 != ship->GetTeam() && ship->GetTeam() == m_team)) || !ship->Alive();
   }
 
-  int m_team;
+  int   m_team;
+  bool  m_negate;
 };
 
 Wiz::ShipTravel Wiz::GetEnemies(int team) const
@@ -165,6 +166,14 @@ Wiz::ShipTravel Wiz::GetEnemies(int team) const
   std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), EnemyPredicate(team));
   return res;
 }
+
+Wiz::ShipTravel Wiz::GetTeam(int team) const
+{
+  ShipTravel res;
+  std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), EnemyPredicate(team, true));
+  return res;
+}
+
 
 void Wiz::MoveAll()
 {

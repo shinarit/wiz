@@ -139,6 +139,12 @@ class DiskShipAi
       RemoveMe(enemies, m_ship);
       return enemies;
     }
+    Wiz::ShipTravel GetTeammates() const
+    {
+      Wiz::ShipTravel mates = m_ship->m_frame.GetTeam(m_ship->GetTeam());
+      RemoveMe(mates, m_ship);
+      return mates;
+    }
 
     DiskShip* m_ship;
 };
