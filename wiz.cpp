@@ -88,6 +88,7 @@ void Wiz::DrawFrame()
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), true);
 */  ++i;
+  DrawText("asd", Coordinate(100, 12), Colors::red);
 
   MoveAll();
   Clean();

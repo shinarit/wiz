@@ -63,6 +63,8 @@ extern "C"
 #include "screenhack.h"
 }
 
+const char FontName[] = "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
+
 struct State
 {
   Display* dpy;
@@ -74,6 +76,7 @@ struct State
   int width, height;
   int depth;
   Colormap cmap;
+  XFontStruct* font;
 
   Drawable draw;
 
@@ -115,6 +118,13 @@ void* wiz_init(Display* dpy, Window window)
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
   //state.draw = state.window;
+
+  state.font = XLoadQueryFont(state.dpy, FontName);
+  if (!state.font)
+  {
+    std::cerr << "Could not load font: " << FontName << '\n';
+    std::exit(1);
+  }
 
   state.wiz->Init();
   return tostore;
@@ -278,6 +288,15 @@ Size GetSize()
 
   return Size(state.width, state.height);
 }
+
+void DrawText(const std::string& text, Coordinate center, Color color)
+{
+  State& state = *stateptr;
+
+  SetColor(color);
+  XDrawString(state.dpy, state.draw, state.gc, center.x - XTextWidth(state.font, text.c_str(), text.size()) / 2, center.y, text.c_str(), text.size());
+}
+
 
 struct IpcImplementation
 {
