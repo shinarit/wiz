@@ -42,7 +42,7 @@ Wiz::~Wiz()
 void Wiz::Init()
 {
   Ipc ipc("test");
-  DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], "REMOTE AI", *this, 3);
+  DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], "REMOTE AI        X  I  X        IA ETOMER", *this, 3);
   DiskShipAi* aiptr = new DiskShipAiRemote(shipptr, ipc);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);

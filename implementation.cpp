@@ -63,7 +63,8 @@ extern "C"
 #include "screenhack.h"
 }
 
-const char FontName[] = "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
+const char FontName[] = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";// "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
+
 
 struct State
 {
@@ -107,11 +108,20 @@ void* wiz_init(Display* dpy, Window window)
   state.cmap = xgwa.colormap;
 
   XGCValues gcv;
-  gcv.foreground= state.fg = get_pixel_resource(state.dpy, state.cmap, "foreground", "Foreground");
-  gcv.background= state.bg = get_pixel_resource(state.dpy, state.cmap, "background", "Background");
+  gcv.foreground = state.fg = get_pixel_resource(state.dpy, state.cmap, "foreground", "Foreground");
+  gcv.background = state.bg = get_pixel_resource(state.dpy, state.cmap, "background", "Background");
   gcv.fill_style = FillSolid;
 
-  state.gc = XCreateGC (state.dpy, state.window, GCForeground | GCBackground | GCFillStyle, &gcv);
+  Font fid = XLoadFont(state.dpy, FontName);
+  state.font = XQueryFont(state.dpy, fid);
+  if (!state.font)
+  {
+    std::cerr << "Could not load font: " << FontName << '\n';
+    std::exit(1);
+  }
+  gcv.font = fid;
+
+  state.gc = XCreateGC (state.dpy, state.window, GCForeground | GCBackground | GCFillStyle | GCFont, &gcv);
 
   state.delay = 1000000 / FramePerSecond; //1000000 == 1 second
 
@@ -119,12 +129,6 @@ void* wiz_init(Display* dpy, Window window)
   state.draw = state.double_buffer;
   //state.draw = state.window;
 
-  state.font = XLoadQueryFont(state.dpy, FontName);
-  if (!state.font)
-  {
-    std::cerr << "Could not load font: " << FontName << '\n';
-    std::exit(1);
-  }
 
   state.wiz->Init();
   return tostore;
@@ -294,7 +298,7 @@ void DrawText(const std::string& text, Coordinate center, Color color)
   State& state = *stateptr;
 
   SetColor(color);
-  XDrawString(state.dpy, state.draw, state.gc, center.x - XTextWidth(state.font, text.c_str(), text.size()) / 2, center.y, text.c_str(), text.size());
+  XDrawString(state.dpy, state.draw, state.gc, center.x - XTextWidth(state.font, text.c_str(), text.size()) / 2, center.y - 1, text.c_str(), text.size());
 }
 
 
