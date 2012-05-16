@@ -11,9 +11,11 @@
 #ifndef FLYERZ_H
 #define FLYERZ_H
 
-#include "drawinterface.hpp"
+#include <string>
 
+#include "drawinterface.hpp"
 #include "wiz.hpp"
+
 
 const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me);
 const Hitable* FindClosest(const Wiz::ShipTravel& list, const Coordinate& center);
@@ -45,12 +47,20 @@ class Flyer
 class Hitable: public Flyer
 {
   public:
-    Hitable(int team, Wiz& frame): Flyer(team, frame)
+    Hitable(const std::string& name, int team, Wiz& frame): Flyer(team, frame), m_name(name)
     {}
     virtual Coordinate GetCenter() const = 0;
     virtual Coordinate::CoordType GetSize() const = 0;
     virtual void Hit() = 0;
     virtual bool Alive() const = 0;
+
+    const std::string& GetName() const
+    {
+      return m_name;
+    }
+
+  protected:
+    std::string m_name;
 };
 
 class DiskShipAi;
@@ -67,7 +77,7 @@ class DiskShip: public Hitable
     static int explosionInterval;
     static int explosionSize;
 
-    DiskShip(Coordinate center, Color shipColor, Color laserColor, Wiz& frame, int team = 0);
+    DiskShip(Coordinate center, Color shipColor, Color laserColor, const std::string& name, Wiz& frame, int team = 0);
     DiskShipAi* SetAi(DiskShipAi* ai)
     {
       DiskShipAi* old = m_ai;

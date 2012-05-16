@@ -36,7 +36,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, Wiz& frame, int team): Hitable(team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(0)
+DiskShip::DiskShip(Coordinate center, Color color, Color lasercolor, const std::string &name, Wiz &frame, int team): Hitable(name, team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_ai(0)
 {}
 
 const Color ExplosionColors[] = {Colors::yellow, Colors::orange};
@@ -61,6 +61,7 @@ void DiskShip::Draw()
   else
   {
     DrawCircle(m_center, shipSize, m_shipColor, true);
+    DrawText(GetName(), Coordinate(m_center.x, m_center.y - shipSize), m_shipColor);
   }
 }
 
