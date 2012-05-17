@@ -30,7 +30,7 @@ CFLAGS		= -O2
 HACK_OBJS	= screenhack.o fps.o resources.o visual.o usleep.o yarandom.o xmu.o
 CPP_HACK  = $(CPP) $(LDFLAGS)
 
-HEADERS = $(wildcard *.hpp)
+HEADERS = $(wildcard *.hpp) implementation_gdi.cpp implementation_xlib.cpp
 
 default: all
 
@@ -43,7 +43,7 @@ wiz.cpp: wiz.hpp flyerz.hpp drawinterface.hpp
 
 flyerz.cpp: wiz.hpp flyerz.hpp
 
-implementation.cpp: wiz.hpp drawinterface.hpp
+implementation.cpp: wiz.hpp drawinterface.hpp 
 
 utility.cpp: drawinterface.hpp
 	

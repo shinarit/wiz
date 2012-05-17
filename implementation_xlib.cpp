@@ -1,5 +1,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <map>
 
 std::ofstream wizlog("/home/tetra/wizlog");
 
@@ -177,12 +178,36 @@ XSCREENSAVER_MODULE ("Wiz", wiz)
 // beginning of implementation of common stuff
 //
 
+struct CompareColors
+{
+  bool operator()(const XColor& lhs, const XColor& rhs)
+  {
+    return  lhs.red < rhs.red ||
+            (lhs.red == rhs.red && lhs.green < rhs.green) ||
+            (lhs.red == rhs.red && lhs.green == rhs.green && lhs.blue < rhs.blue);
+  }
+};
+
 unsigned long TranslateColor(Color color)
 {
   State& state = *stateptr;
 
+  CompareColors comp;
+  typedef std::map<XColor, unsigned long, CompareColors> ColorMap;
+  static ColorMap ColorCache(comp);
+
   XColor xcol = {0, 257*color.red, 257*color.green, 257*color.blue, DoRed | DoGreen | DoBlue, 0};
-  XAllocColor(state.dpy, state.cmap, &xcol);
+  ColorMap::iterator colorIt = ColorCache.find(xcol);
+
+  if (ColorCache.end() == colorIt)
+  {
+    XAllocColor(state.dpy, state.cmap, &xcol);
+    ColorCache[xcol] = xcol.pixel;
+  }
+  else
+  {
+    xcol.pixel = colorIt->second;
+  }
   return xcol.pixel;
 }
 
