@@ -97,7 +97,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   SetTimer(hWnd, 0, DrawInterval, 0);
 
   Wiz wiz;
-  wiz.Init();
+  wiz.Init(options);
   wizptr = &wiz;
 
   while( !quit && GetMessage(&Msg, 0, 0, 0) )
@@ -254,6 +254,10 @@ int Random(int sup)
 Size GetSize()
 {
   return size;
+}
+
+void DrawText(const std::string& text, Coordinate center, Color color)
+{
 }
 
 struct IpcImplementation
