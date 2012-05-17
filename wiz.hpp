@@ -13,6 +13,7 @@
 
 #include <vector>
 
+class Options;
 class Flyer;
 class Hitable;
 class Coordinate;
@@ -22,7 +23,7 @@ class Wiz
   public:
     Wiz();
     ~Wiz();
-    void Init();
+    void Init(const Options &options);
     void DrawFrame();
     bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0) const;
     void AddProjectile(Flyer*);

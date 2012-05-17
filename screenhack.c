@@ -663,6 +663,8 @@ init_window (Display *dpy, Widget toplevel, const char *title)
                    (unsigned char *) &XA_WM_DELETE_WINDOW, 1);
 }
 
+int globalArgc;
+char** globalArgv;
 
 int
 main (int argc, char **argv)
@@ -683,6 +685,12 @@ main (int argc, char **argv)
   XEvent event;
   Boolean dont_clear;
   char version[255];
+
+  /*
+    "hack" to get the argc/argv values out of the main
+    */
+  globalArgc = argc;
+  globalArgv = argv;
 
   fix_fds();
 

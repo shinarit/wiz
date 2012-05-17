@@ -105,8 +105,13 @@ const std::string usage = "usage: argv[0] --mode/-m {fullscreen, demo} [--size/-
 
 bool ParseCommandline(int argc, char* argv[], Options& options)
 {
+  int playerCount = 0;
+
   const std::string fullscreen = "fullscreen";
   const std::string demo = "demo";
+
+  bool modeflag = false;
+  bool teamflag = false;
 
   option longOptions[] = {
     {"mode", required_argument, 0, 'm'},
@@ -135,6 +140,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           std::cerr << "invalid argument for --fullscreen: " << arg << '\n';
           RETURN_WITH_USAGE;
         }
+        modeflag = true;
         break;
       }
       case 's':
@@ -159,7 +165,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       }
       case 'n':
       {
-
         int teamnum;
         std::istringstream str(arg);
         str >> teamnum;
@@ -170,6 +175,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           int num;
           str >> num;
           options.teams.push_back(num);
+          playerCount += num;
         }
 
         if (str.bad())
@@ -178,9 +184,21 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           RETURN_WITH_USAGE;
         }
 
+        teamflag = true;
+
         break;
       }
     }
+  }
+
+  if (!modeflag || !teamflag)
+  {
+    RETURN_WITH_USAGE;
+  }
+
+  for (int i = options.names.size(); i < playerCount; ++i)
+  {
+    options.names.push_back("-");
   }
 
   return true;

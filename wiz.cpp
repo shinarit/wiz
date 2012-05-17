@@ -39,8 +39,46 @@ Wiz::~Wiz()
   delete ships[0];
 }
 
-void Wiz::Init()
+void Wiz::Init(const Options& options)
 {
+  std::vector<std::string>::const_iterator nit = options.names.begin();
+  int nameCounter;
+
+  int teamCounter = 1;
+  if (1 == options.teams.size())
+  {
+    teamCounter = 0;
+  }
+
+  for (std::vector<int>::const_iterator tit = options.teams.begin(); options.teams.end() != tit; ++tit)
+  {
+    for (int i = 0; i < *tit; ++i)
+    {
+      std::string name = *nit;
+      bool randomAi = false;
+      if (name == "-")
+      {
+        name = "randum " + char('0' + nameCounter++);
+        randomAi = true;
+      }
+
+      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], *nit, *this, teamCounter);
+      DiskShipAi* aiPtr;
+      if (randomAi)
+      {
+        aiPtr = new DiskShipAiRandom(shipPtr);
+      }
+      else
+      {
+        Ipc ipc("");
+        //TODO create ipc
+        aiPtr = new DiskShipAiRemote(shipPtr, ipc);
+      }
+      shipPtr->SetAi(aiPtr);
+    }
+    ++teamCounter;
+  }
+/*
   Ipc ipc("test");
   DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], "REMOTE AI        X  I  X        IA ETOMER", *this, 3);
   DiskShipAi* aiptr = new DiskShipAiRemote(shipptr, ipc);
@@ -56,6 +94,7 @@ void Wiz::Init()
   aiptr = new DiskShipAiRandom(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
+*/
 /*
   shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
   aiptr = new DiskShipAiRandom(shipptr);

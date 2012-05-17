@@ -78,6 +78,7 @@ struct Options
   bool demo;
   Size size;
   std::vector<int> teams;
+  std::vector<std::string> names;
 };
 
 bool ParseCommandline(int argc, char* argv[], Options& options);
