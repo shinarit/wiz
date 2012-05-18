@@ -2,34 +2,14 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 
+#include <X11/Xlib.h> // Every Xlib program must include this
+#include <unistd.h>   // So we got the profile for 10 seconds
+#include <sys/types.h>
+#include <sys/stat.h>
+
 std::ofstream wizlog("/home/tetra/wizlog");
 
-// xscreensaver, Copyright (c) 1992-2008 Jamie Zawinski <jwz@jwz.org>
-//
-// Permission to use, copy, modify, distribute, and sell this software and its
-// documentation for any purpose is hereby granted without fee, provided that
-// the above copyright notice appear in all copies and that both that
-// copyright notice and this permission notice appear in supporting
-// documentation.  No representations are made about the suitability of this
-// software for any purpose.  It is provided "as is" without express or
-// implied warranty.
-//
-
-//
-// implementation.cpp
-// modified from greynetic.c, credit see above
-// author: Marton Kovacs, 2012, tetra666@gmail.com
-// license: same as above
-//
-
-extern "C"
-{
-#include "screenhack.h"
-}
-
 const char FontName[] = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";// "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
-extern int globalArgc;
-extern char** globalArgv;
 
 struct State
 {
@@ -52,18 +32,114 @@ struct State
   Pixmap double_buffer;
 };
 
-State* stateptr = 0;
+State state;
 
-void* wiz_init(Display* dpy, Window window)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Init(int argc, char *argv[]);
+unsigned long Draw();
+void Reshape(unsigned int w, unsigned int h);
+void Free();
+
+unsigned long TranslateColor(Color color);
+
+int main(int argc, char* argv[])
 {
-  State* tostore = new State();
-  stateptr = tostore;
-  State& state = *tostore;
+  // Open the display
+
+  Display *dpy = XOpenDisplay(0);
+  state.dpy = dpy;
+
+  // Create the window
+
+  Window w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, 800, 600, 0, BlackPixel(dpy, DefaultScreen(dpy)), BlackPixel(dpy, DefaultScreen(dpy)));
+
+  state.window = w;
+
+  XWindowAttributes xgwa;
+  XGetWindowAttributes(state.dpy, state.window, &xgwa);
+  state.cmap = xgwa.colormap;
+
+  XSelectInput(dpy, w, StructureNotifyMask);
+
+  Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+  XSetWMProtocols(dpy, w, &wm_delete_window, 1);
+
+  XMapWindow(dpy, w);
+
+  /*
+  // Create a "Graphics Context"
+
+  GC gc = XCreateGC(dpy, w, 0, 0);
+
+  // Tell the GC we draw using the white color
+
+  XSetForeground(dpy, gc, TranslateColor(255, 0, 0));
+*/
+  Init(argc, argv);
+
+  bool exit = false;
+  bool drawable = false;
+
+  while (!exit)
+  {
+    //event handling part
+    XEvent event;
+    while (!exit && XPending(dpy))
+    {
+      XNextEvent(dpy, &event);
+      switch (event.type)
+      {
+        case MapNotify:
+        {
+          drawable = true;
+          break;
+        }
+        case ConfigureNotify:
+        {
+          Reshape(event.xconfigure.width, event.xconfigure.height);
+          break;
+        }
+        case ClientMessage:
+        {
+          if ((Atom)event.xclient.data.l[0] == wm_delete_window)
+          {
+            exit = true;
+          }
+          break;
+        }
+        default:
+        {
+          break;
+        }
+      }
+    }
+
+    unsigned long delay;
+    //drawing part
+    if (!exit && drawable)
+    {
+      delay = Draw();
+      XFlush(dpy);
+    }
+
+    usleep(delay);
+  }
+
+  Free();
+
+  XCloseDisplay(dpy);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Init(int argc, char* argv[])
+{
+  //State* tostore = new State();
+  //stateptr = tostore;
+  //State& state = *tostore;
 
   state.wiz = new Wiz();
-
-  state.dpy = dpy;
-  state.window = window;
 
   XWindowAttributes xgwa;
   XGetWindowAttributes(state.dpy, state.window, &xgwa);
@@ -73,8 +149,8 @@ void* wiz_init(Display* dpy, Window window)
   state.cmap = xgwa.colormap;
 
   XGCValues gcv;
-  gcv.foreground = state.fg = get_pixel_resource(state.dpy, state.cmap, "foreground", "Foreground");
-  gcv.background = state.bg = get_pixel_resource(state.dpy, state.cmap, "background", "Background");
+  gcv.foreground = state.fg = TranslateColor(Colors::white);
+  gcv.background = state.bg = TranslateColor(Colors::black);
   gcv.fill_style = FillSolid;
 
   Font fid = XLoadFont(state.dpy, FontName);
@@ -96,83 +172,47 @@ void* wiz_init(Display* dpy, Window window)
 
   Options options;
 
-  if (!ParseCommandline(globalArgc, globalArgv, options))
+  if (!ParseCommandline(argc, argv, options))
   {
     exit(1);
   }
 
   state.wiz->Init(options);
-  return tostore;
 }
 
-unsigned long wiz_draw(Display* dpy, Window window, void* closure)
+unsigned long Draw()
 {
-  State& state = *static_cast<State*>(closure);
-  stateptr = &state;
-
   XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
   XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
 
   state.wiz->DrawFrame();
+/*
   XWindowAttributes xgwa;
-  XGetWindowAttributes (dpy, window, &xgwa);
-
+  XGetWindowAttributes (state.dpy, state.window, &xgwa);
+*/
   XCopyArea(state.dpy, state.double_buffer, state.window, state.gc, 0, 0, state.width, state.height, 0, 0);
 
   return state.delay;
 }
 
-const char* wiz_defaults[] =
+void Reshape(unsigned int w, unsigned int h)
 {
-  ".background:	black",
-  ".foreground:	white",
-  "*fpsSolid:	true",
-  0
-};
-
-XrmOptionDescRec wiz_options[] =
-{
-  { "-delay",		".delay",	XrmoptionSepArg, 0 },
-  { "-grey",		".grey",	XrmoptionNoArg, "True" },
-  { 0, 0, XrmoptionNoArg, 0 }
-};
-void wiz_reshape(Display* dpy, Window window, void* closure,
-                 unsigned int w, unsigned int h)
-{
-  State& state = *static_cast<State*>(closure);
-
   XWindowAttributes xgwa;
-  XGetWindowAttributes (dpy, window, &xgwa);
+  XGetWindowAttributes (state.dpy, state.window, &xgwa);
 
   state.width = xgwa.width;
   state.height = xgwa.height;
   state.depth = xgwa.depth;
   state.cmap = xgwa.colormap;
-  //state.dpy = dpy;
-  //state.window = window;
 
-  XFreePixmap(dpy, state.double_buffer);
+  XFreePixmap(state.dpy, state.double_buffer);
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
-  //state.draw = state.window;
 }
 
-int wiz_event(Display* dpy, Window window, void* closure, XEvent *event)
+void Free()
 {
-//  State& state = *static_cast<State*>(closure);
-
-  return false;
 }
-
-void wiz_free(Display *dpy, Window window, void *closure)
-{
-  State& state = *static_cast<State*>(closure);
-
-  delete &state;
-}
-
-XSCREENSAVER_MODULE ("Wiz", wiz)
-
 
 //
 // beginning of implementation of common stuff
@@ -190,8 +230,6 @@ struct CompareColors
 
 unsigned long TranslateColor(Color color)
 {
-  State& state = *stateptr;
-
   CompareColors comp;
   typedef std::map<XColor, unsigned long, CompareColors> ColorMap;
   static ColorMap ColorCache(comp);
@@ -213,8 +251,6 @@ unsigned long TranslateColor(Color color)
 
 void SetColor(Color color)
 {
-  State& state = *stateptr;
-
   XSetForeground(state.dpy, state.gc, TranslateColor(color));
 }
 
@@ -238,8 +274,6 @@ std::vector<XPoint> ConvertPoints(const Coordinate* const begin, const Coordinat
 
 void DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
-  State& state = *stateptr;
-
   SetColor(color);
   if(fill)
   {
@@ -253,16 +287,12 @@ void DrawCircle(Coordinate center, int size, Color color, bool fill)
 
 void DrawLine(Coordinate begin, Coordinate end, Color color)
 {
-  State& state = *stateptr;
-
   SetColor(color);
   XDrawLine(state.dpy, state.draw, state.gc, begin.x, begin.y, end.x, end.y);
 }
 
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
-  State& state = *stateptr;
-
   SetColor(color);
   std::vector<XPoint> points = ConvertPoints(begin, end);
   points.push_back(points.front());
@@ -283,15 +313,11 @@ int Random(int sup)
 
 Size GetSize()
 {
-  State& state = *stateptr;
-
   return Size(state.width, state.height);
 }
 
 void DrawText(const std::string& text, Coordinate center, Color color)
 {
-  State& state = *stateptr;
-
   SetColor(color);
   XDrawString(state.dpy, state.draw, state.gc, center.x - XTextWidth(state.font, text.c_str(), text.size()) / 2, center.y - 1, text.c_str(), text.size());
 }

@@ -176,6 +176,8 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           str >> num;
           options.teams.push_back(num);
           playerCount += num;
+          std::cerr << "num: " << num << '\n';
+          std::cerr << "currcount: " << playerCount << '\n';
         }
 
         if (str.bad())

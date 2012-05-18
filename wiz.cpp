@@ -50,10 +50,13 @@ void Wiz::Init(const Options& options)
     teamCounter = 0;
   }
 
+  std::cerr << "teamnum: " << options.teams.size() << '\n';
   for (std::vector<int>::const_iterator tit = options.teams.begin(); options.teams.end() != tit; ++tit)
   {
+    std::cerr << "players in team: " << *tit << '\n';
     for (int i = 0; i < *tit; ++i)
     {
+      std::cerr << "player: " << i << '\n';
       std::string name = *nit;
       bool randomAi = false;
       if (name == "-")
@@ -75,6 +78,8 @@ void Wiz::Init(const Options& options)
         aiPtr = new DiskShipAiRemote(shipPtr, ipc);
       }
       shipPtr->SetAi(aiPtr);
+      std::cerr << "pushin a ship yo!\n";
+      ships.push_back(shipPtr);
     }
     ++teamCounter;
   }
@@ -92,23 +97,6 @@ void Wiz::Init(const Options& options)
 
   shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], "BlueRandom", *this, 2);
   aiptr = new DiskShipAiRandom(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-*/
-/*
-  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], *this, 1);
-  aiptr = new DiskShipAiRandom(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-
-
-  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
-  aiptr = new DiskShipAiRandom(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-
-  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], *this, 2);
-  aiptr = new DiskShipAiRanger(shipptr);
   shipptr->SetAi(aiptr);
   ships.push_back(shipptr);
 */
@@ -218,8 +206,10 @@ Wiz::ShipTravel Wiz::GetTeam(int team) const
 void Wiz::MoveAll()
 {
   //TODO: C++11 feature
+  std::cerr << "move mah ship yo!\n";
   for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
   {
+    std::cerr << "an goyo!\n";
     (*it)->Draw();
     (*it)->Move();
   }
