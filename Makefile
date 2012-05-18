@@ -20,7 +20,7 @@ else
     LDFLAGS		=  -L/usr/local/lib
     DEFS		= -DSTANDALONE -DHAVE_CONFIG_H -DHAVE_GTK2
     INCLUDES	= -I. -pthread -I/usr/include/gtk-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
-    HACK_LIBS = -lSM -lICE -lXt -lX11 -lXext -lm
+    HACK_LIBS = -lX11
     OBJS = $(COMMON_OBJS)
   endif
 endif
@@ -47,9 +47,6 @@ implementation.cpp: wiz.hpp drawinterface.hpp
 
 utility.cpp: drawinterface.hpp
 	
-
-%o: %c; $(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $<
-
 %o: %cpp $(HEADERS); 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
 clean:
