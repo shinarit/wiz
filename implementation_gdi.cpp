@@ -256,7 +256,7 @@ Size GetSize()
   return size;
 }
 
-void DrawText(const std::string& text, Coordinate center, Color color)
+int DrawText(const std::string& text, Coordinate center, Color color, int correction)
 {
 }
 

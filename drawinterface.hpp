@@ -92,7 +92,7 @@ void DrawLine(Coordinate begin, Coordinate end, Color col);
 void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
 int Random(int sup);
 Size GetSize();
-void DrawText(const std::string& text, Coordinate center, Color color);
+int DrawText(const std::string& text, Coordinate center, Color color, int correction = -1);
 
 namespace RemoteProtocol
 {

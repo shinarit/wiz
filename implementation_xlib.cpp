@@ -316,10 +316,16 @@ Size GetSize()
   return Size(state.width, state.height);
 }
 
-void DrawText(const std::string& text, Coordinate center, Color color)
+int DrawText(const std::string& text, Coordinate center, Color color, int correction)
 {
+  int res = correction;
+  if (-1 == res)
+  {
+    res = XTextWidth(state.font, text.c_str(), text.size()) / 2;
+  }
   SetColor(color);
-  XDrawString(state.dpy, state.draw, state.gc, center.x - XTextWidth(state.font, text.c_str(), text.size()) / 2, center.y - 1, text.c_str(), text.size());
+  XDrawString(state.dpy, state.draw, state.gc, center.x - res, center.y - 1, text.c_str(), text.size());
+  return res;
 }
 
 
