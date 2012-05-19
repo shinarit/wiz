@@ -47,12 +47,12 @@ void DiskShip::Draw()
   {
     if (m_explode)
     {
-      if (2 != Random(3))   //67% of showing some explosion
+      if (2 != DrawWrapper::Random(3))   //67% of showing some explosion
       {
-        Color color = ExplosionColors[Random(2)];
-        int size = explosionSize / 2 + Random(explosionSize / 2) * (m_explode / 2);
+        Color color = ExplosionColors[DrawWrapper::Random(2)];
+        int size = explosionSize / 2 + DrawWrapper::Random(explosionSize / 2) * (m_explode / 2);
 
-        DrawCircle(m_center, size, color, true);
+        DrawWrapper::DrawCircle(m_center, size, color, true);
 
         --m_explode;
       }
@@ -60,8 +60,8 @@ void DiskShip::Draw()
   }
   else
   {
-    DrawCircle(m_center, shipSize, m_shipColor, true);
-    DrawText(GetName(), Coordinate(m_center.x, m_center.y - shipSize), m_shipColor);
+    DrawWrapper::DrawCircle(m_center, shipSize, m_shipColor, true);
+    DrawWrapper::DrawText(GetName(), Coordinate(m_center.x, m_center.y - shipSize), m_shipColor);
   }
 }
 
@@ -82,7 +82,7 @@ void DiskShip::Move()
   }
   else
   {
-    Size screenSize = ::GetSize();
+    Size screenSize = ::DrawWrapper::GetSize();
 
     m_center.x = (m_center.x + m_speed.x);
     m_center.y = (m_center.y + m_speed.y);
@@ -154,7 +154,7 @@ void DiskShipAiRandom::Do()
   //random movement
   if (!(GetTicker() % changeDirectionInterval))
   {
-    m_randum = Normalize(Coordinate(Random(1000) - 500, Random(1000) - 500), DiskShip::maxSpeed);
+    m_randum = Normalize(Coordinate(DrawWrapper::Random(1000) - 500, DrawWrapper::Random(1000) - 500), DiskShip::maxSpeed);
   }
   GetSpeed() += m_randum;
 
@@ -165,7 +165,7 @@ void DiskShipAiRandom::Do()
     const Hitable* enemy = 0;
     if (!m_target || (!(GetTicker() % changeTargetInterval)))
     {
-      enemy = enemies[Random(enemies.size())];
+      enemy = enemies[DrawWrapper::Random(enemies.size())];
     }
     //found enemy. so shoot
     if (enemy)
@@ -192,11 +192,11 @@ void DiskShipAiRanger::Do()
     Coordinate targetVector = GetCenter() - enemy->GetCenter();
     Coordinate::CoordType distance = Length(targetVector);
     Coordinate miss = Rotate90Cw(Normalize(targetVector, missFactor));
-    miss = ((miss * Random(100)) / 50 - miss) * distance / 100;
+    miss = ((miss * DrawWrapper::Random(100)) / 50 - miss) * distance / 100;
     Shoot(enemy->GetCenter() + miss);
 
     //and move
-    Coordinate::CoordType minDistance = minDistanceRatio * std::min(GetSize().x, GetSize().y);
+    Coordinate::CoordType minDistance = minDistanceRatio * std::min(DrawWrapper::GetSize().x, DrawWrapper::GetSize().y);
     //if far enough, we move sideways to make it harder to hit
     if (distance > minDistance)
     {
@@ -320,7 +320,7 @@ void DiskShipAiRemote::Do()
 
 void PulseLaser::Draw()
 {
-  DrawLine(m_front, m_back, m_color);
+  DrawWrapper::DrawLine(m_front, m_back, m_color);
 }
 
 void PulseLaser::Move()
@@ -334,7 +334,7 @@ void PulseLaser::Move()
 
   m_back += m_speed;
 
-  Size screenSize = GetSize();
+  Size screenSize = DrawWrapper::GetSize();
 
   if (m_back.x > screenSize.x || m_back.x < 0 || m_back.y > screenSize.y || m_back.y < 0)
   {

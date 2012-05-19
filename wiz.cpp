@@ -50,13 +50,10 @@ void Wiz::Init(const Options& options)
     teamCounter = 0;
   }
 
-  std::cerr << "teamnum: " << options.teams.size() << '\n';
   for (std::vector<int>::const_iterator tit = options.teams.begin(); options.teams.end() != tit; ++tit)
   {
-    std::cerr << "players in team: " << *tit << '\n';
     for (int i = 0; i < *tit; ++i)
     {
-      std::cerr << "player: " << i << '\n';
       std::string name = *nit;
       bool randomAi = false;
       if (name == "-")
@@ -78,7 +75,6 @@ void Wiz::Init(const Options& options)
         aiPtr = new DiskShipAiRemote(shipPtr, ipc);
       }
       shipPtr->SetAi(aiPtr);
-      std::cerr << "pushin a ship yo!\n";
       ships.push_back(shipPtr);
     }
     ++teamCounter;
@@ -115,7 +111,7 @@ void Wiz::DrawFrame()
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), true);
 */  ++i;
-  DrawText("asd", Coordinate(100, 12), Colors::red);
+  DrawWrapper::DrawText("asd", Coordinate(100, 12), Colors::red);
 
   MoveAll();
   Clean();
@@ -163,16 +159,16 @@ void Wiz::RemoveProjectile(Flyer* projectile)
 
 Coordinate Wiz::PlaceMe(int team) const
 {
-  Size screenSize = GetSize();
+  Size screenSize = DrawWrapper::GetSize();
   if (1 == team)
   {
-    return Coordinate(Margin + Random(100) - 50, Margin + Random(screenSize.y - 2 * Margin));
+    return Coordinate(Margin + DrawWrapper::Random(100) - 50, Margin + DrawWrapper::Random(screenSize.y - 2 * Margin));
   }
   if (2 == team)
   {
-    return Coordinate(screenSize.x - 70 + Random(100) - 50, 70 + Random(screenSize.y - 2 * Margin));
+    return Coordinate(screenSize.x - 70 + DrawWrapper::Random(100) - 50, 70 + DrawWrapper::Random(screenSize.y - 2 * Margin));
   }
-  return Coordinate(Margin + Random(screenSize.x - 2 * Margin), 70 + Random(screenSize.y - 2 * Margin));
+  return Coordinate(Margin + DrawWrapper::Random(screenSize.x - 2 * Margin), 70 + DrawWrapper::Random(screenSize.y - 2 * Margin));
 }
 
 struct EnemyPredicate
@@ -206,10 +202,8 @@ Wiz::ShipTravel Wiz::GetTeam(int team) const
 void Wiz::MoveAll()
 {
   //TODO: C++11 feature
-  std::cerr << "move mah ship yo!\n";
   for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
   {
-    std::cerr << "an goyo!\n";
     (*it)->Draw();
     (*it)->Move();
   }

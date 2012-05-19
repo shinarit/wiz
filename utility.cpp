@@ -145,8 +145,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       }
       case 's':
       {
-        std::cerr << "size argument: " << arg << '\n';
-
         int width;
         int height;
         char c;
@@ -168,7 +166,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
         int teamnum;
         std::istringstream str(arg);
         str >> teamnum;
-        std::cerr << "teamnum: " << teamnum << '\n';
         options.teams.reserve(teamnum);
         for (int i = 0; i < teamnum; ++i)
         {
@@ -176,8 +173,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           str >> num;
           options.teams.push_back(num);
           playerCount += num;
-          std::cerr << "num: " << num << '\n';
-          std::cerr << "currcount: " << playerCount << '\n';
         }
 
         if (str.bad())

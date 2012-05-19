@@ -272,7 +272,7 @@ std::vector<XPoint> ConvertPoints(const Coordinate* const begin, const Coordinat
 // now really...
 //
 
-void DrawCircle(Coordinate center, int size, Color color, bool fill)
+void DrawWrapper::DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
   SetColor(color);
   if(fill)
@@ -285,13 +285,13 @@ void DrawCircle(Coordinate center, int size, Color color, bool fill)
   }
 }
 
-void DrawLine(Coordinate begin, Coordinate end, Color color)
+void DrawWrapper::DrawLine(Coordinate begin, Coordinate end, Color color)
 {
   SetColor(color);
   XDrawLine(state.dpy, state.draw, state.gc, begin.x, begin.y, end.x, end.y);
 }
 
-void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
+void DrawWrapper::DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
   SetColor(color);
   std::vector<XPoint> points = ConvertPoints(begin, end);
@@ -306,17 +306,17 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
   }
 }
 
-int Random(int sup)
+int DrawWrapper::Random(int sup)
 {
   return random() % sup;
 }
 
-Size GetSize()
+Size DrawWrapper::GetSize()
 {
   return Size(state.width, state.height);
 }
 
-int DrawText(const std::string& text, Coordinate center, Color color, int correction)
+int DrawWrapper::DrawText(const std::string& text, Coordinate center, Color color, int correction)
 {
   int res = correction;
   if (-1 == res)

@@ -3,7 +3,6 @@ std::ofstream wizlog("wizlog");
 #define _WIN32_WINNT 0x0500
 
 #include <windows.h>
-//#include <scrnsave.h>
 
 #include <cstdlib>
 #include <ctime>
@@ -44,7 +43,6 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     int len = WideCharToMultiByte(CP_ACP, 0, argvw[i], -1, 0, 0, 0, 0);
     argv[i] = new char[len];
     WideCharToMultiByte(CP_ACP, 0, argvw[i], -1, argv[i], len, 0, 0);
-    std::cout << argv[i] << '\n';
   }
   argv[argc] = 0;
   LocalFree(argvw);
@@ -198,7 +196,7 @@ std::vector<POINT> ConvertPoints(const Coordinate* const begin, const Coordinate
 // no, really now...
 //
 
-void DrawCircle(Coordinate center, int size, Color color, bool fill)
+void DrawWrapper::DrawCircle(Coordinate center, int size, Color color, bool fill)
 {
   SelectObject(drawhdc, GetStockObject(DC_PEN));
   SetDCPenColor(drawhdc, TranslateColor(color));
@@ -215,7 +213,7 @@ void DrawCircle(Coordinate center, int size, Color color, bool fill)
   }
 }
 
-void DrawLine(Coordinate begin, Coordinate end, Color color)
+void DrawWrapper::DrawLine(Coordinate begin, Coordinate end, Color color)
 {
   SelectObject(drawhdc, GetStockObject(DC_PEN));
   SelectObject(drawhdc, GetStockObject(DC_BRUSH));
@@ -226,7 +224,7 @@ void DrawLine(Coordinate begin, Coordinate end, Color color)
   LineTo(drawhdc, end.x, end.y);
 }
 
-void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
+void DrawWrapper::DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
 {
   SelectObject(drawhdc, GetStockObject(DC_PEN));
   SetDCPenColor(drawhdc, TranslateColor(color));
@@ -246,18 +244,22 @@ void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill)
   }
 }
 
-int Random(int sup)
+int DrawWrapper::Random(int sup)
 {
   return std::rand() % sup;
 }
 
-Size GetSize()
+Size DrawWrapper::GetSize()
 {
   return size;
 }
 
-int DrawText(const std::string& text, Coordinate center, Color color, int correction)
+#undef DrawText
+
+int DrawWrapper::DrawText(const std::string& text, Coordinate center, Color color, int correction)
 {
+  RECT rect = {0, 0, 100, 100};
+  DrawTextA(drawhdc, "", 0, &rect, DT_INTERNAL);
 }
 
 struct IpcImplementation

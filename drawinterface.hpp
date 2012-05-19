@@ -87,12 +87,16 @@ bool ParseCommandline(int argc, char* argv[], Options& options);
 // implementation.cpp's interface
 //
 
-void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
-void DrawLine(Coordinate begin, Coordinate end, Color col);
-void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
-int Random(int sup);
-Size GetSize();
-int DrawText(const std::string& text, Coordinate center, Color color, int correction = -1);
+
+namespace DrawWrapper
+{
+  void DrawCircle(Coordinate center, int size, Color col, bool fill = false);
+  void DrawLine(Coordinate begin, Coordinate end, Color col);
+  void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
+  int Random(int sup);
+  Size GetSize();
+  int DrawText(const std::string& text, Coordinate center, Color color, int correction = -1);
+}
 
 namespace RemoteProtocol
 {
