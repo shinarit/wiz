@@ -138,6 +138,8 @@ void DiskShip::Hit()
   m_speed = Coordinate();
   m_dead = deadInterval;
   m_explode = explosionInterval;
+  m_cooldown = 0;
+  m_bulletNum = 0;
 }
 
 bool DiskShip::Alive() const
