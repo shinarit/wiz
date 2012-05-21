@@ -2,10 +2,12 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 
-#include <X11/Xlib.h> // Every Xlib program must include this
-#include <unistd.h>   // So we got the profile for 10 seconds
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <X11/Xlib.h>       // Every Xlib program must include this
+#include <X11/keysym.h>     //keysyms
+
+#include <unistd.h>         //usleep
+#include <sys/stat.h>       //mkfifo
+
 
 std::ofstream wizlog("/home/tetra/wizlog");
 
@@ -45,38 +47,14 @@ unsigned long TranslateColor(Color color);
 
 int main(int argc, char* argv[])
 {
-  // Open the display
-
-  Display *dpy = XOpenDisplay(0);
-  state.dpy = dpy;
-
-  // Create the window
-
-  Window w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, 800, 600, 0, BlackPixel(dpy, DefaultScreen(dpy)), BlackPixel(dpy, DefaultScreen(dpy)));
-
-  state.window = w;
-
-  XWindowAttributes xgwa;
-  XGetWindowAttributes(state.dpy, state.window, &xgwa);
-  state.cmap = xgwa.colormap;
-
-  XSelectInput(dpy, w, StructureNotifyMask);
-
-  Atom wm_delete_window = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
-  XSetWMProtocols(dpy, w, &wm_delete_window, 1);
-
-  XMapWindow(dpy, w);
-
-  /*
-  // Create a "Graphics Context"
-
-  GC gc = XCreateGC(dpy, w, 0, 0);
-
-  // Tell the GC we draw using the white color
-
-  XSetForeground(dpy, gc, TranslateColor(255, 0, 0));
-*/
   Init(argc, argv);
+
+  XSelectInput(state.dpy, state.window, StructureNotifyMask | KeyPressMask);
+
+  Atom wm_delete_window = XInternAtom(state.dpy, "WM_DELETE_WINDOW", False);
+  XSetWMProtocols(state.dpy, state.window, &wm_delete_window, 1);
+
+  XMapWindow(state.dpy, state.window);
 
   bool exit = false;
   bool drawable = false;
@@ -85,9 +63,9 @@ int main(int argc, char* argv[])
   {
     //event handling part
     XEvent event;
-    while (!exit && XPending(dpy))
+    while (!exit && XPending(state.dpy))
     {
-      XNextEvent(dpy, &event);
+      XNextEvent(state.dpy, &event);
       switch (event.type)
       {
         case MapNotify:
@@ -108,6 +86,14 @@ int main(int argc, char* argv[])
           }
           break;
         }
+        case KeyPress:
+        {
+          if (XK_Escape == XLookupKeysym(&event.xkey, 0))
+          {
+            exit = true;
+          }
+          break;
+        }
         default:
         {
           break;
@@ -115,38 +101,92 @@ int main(int argc, char* argv[])
       }
     }
 
-    unsigned long delay;
     //drawing part
     if (!exit && drawable)
     {
-      delay = Draw();
-      XFlush(dpy);
+      unsigned long delay = Draw();
+      XFlush(state.dpy);
+      usleep(delay);
     }
-
-    usleep(delay);
   }
 
   Free();
 
-  XCloseDisplay(dpy);
+  XCloseDisplay(state.dpy);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+struct MwmHints
+{
+  unsigned long flags;
+  unsigned long functions;
+  unsigned long decorations;
+  long input_mode;
+  unsigned long status;
+};
+
+enum
+{
+  MWM_HINTS_FUNCTIONS = (1L << 0),
+  MWM_HINTS_DECORATIONS =  (1L << 1),
+
+  MWM_FUNC_ALL = (1L << 0),
+  MWM_FUNC_RESIZE = (1L << 1),
+  MWM_FUNC_MOVE = (1L << 2),
+  MWM_FUNC_MINIMIZE = (1L << 3),
+  MWM_FUNC_MAXIMIZE = (1L << 4),
+  MWM_FUNC_CLOSE = (1L << 5)
+};
+
 void Init(int argc, char* argv[])
 {
-  //State* tostore = new State();
-  //stateptr = tostore;
-  //State& state = *tostore;
+  Options options;
 
-  state.wiz = new Wiz();
+  if (!ParseCommandline(argc, argv, options))
+  {
+    exit(1);
+  }
+
+  // Open the display
+  Display *dpy = XOpenDisplay(0);
+  state.dpy = dpy;
+
+  // Create the window
+
+  Size resolution;
+  if (options.demo)
+  {
+    if (0 != options.size.x)
+    {
+      resolution = options.size;
+    }
+    else
+    {
+      resolution = Size(800, 600);  //default size
+    }
+  }
+  else
+  {
+    resolution = Size(XDisplayWidth(state.dpy, DefaultScreen(state.dpy)), XDisplayHeight(state.dpy, DefaultScreen(state.dpy)));
+  }
+
+  state.window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 0, 0, resolution.x, resolution.y, 0, BlackPixel(dpy, DefaultScreen(dpy)), BlackPixel(dpy, DefaultScreen(dpy)));
+
+  Atom mwmHintsProperty = XInternAtom(state.dpy, "_MOTIF_WM_HINTS", 0);
+  struct MwmHints hints;
+  hints.flags = MWM_HINTS_DECORATIONS;
+  hints.decorations = 0;
+  XChangeProperty(state.dpy, state.window, mwmHintsProperty, mwmHintsProperty, 32, PropModeReplace, (unsigned char *)&hints, 5);
 
   XWindowAttributes xgwa;
   XGetWindowAttributes(state.dpy, state.window, &xgwa);
-  state.width = xgwa.width;
-  state.height = xgwa.height;
-  state.depth = xgwa.depth;
   state.cmap = xgwa.colormap;
+  state.depth = xgwa.depth;
+  state.width = resolution.x;
+  state.height = resolution.y;
+
+  state.wiz = new Wiz();
 
   XGCValues gcv;
   gcv.foreground = state.fg = TranslateColor(Colors::white);
@@ -169,13 +209,6 @@ void Init(int argc, char* argv[])
   state.double_buffer = XCreatePixmap(state.dpy, state.window, state.width, state.height, state.depth);
   state.draw = state.double_buffer;
   //state.draw = state.window;
-
-  Options options;
-
-  if (!ParseCommandline(argc, argv, options))
-  {
-    exit(1);
-  }
 
   state.wiz->Init(options);
 }
