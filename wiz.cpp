@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <set>
 
 #include <iostream>
 
@@ -28,7 +29,14 @@
 //
 // (ship : ammo) color theme for teams, 0 for default
 //
-Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}};
+const Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}};
+const std::string randomNames[] =
+{
+  "robot0x00",        "Stanley",  "GAURRR",   "muszmusz",   "d(O_O)b",          "Bob",          "Greyson",    "Robert Paulson",   "Jeronimo",             "Suzuki",
+  "robot0xbfffffff",  "Utvefuro", "|o|",      "|oo|",       "<o>",              "Roy",          "Jaime",      "Diablo",           "RAMPAGE",              "PENTAKILL",
+  "robot0xcfcfcfcf",  "vidya",    ">oo>",     "<oo<",       "isten, csak igy",  "n00b",         "l33+h4xxoR", "Faust",            "gut, besser, gosser",  "Hovertank",
+  "CrayII",           "AVENGER",  "blaster",  "SKYRANGER",  "LIGHTNING",        "INTERCEPTOR",  "FIRESTORM",  "Sleeper Service",  "Zero Gravitas",        "Very Little Gravitas Indeed"
+};
 
 Wiz::Wiz()
 {
@@ -52,6 +60,8 @@ void Wiz::Init(const Options& options)
     teamCounter = 0;
   }
 
+  std::set<std::string> nameBin(&randomNames[0], &randomNames[sizeof(randomNames)/sizeof(randomNames[0])]);
+
   for (std::vector<int>::const_iterator tit = options.teams.begin(); options.teams.end() != tit; ++tit)
   {
     for (int i = 0; i < *tit; ++i)
@@ -60,11 +70,21 @@ void Wiz::Init(const Options& options)
       bool randomAi = false;
       if (name == "-")
       {
-        name = "randum " + char('0' + nameCounter++);
+        if (nameBin.empty())
+        {
+          name = "---- not enough names ----";
+        }
+        else
+        {
+          std::set<std::string>::iterator rname = nameBin.begin();
+          std::advance(rname, DrawWrapper::Random(nameBin.size()));
+          name = *rname;
+          nameBin.erase(rname);
+        }
         randomAi = true;
       }
 
-      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], *nit, *this, teamCounter);
+      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, *this, teamCounter);
       DiskShipAi* aiPtr;
       if (randomAi)
       {
