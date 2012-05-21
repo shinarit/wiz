@@ -42,7 +42,7 @@ Wiz::~Wiz()
 void Wiz::Init(const Options& options)
 {
   std::vector<std::string>::const_iterator nit = options.names.begin();
-  int nameCounter;
+  int nameCounter = 0;
 
   int teamCounter = 1;
   if (1 == options.teams.size())
