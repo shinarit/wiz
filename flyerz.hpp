@@ -109,6 +109,8 @@ class DiskShip: public Hitable
     int         m_dead;
     int         m_explode;
 
+    int         m_textAlign;
+
     DiskShipAi* m_ai;
 };
 

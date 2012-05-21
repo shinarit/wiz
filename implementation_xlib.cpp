@@ -1,6 +1,8 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <map>
+#include <cstdlib>
+#include <ctime>
 
 #include <X11/Xlib.h>       // Every Xlib program must include this
 #include <X11/keysym.h>     //keysyms
@@ -47,14 +49,9 @@ unsigned long TranslateColor(Color color);
 
 int main(int argc, char* argv[])
 {
+  std::srand(std::time(0));
+
   Init(argc, argv);
-
-  XSelectInput(state.dpy, state.window, StructureNotifyMask | KeyPressMask);
-
-  Atom wm_delete_window = XInternAtom(state.dpy, "WM_DELETE_WINDOW", False);
-  XSetWMProtocols(state.dpy, state.window, &wm_delete_window, 1);
-
-  XMapWindow(state.dpy, state.window);
 
   bool exit = false;
   bool drawable = false;
@@ -80,10 +77,7 @@ int main(int argc, char* argv[])
         }
         case ClientMessage:
         {
-          if ((Atom)event.xclient.data.l[0] == wm_delete_window)
-          {
-            exit = true;
-          }
+          exit = true;
           break;
         }
         case KeyPress:
@@ -186,8 +180,6 @@ void Init(int argc, char* argv[])
   state.width = resolution.x;
   state.height = resolution.y;
 
-  state.wiz = new Wiz();
-
   XGCValues gcv;
   gcv.foreground = state.fg = TranslateColor(Colors::white);
   gcv.background = state.bg = TranslateColor(Colors::black);
@@ -210,6 +202,14 @@ void Init(int argc, char* argv[])
   state.draw = state.double_buffer;
   //state.draw = state.window;
 
+  XSelectInput(state.dpy, state.window, StructureNotifyMask | KeyPressMask);
+
+  Atom wm_delete_window = XInternAtom(state.dpy, "WM_DELETE_WINDOW", False);
+  XSetWMProtocols(state.dpy, state.window, &wm_delete_window, 1);
+
+  XMapWindow(state.dpy, state.window);
+
+  state.wiz = new Wiz();
   state.wiz->Init(options);
 }
 
@@ -341,7 +341,7 @@ void DrawWrapper::DrawShape(Coordinate* begin, Coordinate* end, Color color, boo
 
 int DrawWrapper::Random(int sup)
 {
-  return random() % sup;
+  return std::rand() % sup;
 }
 
 Size DrawWrapper::GetSize()

@@ -95,11 +95,7 @@ Coordinate Rotate90Ccw(const Coordinate& vektor)
   return Coordinate(-vektor.y, vektor.x);
 }
 
-//
-// usage: argv[0] --mode/-m {fullscreen, demo} [--size/-s WIDTHxHEIGHT] [--teamnum/-n N n1 n2 n3...]
-//
-
-const std::string usage = "usage: argv[0] --mode/-m {fullscreen, demo} [--size/-s WIDTHxHEIGHT] [--teamnum/-n N n1 n2 n3...]";
+const std::string usage = "usage: argv[0] --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [remote ai names, - for builtin]*";
 
 #define RETURN_WITH_USAGE std::cerr << usage << '\n'; return false;
 
@@ -187,6 +183,8 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       }
     }
   }
+
+  options.names.insert(options.names.end(), &argv[optind], &argv[argc]);
 
   if (!modeflag || !teamflag)
   {

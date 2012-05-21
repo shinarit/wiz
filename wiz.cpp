@@ -66,7 +66,7 @@ void Wiz::Init(const Options& options)
   {
     for (int i = 0; i < *tit; ++i)
     {
-      std::string name = *nit;
+      std::string name = *nit++;
       bool randomAi = false;
       if (name == "-")
       {
@@ -86,7 +86,7 @@ void Wiz::Init(const Options& options)
 
       DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, *this, teamCounter);
       DiskShipAi* aiPtr;
-      if (randomAi)
+      if (true || randomAi)
       {
         aiPtr = new DiskShipAiRandom(shipPtr);
       }
