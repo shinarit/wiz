@@ -52,13 +52,14 @@ void Wiz::Init(const Options& options)
   Margin = std::min(DrawWrapper::GetSize().x, DrawWrapper::GetSize().y) / 10;
 
   std::vector<std::string>::const_iterator nit = options.names.begin();
-  int nameCounter = 0;
 
   int teamCounter = 1;
   if (1 == options.teams.size())
   {
     teamCounter = 0;
   }
+
+  int id = 0;
 
   std::set<std::string> nameBin(&randomNames[0], &randomNames[sizeof(randomNames)/sizeof(randomNames[0])]);
 
@@ -84,7 +85,7 @@ void Wiz::Init(const Options& options)
         randomAi = true;
       }
 
-      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, *this, teamCounter);
+      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, id++,*this, teamCounter);
       DiskShipAi* aiPtr;
       if (true || randomAi)
       {
@@ -101,6 +102,8 @@ void Wiz::Init(const Options& options)
     }
     ++teamCounter;
   }
+
+  scores = ScoreList(ships.size(), 0);
 /*
   Ipc ipc("test");
   DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], "REMOTE AI        X  I  X        IA ETOMER", *this, 3);
@@ -139,7 +142,7 @@ void Wiz::DrawFrame()
   Clean();
 }
 
-bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team) const
+bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const
 {
   Coordinate vektor = begin - end;
   Coordinate::CoordType len = Length(vektor);
@@ -149,6 +152,9 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
 
   //calculating the step
   Coordinate step = vektor * CheckDistance / len;
+
+  bool hit = false;
+
   for (ShipList::const_iterator it = potentials.begin(); potentials.end() != it; ++it)
   {
     Coordinate point = end;
@@ -157,20 +163,22 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
       if (Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
       {
         (*it)->Hit();
-        return true;
+        ++scores[owner];
+        hit = true;
+        break;
       }
       point += step;
     }
   }
-  return false;
+  return hit;
 }
 
-void Wiz::AddProjectile(Flyer* projectile)
+void Wiz::AddProjectile(Owned *projectile)
 {
   projectiles.push_back(projectile);
 }
 
-void Wiz::RemoveProjectile(Flyer* projectile)
+void Wiz::RemoveProjectile(Owned *projectile)
 {
   ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
   if (projectiles.end() != iter)
@@ -246,7 +254,7 @@ void Wiz::Clean()
   deads.clear();
 }
 
-void Wiz::KillProjectile(Flyer* projectile)
+void Wiz::KillProjectile(Owned *projectile)
 {
   ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
   if (projectiles.end() != iter)

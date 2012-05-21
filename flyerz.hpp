@@ -63,6 +63,24 @@ class Hitable: public Flyer
     std::string m_name;
 };
 
+class Owned: public Flyer
+{
+  public:
+    Owned(int owner, Wiz& frame, int team = 0): Flyer(team, frame), m_owner(owner)
+    { }
+    int GetOwner() const
+    {
+      return m_owner;
+    }
+    void SetOwner(int owner)
+    {
+      m_owner = owner;
+    }
+
+  private:
+    int m_owner;
+};
+
 class DiskShipAi;
 
 class DiskShip: public Hitable
@@ -77,7 +95,7 @@ class DiskShip: public Hitable
     static int explosionInterval;
     static int explosionSize;
 
-    DiskShip(Coordinate center, Color shipColor, Color laserColor, const std::string& name, Wiz& frame, int team = 0);
+    DiskShip(Coordinate center, Color shipColor, Color laserColor, const std::string& name, int id, Wiz& frame, int team = 0);
     DiskShipAi* SetAi(DiskShipAi* ai)
     {
       DiskShipAi* old = m_ai;
@@ -104,6 +122,7 @@ class DiskShip: public Hitable
     Color       m_laserColor;
     Coordinate  m_speed;
 
+    int         m_id;
     int         m_bulletNum;
     int         m_cooldown;
     int         m_dead;
@@ -214,12 +233,12 @@ class DiskShipAiRemote: public DiskShipAi
     Ipc m_communication;
 };
 
-class PulseLaser: public Flyer
+class PulseLaser: public Owned
 {
   public:
     static int speed;
 
-    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz& frame, int team = 0): Flyer(team, frame), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
+    PulseLaser(Coordinate begin, Coordinate end, Color color, Wiz& frame, int team, int id): Owned(id, frame, team), m_front(begin), m_back(end), m_speed((m_front - m_back)), m_color(color)
     {
       m_speed = (m_speed * speed) / Length(m_speed);
     }

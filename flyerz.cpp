@@ -36,7 +36,7 @@ struct DistanceComparer
 // DiskShip functions
 //
 
-DiskShip::DiskShip(Coordinate center,Color color, Color lasercolor, const std::string &name, Wiz &frame, int team): Hitable(name, team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_bulletNum(0), m_cooldown(0), m_dead(0), m_textAlign(-1), m_ai(0)
+DiskShip::DiskShip(Coordinate center,Color color, Color lasercolor, const std::string &name, int id, Wiz &frame, int team): Hitable(name, team, frame), m_center(center), m_shipColor(color), m_laserColor(lasercolor), m_id(id), m_bulletNum(0), m_cooldown(0), m_dead(0), m_textAlign(-1), m_ai(0)
 { }
 
 const Color ExplosionColors[] = {Colors::yellow, Colors::orange};
@@ -119,7 +119,7 @@ void DiskShip::Shoot(const Coordinate& target)
     Coordinate step = Normalize(targetvector, 1.0);
     Coordinate end = m_center + step * (shipSize + 1);
     Coordinate begin = end + step * laserLength;
-    m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam()));
+    m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam(), m_id));
   }
 }
 
@@ -329,7 +329,7 @@ void PulseLaser::Move()
 {
   m_front += m_speed;
 
-  if (m_frame.CheckCollision(m_front, m_back, GetTeam()))
+  if (m_frame.CheckCollision(m_front, m_back, GetTeam(), GetOwner()))
   {
     m_frame.RemoveProjectile(this);
   }

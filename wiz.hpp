@@ -14,7 +14,7 @@
 #include <vector>
 
 class Options;
-class Flyer;
+class Owned;
 class Hitable;
 class Coordinate;
 
@@ -25,9 +25,9 @@ class Wiz
     ~Wiz();
     void Init(const Options &options);
     void DrawFrame();
-    bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team = 0) const;
-    void AddProjectile(Flyer*);
-    void RemoveProjectile(Flyer*);
+    bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const;
+    void AddProjectile(Owned*);
+    void RemoveProjectile(Owned*);
     Coordinate PlaceMe(int team) const;
 
     typedef std::vector<const Hitable*> ShipTravel;
@@ -41,16 +41,17 @@ class Wiz
 
     typedef std::vector<Hitable*> ShipList;
     ShipList ships;
-    typedef std::vector<Flyer*> ProjectileList;
+    typedef std::vector<Owned*> ProjectileList;
     ProjectileList projectiles;
+    typedef std::vector<int> ScoreList;
+    mutable ScoreList scores;
 
     ProjectileList deads;
 
     void MoveAll();
     void Clean();
-    void KillProjectile(Flyer*);
+    void KillProjectile(Owned*);
     ShipList GetPotentials(int team, Coordinate center, int dist) const;
-
 };
 
 #endif // WIZ_HPP
