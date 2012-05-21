@@ -41,6 +41,8 @@ Wiz::~Wiz()
 
 void Wiz::Init(const Options& options)
 {
+  Margin = std::min(DrawWrapper::GetSize().x, DrawWrapper::GetSize().y) / 10;
+
   std::vector<std::string>::const_iterator nit = options.names.begin();
   int nameCounter = 0;
 
@@ -166,9 +168,9 @@ Coordinate Wiz::PlaceMe(int team) const
   }
   if (2 == team)
   {
-    return Coordinate(screenSize.x - 70 + DrawWrapper::Random(100) - 50, 70 + DrawWrapper::Random(screenSize.y - 2 * Margin));
+    return Coordinate(screenSize.x - Margin + DrawWrapper::Random(100) - 50, Margin + DrawWrapper::Random(screenSize.y - 2 * Margin));
   }
-  return Coordinate(Margin + DrawWrapper::Random(screenSize.x - 2 * Margin), 70 + DrawWrapper::Random(screenSize.y - 2 * Margin));
+  return Coordinate(Margin + DrawWrapper::Random(screenSize.x - 2 * Margin), Margin + DrawWrapper::Random(screenSize.y - 2 * Margin));
 }
 
 struct EnemyPredicate
@@ -255,4 +257,6 @@ Wiz::ShipList Wiz::GetPotentials(int team, Coordinate center, int dist) const
   std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), PotentialityChecker(team, center, dist));
   return res;
 }
+
+int Wiz::Margin;
 

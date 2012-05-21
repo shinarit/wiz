@@ -37,7 +37,7 @@ class Wiz
 
   private:
     static const int CheckDistance = 4;
-    static const int Margin = 70;
+    static int Margin;
 
     typedef std::vector<Hitable*> ShipList;
     ShipList ships;
