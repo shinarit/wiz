@@ -258,12 +258,12 @@ void Wiz::Clean()
 
 void Wiz::DrawScore()
 {
-  Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1));
+  Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1) + FontHeight / 2);
   if (100 < startPoint.x)
   {
     if (0 > startPoint.y)
     {
-      startPoint.y = 0;
+      startPoint.y = FontHeight;
     }
     std::ostringstream ostr;
     for (int i = 0; i < ships.size(); ++i)
