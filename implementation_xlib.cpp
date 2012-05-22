@@ -383,8 +383,8 @@ struct IpcImplementation
       throw "Could not open " + inName;
     }
 
-    std::cerr << "running " << name + ' ' + inName + ' ' + outName + "&\n";
-    std::system((name + ' ' + inName + ' ' + outName + " >/dev/null 2>/dev/null  &").c_str());
+//    std::cerr << "running " << name + ' ' + inName + ' ' + outName + " &\n";
+    std::system((name + ' ' + inName + ' ' + outName + " >/dev/null 2>/dev/null &").c_str());
 
     m_out.reset(new std::ofstream(outName.c_str()));
     m_in.reset(new std::ifstream(inName.c_str()));
