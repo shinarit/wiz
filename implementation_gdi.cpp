@@ -263,7 +263,7 @@ int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Co
   return 0;
 }
 
-void DrawWrapper::DrawText(const std::string& text, Coordinate leftmid, Color color)
+void DrawWrapper::DrawText(const std::string& text, Coordinate botleft, Color color)
 {
 
 }

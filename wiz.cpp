@@ -88,13 +88,13 @@ void Wiz::Init(const Options& options)
 
       DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, id++,*this, teamCounter);
       DiskShipAi* aiPtr;
-      if (true || randomAi)
+      if (randomAi)
       {
         aiPtr = new DiskShipAiRandom(shipPtr);
       }
       else
       {
-        Ipc ipc("");
+        Ipc ipc(name);
         //TODO create ipc
         aiPtr = new DiskShipAiRemote(shipPtr, ipc);
       }

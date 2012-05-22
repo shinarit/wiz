@@ -99,7 +99,7 @@ namespace DrawWrapper
   int Random(int sup);
   Size GetSize();
   int DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction = -1);
-  void DrawText(const std::string& text, Coordinate leftmid, Color color);
+  void DrawText(const std::string& text, Coordinate botleft, Color color);
 }
 
 namespace RemoteProtocol

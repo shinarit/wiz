@@ -362,10 +362,10 @@ int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Co
   return res;
 }
 
-void DrawWrapper::DrawText(const std::string& text, Coordinate leftmid, Color color)
+void DrawWrapper::DrawText(const std::string& text, Coordinate botleft, Color color)
 {
   SetColor(color);
-  XDrawString(state.dpy, state.draw, state.gc, leftmid.x, leftmid.y, text.c_str(), text.size());
+  XDrawString(state.dpy, state.draw, state.gc, botleft.x, botleft.y, text.c_str(), text.size());
 }
 
 struct IpcImplementation
@@ -382,6 +382,9 @@ struct IpcImplementation
     {
       throw "Could not open " + inName;
     }
+
+    std::cerr << "running " << name + ' ' + inName + ' ' + outName + "&\n";
+    std::system((name + ' ' + inName + ' ' + outName + " >/dev/null 2>/dev/null  &").c_str());
 
     m_out.reset(new std::ofstream(outName.c_str()));
     m_in.reset(new std::ifstream(inName.c_str()));
