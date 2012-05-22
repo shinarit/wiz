@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <set>
+#include <sstream>
 
 #include <iostream>
 
@@ -136,10 +137,11 @@ void Wiz::DrawFrame()
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), true);
 */  ++i;
-  DrawWrapper::DrawText("asd", Coordinate(100, 12), Colors::red);
+  DrawWrapper::DrawTextCentered("asd", Coordinate(100, 12), Colors::red);
 
   MoveAll();
   Clean();
+  DrawScore();
 }
 
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const
@@ -253,6 +255,28 @@ void Wiz::Clean()
   }
   deads.clear();
 }
+
+void Wiz::DrawScore()
+{
+  Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1));
+  if (100 < startPoint.x)
+  {
+    if (0 > startPoint.y)
+    {
+      startPoint.y = 0;
+    }
+    std::ostringstream ostr;
+    for (int i = 0; i < ships.size(); ++i)
+    {
+      ostr << scores[i] << ": " << ships[i]->GetName();
+      DrawWrapper::DrawText(ostr.str(), startPoint, Colors::pink);
+      startPoint += Coordinate(0, FontHeight + 1);
+      ostr.str("");
+      ostr.clear();
+    }
+  }
+}
+
 
 void Wiz::KillProjectile(Owned *projectile)
 {

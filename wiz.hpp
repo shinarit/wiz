@@ -50,6 +50,7 @@ class Wiz
 
     void MoveAll();
     void Clean();
+    void DrawScore();
     void KillProjectile(Owned*);
     ShipList GetPotentials(int team, Coordinate center, int dist) const;
 };

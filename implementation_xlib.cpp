@@ -215,7 +215,8 @@ void Init(int argc, char* argv[])
 
 unsigned long Draw()
 {
-  XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
+//  XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
+  XSetForeground(state.dpy, state.gc, TranslateColor(Colors::gray));
   XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
 
   state.wiz->DrawFrame();
@@ -349,7 +350,7 @@ Size DrawWrapper::GetSize()
   return Size(state.width, state.height);
 }
 
-int DrawWrapper::DrawText(const std::string& text, Coordinate center, Color color, int correction)
+int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction)
 {
   int res = correction;
   if (-1 == res)
@@ -361,6 +362,11 @@ int DrawWrapper::DrawText(const std::string& text, Coordinate center, Color colo
   return res;
 }
 
+void DrawWrapper::DrawText(const std::string& text, Coordinate leftmid, Color color)
+{
+  SetColor(color);
+  XDrawString(state.dpy, state.draw, state.gc, leftmid.x, leftmid.y, text.c_str(), text.size());
+}
 
 struct IpcImplementation
 {

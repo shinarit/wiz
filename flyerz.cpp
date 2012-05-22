@@ -61,7 +61,7 @@ void DiskShip::Draw()
   else
   {
     DrawWrapper::DrawCircle(m_center, shipSize, m_shipColor, true);
-    m_textAlign = DrawWrapper::DrawText(GetName(), Coordinate(m_center.x, m_center.y - shipSize), m_shipColor, m_textAlign);
+    m_textAlign = DrawWrapper::DrawTextCentered(GetName(), Coordinate(m_center.x, m_center.y - shipSize), m_shipColor, m_textAlign);
   }
 }
 

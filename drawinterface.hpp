@@ -12,6 +12,7 @@
 #define WIZ_DRAW_H_
 
 const int FramePerSecond = 25;
+const int FontHeight = 12;
 
 #include <vector>
 #include <string>
@@ -43,6 +44,8 @@ namespace Colors
   const Color yellow(255, 255, 0);
   const Color pink(255, 0, 255);
   const Color orange(255, 0xA5, 0);
+  const Color gray(0xC0, 0xC0, 0xC0);
+  const Color grey(gray);
 }
 
 //simple class containing the x, y coordinates
@@ -95,7 +98,8 @@ namespace DrawWrapper
   void DrawShape(Coordinate* begin, Coordinate* end, Color color, bool fill = false);
   int Random(int sup);
   Size GetSize();
-  int DrawText(const std::string& text, Coordinate center, Color color, int correction = -1);
+  int DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction = -1);
+  void DrawText(const std::string& text, Coordinate leftmid, Color color);
 }
 
 namespace RemoteProtocol

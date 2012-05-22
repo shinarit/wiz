@@ -256,10 +256,16 @@ Size DrawWrapper::GetSize()
 
 #undef DrawText
 
-int DrawWrapper::DrawText(const std::string& text, Coordinate center, Color color, int correction)
+int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction)
 {
   RECT rect = {0, 0, 100, 100};
   DrawTextA(drawhdc, "", 0, &rect, DT_INTERNAL);
+  return 0;
+}
+
+void DrawWrapper::DrawText(const std::string& text, Coordinate leftmid, Color color)
+{
+
 }
 
 struct IpcImplementation
