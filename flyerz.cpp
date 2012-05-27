@@ -9,7 +9,6 @@
 //
 
 #include "flyerz.hpp"
-#include "wiz.hpp"
 
 #include <algorithm>
 #include <cmath>
