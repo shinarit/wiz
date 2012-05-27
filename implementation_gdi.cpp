@@ -190,7 +190,10 @@ std::vector<POINT> ConvertPoints(const Coordinate* const begin, const Coordinate
 }
 
 
-#define TranslateColor(color) RGB(color.red, color.green, color.blue)
+inline COLORREF TranslateColor(Color color)
+{
+  return RGB(color.red, color.green, color.blue);
+}
 
 //
 // no, really now...
