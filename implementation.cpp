@@ -30,8 +30,8 @@ struct printer
     out.flush();
   }
 
-  std::ostream& out;
   std::string print;
+  std::ostream& out;
 };
 
 #ifdef __linux__

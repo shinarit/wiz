@@ -266,7 +266,7 @@ void Wiz::DrawScore()
       startPoint.y = FontHeight;
     }
     std::ostringstream ostr;
-    for (int i = 0; i < ships.size(); ++i)
+    for (unsigned i = 0; i < ships.size(); ++i)
     {
       ostr << scores[i] << ": " << ships[i]->GetName();
       DrawWrapper::DrawText(ostr.str(), startPoint, Colors::pink);
