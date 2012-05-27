@@ -258,14 +258,15 @@ Size DrawWrapper::GetSize()
 
 int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction)
 {
-  RECT rect = {0, 0, 100, 100};
-  DrawTextA(drawhdc, "", 0, &rect, DT_INTERNAL);
+  RECT rect = {center.x, center.y - 10, center.x, center.y - 10};
+  DrawTextA(drawhdc, text.c_str(), text.size(), &rect, DT_INTERNAL | DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP);
   return 0;
 }
 
 void DrawWrapper::DrawText(const std::string& text, Coordinate botleft, Color color)
 {
-
+  RECT rect = {botleft.x, botleft.y, botleft.x, botleft.y};
+  DrawTextA(drawhdc, text.c_str(), text.size(), &rect, DT_INTERNAL | DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP);
 }
 
 struct IpcImplementation
