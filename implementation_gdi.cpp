@@ -261,6 +261,7 @@ Size DrawWrapper::GetSize()
 
 int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Color color, int correction)
 {
+  SetTextColor(drawhdc, TranslateColor(color));
   RECT rect = {center.x, center.y - 10, center.x, center.y - 10};
   DrawTextA(drawhdc, text.c_str(), text.size(), &rect, DT_INTERNAL | DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP);
   return 0;
@@ -268,6 +269,7 @@ int DrawWrapper::DrawTextCentered(const std::string& text, Coordinate center, Co
 
 void DrawWrapper::DrawText(const std::string& text, Coordinate botleft, Color color)
 {
+  SetTextColor(drawhdc, TranslateColor(color));
   RECT rect = {botleft.x, botleft.y, botleft.x, botleft.y};
   DrawTextA(drawhdc, text.c_str(), text.size(), &rect, DT_INTERNAL | DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP);
 }
