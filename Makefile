@@ -36,18 +36,22 @@ default: all
 
 all: wiz
 
-wiz: $(OBJS) drawinterface.hpp
+wiz: $(OBJS)
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
 
-wiz.cpp: wiz.hpp flyerz.hpp drawinterface.hpp
+wiz.o: wiz.cpp wiz.hpp flyerz.hpp drawinterface.hpp
+	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
-flyerz.cpp: wiz.hpp flyerz.hpp
+flyerz.o: flyerz.cpp wiz.hpp flyerz.hpp drawinterface.hpp
+	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
-implementation.cpp: wiz.hpp drawinterface.hpp 
+implementation.o: implementation.cpp wiz.hpp drawinterface.hpp implementation_gdi.cpp implementation_xlib.cpp
+	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
-utility.cpp: drawinterface.hpp
-	
-%o: %cpp $(HEADERS); 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
+utility.o: utility.cpp drawinterface.hpp flyerz.hpp
+	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
+
+%o: %cpp
 
 clean:
 	$(RM) *.o $(EXE) core
