@@ -150,6 +150,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 // windows implementation part
 //
 
+inline COLORREF TranslateColor(Color color)
+{
+  return RGB(color.red, color.green, color.blue);
+}
+
 void SetHdc()
 {
   hdc = BeginPaint(hWnd, &paint);
@@ -171,6 +176,7 @@ void ReleaseHdc()
 void Draw()
 {
   SetHdc();
+  SetBkColor(drawhdc, TranslateColor(Colors::black));
   wizptr->DrawFrame();
   ReleaseHdc();
 }
@@ -187,12 +193,6 @@ std::vector<POINT> ConvertPoints(const Coordinate* const begin, const Coordinate
     ++runptr;
   }
   return result;
-}
-
-
-inline COLORREF TranslateColor(Color color)
-{
-  return RGB(color.red, color.green, color.blue);
 }
 
 //
