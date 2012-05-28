@@ -105,23 +105,6 @@ void Wiz::Init(const Options& options)
   }
 
   scores = ScoreList(ships.size(), 0);
-/*
-  Ipc ipc("test");
-  DiskShip* shipptr = new DiskShip(PlaceMe(3), teamColors[3][0], teamColors[3][1], "REMOTE AI        X  I  X        IA ETOMER", *this, 3);
-  DiskShipAi* aiptr = new DiskShipAiRemote(shipptr, ipc);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-
-  shipptr = new DiskShip(PlaceMe(1), teamColors[1][0], teamColors[1][1], "RedRandom", *this, 1);
-  aiptr = new DiskShipAiRandom(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-
-  shipptr = new DiskShip(PlaceMe(2), teamColors[2][0], teamColors[2][1], "BlueRandom", *this, 2);
-  aiptr = new DiskShipAiRandom(shipptr);
-  shipptr->SetAi(aiptr);
-  ships.push_back(shipptr);
-*/
 }
 
 
@@ -137,7 +120,6 @@ void Wiz::DrawFrame()
   Coordinate points[] = {Coordinate(100, 100), Coordinate(300, 100), Coordinate(300, 300), Coordinate(100, 300)};
   DrawShape(&points[0], &points[4], Color(0, 255, 0), true);
 */  ++i;
-  DrawWrapper::DrawTextCentered("asd", Coordinate(100, 12), Colors::red);
 
   MoveAll();
   Clean();
