@@ -1,7 +1,3 @@
-#tryout makefile by hand
-
-
-CC = gcc -pedantic -Wall -Wstrict-prototypes -Wnested-externs -Wmissing-prototypes -Wno-overlength-strings -Wdeclaration-after-statement -std=c89 -U__STRICT_ANSI__
 CPP = g++ -pedantic -Wall -U__STRICT_ANSI__
 COMMON_OBJS = wiz.o implementation.o utility.o flyerz.o
 
