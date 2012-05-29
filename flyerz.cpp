@@ -163,18 +163,9 @@ void DiskShipAiRandom::Do()
   Wiz::ShipTravel enemies = GetEnemies();
   if (!enemies.empty())
   {
-    const Hitable* enemy = 0;
-    if (!m_target || (!(GetTicker() % changeTargetInterval)))
-    {
-      enemy = enemies[DrawWrapper::Random(enemies.size())];
-    }
-    //found enemy. so shoot
-    if (enemy)
-    {
-      Shoot(enemy->GetCenter());
-    }
+    const Hitable* enemy = enemies[DrawWrapper::Random(enemies.size())];
+    Shoot(enemy->GetCenter());
   }
-
 }
 
 //
