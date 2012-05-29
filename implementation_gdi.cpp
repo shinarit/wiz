@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// implementation_gdi.cpp
+//
+// the drawing implementation using gdi
+//
+
 std::ofstream wizlog("wizlog");
 
 #define _WIN32_WINNT 0x0500

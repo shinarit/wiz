@@ -7,7 +7,13 @@
 //
 // the main class that represents and moves the draw logic
 //
-
+// remake of the great blaster screensaver, with more features i missed when watching it
+// list of planned features:
+//                            teams (so that red and green actually means something)
+//                            score
+//                            better(?) AI
+//
+//
 #ifndef WIZ_HPP
 #define WIZ_HPP
 

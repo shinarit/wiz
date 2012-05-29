@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// randomai.cpp
+//
+// sample ai which copies the builtin random ai
+//
+
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -5,6 +15,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstdlib>
+#include <unistd.h>
 
 struct Coordinate
 {
@@ -96,7 +107,7 @@ int main(int argc, char *argv[])
     }
   }
 */
-  std::srand(std::time(0));
+  std::srand(std::time(0) + getpid());
 
   const int changeDirectionInterval = 10;
   const int changeTargetInterval = 3;

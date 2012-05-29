@@ -1,3 +1,13 @@
+//
+// author: Kovacs Marton
+// email: tetra666@gmail.com
+// license: whatever. note my name
+//
+// implementation_xlib.cpp
+//
+// the drawing implementation using xlib
+//
+
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <map>
@@ -216,7 +226,7 @@ void Init(int argc, char* argv[])
 unsigned long Draw()
 {
 //  XSetForeground(state.dpy, state.gc, BlackPixelOfScreen(DefaultScreenOfDisplay(state.dpy)));
-  XSetForeground(state.dpy, state.gc, TranslateColor(Colors::gray));
+  XSetForeground(state.dpy, state.gc, TranslateColor(Colors::black));
   XFillRectangle(state.dpy, state.double_buffer, state.gc, 0, 0, state.width, state.height);
 
   state.wiz->DrawFrame();
