@@ -380,7 +380,7 @@ void DrawWrapper::DrawText(const std::string& text, Coordinate botleft, Color co
 
 struct IpcImplementation
 {
-  IpcImplementation(const std::string& name): outName(name + "_info"), inName(name + "_command")
+  IpcImplementation(const std::string& name): outName(name + "_info"), inName(name + "_command"), logName(name + "_log")
   {
     std::remove(outName.c_str());
     std::remove(inName.c_str());
@@ -394,7 +394,7 @@ struct IpcImplementation
     }
 
 //    std::cerr << "running " << name + ' ' + inName + ' ' + outName + " &\n";
-    std::system((name + ' ' + inName + ' ' + outName + " >/dev/null 2>/dev/null &").c_str());
+    std::system((name + ' ' + inName + ' ' + outName + " >" + logName + " 2>/dev/null &").c_str());
 
     m_out.reset(new std::ofstream(outName.c_str()));
     m_in.reset(new std::ifstream(inName.c_str()));
@@ -411,6 +411,7 @@ struct IpcImplementation
 
   const std::string outName;
   const std::string inName;
+  const std::string logName;
 
   boost::shared_ptr<std::ostream> m_out;
   boost::shared_ptr<std::istream> m_in;
