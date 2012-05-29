@@ -17,56 +17,7 @@
 #include <cstdlib>
 #include <unistd.h>
 
-struct Coordinate
-{
-  typedef double CoordType;
-  explicit Coordinate(CoordType x = CoordType(), CoordType y = CoordType()): x(x), y(y)
-  {}
-  CoordType x;
-  CoordType y;
-
-  Coordinate& operator+=(const Coordinate& rhs);
-  Coordinate& operator*=(const Coordinate::CoordType& rhs);
-  Coordinate& operator/=(const Coordinate::CoordType& rhs);
-};
-
-inline Coordinate::CoordType Sqr(Coordinate::CoordType x)
-{
-  return x*x;
-}
-
-Coordinate::CoordType Length(const Coordinate& vektor)
-{
-  return std::sqrt(Sqr(vektor.x) + Sqr(vektor.y));
-}
-
-Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType& rhs)
-{
-  return Coordinate(lhs.x * rhs, lhs.y * rhs);
-}
-
-Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs)
-{
-  return Coordinate(lhs.x / rhs, lhs.y / rhs);
-}
-
-Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs)
-{
-  return Coordinate(lhs.x + rhs.x, lhs.y + rhs.y);
-}
-
-Coordinate& Coordinate::operator+=(const Coordinate& rhs)
-{
-  x += rhs.x;
-  y += rhs.y;
-  return *this;
-}
-
-Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length)
-{
-  return vektor * length / Length(vektor);
-}
-
+#include "skeleton.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -84,61 +35,43 @@ int main(int argc, char *argv[])
     std::cerr << "Error with opening file\n";
     return 2;
   }
-/*
-  if (!(GetTicker() % changeDirectionInterval))
-  {
-    m_randum = Normalize(Coordinate(DrawWrapper::Random(1000) - 500, DrawWrapper::Random(1000) - 500), DiskShip::maxSpeed);
-  }
-  GetSpeed() += m_randum;
 
-  //shooting if feasible
-  Wiz::ShipTravel enemies = GetEnemies();
-  if (!enemies.empty())
-  {
-    const Hitable* enemy = 0;
-    if (!m_target || (!(GetTicker() % changeTargetInterval)))
-    {
-      enemy = enemies[DrawWrapper::Random(enemies.size())];
-    }
-    //found enemy. so shoot
-    if (enemy)
-    {
-      Shoot(enemy->GetCenter());
-    }
-  }
-*/
+  Skeleton ipc(in, out);
+
   std::srand(std::time(0) + getpid());
 
   const int changeDirectionInterval = 10;
   const int changeTargetInterval = 3;
   const int maxSpeed = 5;
-  int ticker = 0;
 
   Coordinate randum;
-
+  int ticker = 0;
   std::string str;
+
   while (true)
   {
-    std::getline(in, str);  //begin
-    //////////////////
-    if (!(ticker++ % changeDirectionInterval))
+    ipc.Begin();
+
+    if (!(ticker % changeDirectionInterval))
     {
       randum = Normalize(Coordinate(std::rand()%1000 - 500, std::rand()%1000 - 500), maxSpeed);
     }
-    Coordinate speed;
+
     out << "get speed\n";
-    out.flush();
-    std::getline(in, str);  //speed x y
-    std::istringstream istr(str);
-    istr >> str >> speed.x >> speed.y;
-    speed += randum;
-    out << "speed " << speed.x << ' ' << speed.y << '\n';
-    out.flush();
-    //////////////////
+    Coordinate speed = ipc.GetSpeed();
+    ipc.SetSpeed(speed + randum);
+    //ipc.SetSpeed(Coordinate(10, 10));
 
-    std::getline(in, str);  //ack
-    out << "end\n";
-    out.flush();
+    Skeleton::ShipList enemies = ipc.GetEnemies();
+    if (!enemies.empty())
+    {
+      int index = std::rand() % enemies.size();
+      std::pair<int, Coordinate> enemy = enemies[index];
+      ipc.Shoot(enemy.second);
+    }
+
+    ipc.End();
+
+    ++ticker;
   }
-
 }
