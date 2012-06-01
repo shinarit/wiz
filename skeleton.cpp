@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-Skeleton::Skeleton(std::istream& in, std::ostream& out): m_in(in), m_out(out)
+Skeleton::Skeleton(std::istream& in, std::ostream& out): m_in(in), m_out(out), first(true)
 {
   m_out << std::unitbuf;
 }
@@ -26,6 +26,24 @@ void Skeleton::Begin()
   if (!GetAck("begin"))
   {
     ;
+  }
+
+  if (first)
+  {
+    m_out << "get context\n";
+
+    std::string str;
+    std::getline(m_in, str);
+    std::istringstream istr(str);
+
+    istr >> str;
+    if ("context" != str)
+    {      ;
+    }
+
+    istr >> sizeX >> sizeY >> shipSize >> shipSpeed >> bulletLimit >> cooldown >> laserLength >> laserSpeed >> deadTimer;
+
+    first = false;
   }
 }
 
@@ -81,6 +99,7 @@ Skeleton::ShipList Skeleton::GetEnemies()
   {
     ;
   }
+
   int team;
   Coordinate pos;
   while (istr)

@@ -62,6 +62,15 @@ class Skeleton
 
     void End();
 
+    int sizeX;
+    int sizeY;
+    int shipSize;
+    int shipSpeed;
+    int bulletLimit;
+    int cooldown;
+    int laserLength;
+    int laserSpeed;
+    int deadTimer;
 
   private:
     bool GetAck(const std::string& txt = "ack");
@@ -69,6 +78,8 @@ class Skeleton
 
     std::istream& m_in;
     std::ostream& m_out;
+
+    bool first;
 };
 
 #endif // SKELETON_H
