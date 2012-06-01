@@ -42,41 +42,23 @@ Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length);
 Coordinate Rotate90Cw(const Coordinate& vektor);
 Coordinate Rotate90Ccw(const Coordinate& vektor);
 
-/*
-    int GetTeam() const
-    {
-      return m_ship->GetTeam();
-    }
-
-    Wiz::ShipTravel GetEnemies() const
-    {
-      Wiz::ShipTravel enemies = m_ship->m_frame.GetEnemies(m_ship->GetTeam());
-      RemoveMe(enemies, m_ship);
-      return enemies;
-    }
-    Wiz::ShipTravel GetTeammates() const
-    {
-      Wiz::ShipTravel mates = m_ship->m_frame.GetTeam(m_ship->GetTeam());
-      RemoveMe(mates, m_ship);
-      return mates;
-    }
-*/
-
 class Skeleton
 {
   public:
     typedef std::vector<std::pair<int, Coordinate> > ShipList;
+    typedef std::vector<std::pair<int, std::pair<Coordinate, Coordinate> > > LaserList;
 
     Skeleton(std::istream &in, std::ostream &out);
 
     void Begin();
 
     Coordinate GetSpeed();
-    void SetSpeed(const Coordinate& speed);
+    bool SetSpeed(const Coordinate& speed);
     Coordinate GetCenter();
-    void Shoot(const Coordinate& target);
+    bool Shoot(const Coordinate& target);
     ShipList GetEnemies();
     ShipList GetTeammates();
+    LaserList GetBullets();
 
     void End();
 

@@ -40,15 +40,12 @@ Coordinate Skeleton::GetSpeed()
   return res;
 }
 
-void Skeleton::SetSpeed(const Coordinate& speed)
+bool Skeleton::SetSpeed(const Coordinate& speed)
 {
   m_out << "speed " << speed.x << ' ' << speed.y << '\n';
   m_out.flush();
 
-  if (!GetAck())
-  {
-    ;
-  }
+  return GetAck();
 }
 
 Coordinate Skeleton::GetCenter()
@@ -64,18 +61,16 @@ Coordinate Skeleton::GetCenter()
   return res;
 }
 
-void Skeleton::Shoot(const Coordinate& target)
+bool Skeleton::Shoot(const Coordinate& target)
 {
-  m_out << target.x << ' ' << target.y << '\n';
-  if (!GetAck())
-  {
-    ;
-  }
+  m_out << "shoot " << target.x << ' ' << target.y << '\n';
+  return GetAck();
 }
 
 Skeleton::ShipList Skeleton::GetEnemies()
 {
   ShipList res;
+
   m_out << "get enemies\n";
   std::string str;
   std::getline(m_in, str);
@@ -86,12 +81,75 @@ Skeleton::ShipList Skeleton::GetEnemies()
   {
     ;
   }
+  int team;
+  Coordinate pos;
+  while (istr)
+  {
+    istr >> team >> pos.x >> pos.y;
+    if (istr)
+    {
+      res.push_back(std::make_pair(team, pos));
+    }
+  }
+
   return res;
 }
 
 Skeleton::ShipList Skeleton::GetTeammates()
 {
   ShipList res;
+
+  m_out << "get friends\n";
+  std::string str;
+  std::getline(m_in, str);
+  std::istringstream istr(str);
+
+  istr >> str;
+  if ("friends" != str)
+  {
+    ;
+  }
+
+  Coordinate pos;
+  while (istr)
+  {
+    istr >> pos.x >> pos.y;
+    if (istr)
+    {
+      res.push_back(std::make_pair(-1, pos));
+    }
+  }
+
+  return res;
+}
+
+Skeleton::LaserList Skeleton::GetBullets()
+{
+  LaserList res;
+
+  m_out << "get bullets\n";
+  std::string str;
+  std::getline(m_in, str);
+  std::istringstream istr(str);
+
+  istr >> str;
+  if ("bullets" != str)
+  {
+    ;
+  }
+
+  int team;
+  Coordinate front;
+  Coordinate back;
+  while (istr)
+  {
+    istr >> team >> front.x >> front.y >> back.x >> back.y;
+    if (istr)
+    {
+      res.push_back(std::make_pair(team, std::make_pair(front, back)));
+    }
+  }
+
   return res;
 }
 

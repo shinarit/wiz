@@ -1,4 +1,5 @@
-CPP = g++ -pedantic -Wall -U__STRICT_ANSI__
+CC = g++
+CPP = $(CC) -pedantic -Wall -U__STRICT_ANSI__
 COMMON_OBJS = wiz.o implementation.o utility.o flyerz.o
 
 ifdef SystemRoot

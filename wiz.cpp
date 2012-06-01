@@ -150,9 +150,10 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
   return hit;
 }
 
-void Wiz::AddProjectile(Owned *projectile)
+void Wiz::AddProjectile(Owned* projectile)
 {
   projectiles.push_back(projectile);
+  projectileCache.push_back(std::make_pair(projectile->GetTeam(), projectile->GetCollision()));
 }
 
 void Wiz::RemoveProjectile(Owned *projectile)
@@ -205,6 +206,11 @@ Wiz::ShipTravel Wiz::GetTeam(int team) const
   return res;
 }
 
+Wiz::LaserList Wiz::GetBullets() const
+{
+  return projectileCache;
+}
+
 
 void Wiz::MoveAll()
 {
@@ -215,10 +221,13 @@ void Wiz::MoveAll()
     (*it)->Move();
   }
 
+  LaserList::iterator lit = projectileCache.begin();
   for(ProjectileList::iterator it = projectiles.begin(); projectiles.end() != it; ++it)
   {
     (*it)->Draw();
     (*it)->Move();
+    lit->second = (*it)->GetCollision();
+    ++lit;
   }
 }
 
@@ -253,13 +262,15 @@ void Wiz::DrawScore()
 }
 
 
-void Wiz::KillProjectile(Owned *projectile)
+void Wiz::KillProjectile(Owned* projectile)
 {
   ProjectileList::iterator iter = std::find(projectiles.begin(), projectiles.end(), projectile);
   if (projectiles.end() != iter)
   {
+    int pos = iter - projectiles.begin();
     delete *iter;
     projectiles.erase(iter);
+    projectileCache.erase(projectileCache.begin() + pos);
   }
 }
 

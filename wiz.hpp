@@ -14,6 +14,7 @@
 //                            better(?) AI
 //
 //
+
 #ifndef WIZ_HPP
 #define WIZ_HPP
 
@@ -38,8 +39,11 @@ class Wiz
 
     typedef std::vector<const Hitable*> ShipTravel;
     ShipTravel GetEnemies(int team) const;
-
     ShipTravel GetTeam(int team) const;
+
+    //(team, (front, back))
+    typedef std::vector<std::pair<int, std::pair<Coordinate, Coordinate> > > LaserList;
+    LaserList GetBullets() const;
 
   private:
     static const int CheckDistance = 4;
@@ -53,6 +57,8 @@ class Wiz
     mutable ScoreList scores;
 
     ProjectileList deads;
+
+    mutable LaserList projectileCache;
 
     void MoveAll();
     void Clean();

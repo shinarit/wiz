@@ -65,8 +65,8 @@ int main(int argc, char *argv[])
     Skeleton::ShipList enemies = ipc.GetEnemies();
     if (!enemies.empty())
     {
-      int index = std::rand() % enemies.size();
-      std::pair<int, Coordinate> enemy = enemies[index];
+      std::pair<int, Coordinate> enemy = enemies[std::rand() % enemies.size()];
+      Coordinate myc = ipc.GetCenter();
       ipc.Shoot(enemy.second);
     }
 

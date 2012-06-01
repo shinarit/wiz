@@ -239,19 +239,33 @@ void DiskShipAiRemote::Do()
     istr >> str;
     if (RemoteProtocol::COMMAND_SPEED == str)
     {
-      double x, y;
-      istr >> x >> y;
-      GetSpeed() = Coordinate(x, y);
+      if (Alive())
+      {
+        double x, y;
+        istr >> x >> y;
+        GetSpeed() = Coordinate(x, y);
 
-      response = RemoteProtocol::ACK;
+        response = RemoteProtocol::ACK;
+      }
+      else
+      {
+        response = RemoteProtocol::DEAD;
+      }
     }
     else if (RemoteProtocol::COMMAND_SHOOT == str)
     {
-      double x, y;
-      istr >> x >> y;
-      Shoot(Coordinate(x, y));
+      if (Alive())
+      {
+        double x, y;
+        istr >> x >> y;
+        Shoot(Coordinate(x, y));
 
-      response = RemoteProtocol::ACK;
+        response = RemoteProtocol::ACK;
+      }
+      else
+      {
+        response = RemoteProtocol::DEAD;
+      }
     }
     else if (RemoteProtocol::QUERY == str)
     {
@@ -290,6 +304,21 @@ void DiskShipAiRemote::Do()
           Coordinate center = (*it)->GetCenter();
           ostr << center.x << ' ' << center.y << ' ';
         }
+      }
+      else if (RemoteProtocol::QUERY_BULLETS == str)
+      {
+        ostr << RemoteProtocol::RESPONSE_BULLETS << ' ';
+        Wiz::LaserList bullets = GetBullets();
+        for (Wiz::LaserList::iterator it = bullets.begin(); bullets.end() != it; ++it)
+        {
+          ostr << it->first << ' ' << it->second.first.x << ' ' << it->second.first.y << ' ' << it->second.second.x << ' ' << it->second.second.y << ' ';
+        }
+      }
+      else if (RemoteProtocol::QUERY_CONTEXT == str)
+      {
+        Size size = DrawWrapper::GetSize();
+        ostr << "context " << size.x << ' ' << size.y << ' ' << DiskShip::shipSize << ' ' << DiskShip::maxSpeed << ' ' << DiskShip::bulletLimit << ' ' <<
+                DiskShip::cooldown << ' ' << DiskShip::laserLength << ' ' << PulseLaser::speed << ' ' << DiskShip::deadInterval;
       }
       response = ostr.str();
     }
@@ -332,6 +361,11 @@ void PulseLaser::Move()
   {
     m_frame.RemoveProjectile(this);
   }
+}
+
+CollisionDescriptor PulseLaser::GetCollision() const
+{
+  return std::make_pair(m_front, m_back);
 }
 
 const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me)

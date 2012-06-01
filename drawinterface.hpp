@@ -114,14 +114,19 @@ namespace RemoteProtocol
   const std::string QUERY_TEAM          = "team";
   const std::string QUERY_ENEMIES       = "enemies";
   const std::string QUERY_FRIENDS       = "friends";
+  const std::string QUERY_BULLETS       = "bullets";
+  const std::string QUERY_CONTEXT       = "context";
 
   const std::string RESPONSE_SPEED      = QUERY_SPEED;
   const std::string RESPONSE_POSITION   = QUERY_POSITION;
   const std::string RESPONSE_TEAM       = QUERY_TEAM;
   const std::string RESPONSE_ENEMIES    = QUERY_ENEMIES;
   const std::string RESPONSE_FRIENDS    = QUERY_FRIENDS;
+  const std::string RESPONSE_BULLETS    = QUERY_BULLETS;
+  const std::string RESPONSE_CONTEXT    = QUERY_CONTEXT;
 
   const std::string ACK                 = "ack";
+  const std::string DEAD                = "dead";
   const std::string END                 = "end";
 }
 

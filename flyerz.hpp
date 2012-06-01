@@ -63,6 +63,8 @@ class Hitable: public Flyer
     std::string m_name;
 };
 
+typedef std::pair<Coordinate, Coordinate> CollisionDescriptor;
+
 class Owned: public Flyer
 {
   public:
@@ -76,6 +78,7 @@ class Owned: public Flyer
     {
       m_owner = owner;
     }
+    virtual CollisionDescriptor GetCollision() const = 0;
 
   private:
     int m_owner;
@@ -176,6 +179,18 @@ class DiskShipAi
       RemoveMe(mates, m_ship);
       return mates;
     }
+    Wiz::LaserList GetBullets() const
+    {
+      return m_ship->m_frame.GetBullets();
+    }
+    bool Alive() const
+    {
+      return m_ship->Alive();
+    }
+    void Kill()
+    {
+      m_ship->Hit();
+    }
 
     DiskShip* m_ship;
 };
@@ -245,6 +260,9 @@ class PulseLaser: public Owned
     //from Flyer
     virtual void Draw();
     virtual void Move();
+
+    //from Owned
+    virtual CollisionDescriptor GetCollision() const;
 
   private:
     Coordinate  m_front;

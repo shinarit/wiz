@@ -12,20 +12,27 @@ commands:
   get team
   get enemies
   get friends
+  get bullets
+  get context
 
-  speed x y   #sets the speed vector, will be limited with max speed if larger, x and y are floating point numbers
-  shoot x y   #x and y are floating point numbers
+  speed x y                       #sets the speed vector, will be limited with max speed if larger, x and y are floating point numbers
+  shoot x y                       #x and y are floating point numbers
 
   end
 
 controller -> AI
-  speed x y   #x and y are floating point numbers
-  coords x y  #x and y are floating point numbers
-  team n      #n is int, 0 means everyone is enemy
-  enemies [team x y]*
-  friends [x y]*
+  speed x y                               #x and y are floating point numbers
+  coords x y                              #x and y are floating point numbers
+  team n                                  #n is int, 0 means everyone is enemy
+  enemies [team x y]*                     #team is int, x and y are floating point numbers
+  friends [x y]*                          #x and y are floating point numbers
+  bullets [team fx fy bx by]*             #team is int, fx, fy, bx and by are floating point numbers, giving the Front and Backof the bullet
+  context sizex sizey shipsize shipspeed\ #sizex and sizey are int, giving the size of the playground, shipsize gives the radius of the ships, shipspeed gives the maximum velocity
+          bullets cooldown laserlen \     #bullets give the maximum number of bullets shot before cooldown, cooldown is the recharge period required to bullets, laserlen is the length of the bullet
+          laserspeed deadtime             #laserspeed is the speed the lasers travel each round, deadtime is the rounds spent dead when hit
 
   ack
+  dead
 
   begin
 
