@@ -43,7 +43,10 @@ namespace Colors
   const Color teal(0, 255, 255);
   const Color yellow(255, 255, 0);
   const Color pink(255, 0, 255);
+  const Color purple(0x80, 0, 0x80);
   const Color orange(255, 0xA5, 0);
+  const Color gold(0xFD, 0xD0, 0x17);
+  const Color lime(0x41, 0xA3, 0x17);
   const Color gray(0xC0, 0xC0, 0xC0);
   const Color grey(gray);
 }
