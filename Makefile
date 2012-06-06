@@ -22,8 +22,6 @@ else
   endif
 endif
 
-CFLAGS		= -O2
-
 HACK_OBJS	= screenhack.o fps.o resources.o visual.o usleep.o yarandom.o xmu.o
 CPP_HACK  = $(CPP) $(LDFLAGS)
 
@@ -34,7 +32,7 @@ default: all
 all: wiz
 
 wiz: $(OBJS)
-	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS)
+	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS) $(CFLAGS)
 
 wiz.o: wiz.cpp wiz.hpp flyerz.hpp drawinterface.hpp
 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
