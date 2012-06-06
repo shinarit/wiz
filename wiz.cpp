@@ -23,7 +23,7 @@
 //
 // (ship : ammo) color theme for teams, 0 for default
 //
-const Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}};
+const Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}, {Colors::pink, Colors::purple}};
 const std::string randomNames[] =
 {
   "robot0x00",        "Stanley",  "GAURRR",   "muszmusz",   "d(O_O)b",          "Bob",          "Greyson",    "Robert Paulson",   "Jeronimo",             "Suzuki",
@@ -240,6 +240,12 @@ void Wiz::Clean()
   deads.clear();
 }
 
+void DrawRectangle(Coordinate topleft, int width, int height, Color color)
+{
+  Coordinate rect[] = {topleft, topleft + Coordinate(width, 0), topleft + Coordinate(width, height), topleft + Coordinate(0, height)};
+  DrawWrapper::DrawShape(&rect[0], &rect[4], color);
+}
+
 void Wiz::DrawScore()
 {
   Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1) + FontHeight / 2);
@@ -250,6 +256,9 @@ void Wiz::DrawScore()
       startPoint.y = FontHeight;
     }
     std::ostringstream ostr;
+
+    int team = ships.front()->GetTeam();
+    Coordinate topleft = startPoint - Coordinate(1, FontHeight);
     for (unsigned i = 0; i < ships.size(); ++i)
     {
       ostr << scores[i] << ": " << ships[i]->GetName();
@@ -257,7 +266,16 @@ void Wiz::DrawScore()
       startPoint += Coordinate(0, FontHeight + 1);
       ostr.str("");
       ostr.clear();
+
+      if (ships[i]->GetTeam() != team)
+      {
+        DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight * 2, teamColors[team][0]);
+
+        team = ships[i]->GetTeam();
+        topleft = startPoint - Coordinate(1, FontHeight * 2);
+      }
     }
+    DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight, teamColors[team][0]);
   }
 }
 
