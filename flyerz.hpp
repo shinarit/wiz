@@ -133,6 +133,8 @@ class DiskShip: public Hitable
 
     int         m_textAlign;
 
+    bool        m_shot;
+
     DiskShipAi* m_ai;
 };
 

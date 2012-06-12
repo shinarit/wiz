@@ -66,6 +66,7 @@ void DiskShip::Draw()
 
 void DiskShip::Move()
 {
+  m_shot = false;
   ++m_ticker;
   if (0 < m_cooldown)
   {
@@ -106,7 +107,7 @@ void DiskShip::Move()
 
 void DiskShip::Shoot(const Coordinate& target)
 {
-  if (0 == m_cooldown)
+  if (!m_shot && 0 == m_cooldown)
   {
     if (++m_bulletNum == DiskShip::bulletLimit)
     {
@@ -119,6 +120,7 @@ void DiskShip::Shoot(const Coordinate& target)
     Coordinate end = m_center + step * (shipSize + 1);
     Coordinate begin = end + step * laserLength;
     m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam(), m_id));
+    m_shot = true;
   }
 }
 
