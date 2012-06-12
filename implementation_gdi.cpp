@@ -81,8 +81,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   RegisterClassEx(&WndClsEx);
 
-  size.x = GetSystemMetrics(SM_CXFULLSCREEN);
-  size.y = GetSystemMetrics(SM_CYFULLSCREEN);
+  if (options.demo)
+  {
+    size = options.size;
+  }
+  else
+  {
+    size.x = GetSystemMetrics(SM_CXFULLSCREEN);
+    size.y = GetSystemMetrics(SM_CYFULLSCREEN);
+  }
 
   hWnd = CreateWindowEx(WS_EX_STATICEDGE,
                         ClsName,
