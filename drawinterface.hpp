@@ -79,12 +79,21 @@ Coordinate Rotate90Ccw(const Coordinate& vektor);
 
 typedef Coordinate Size;
 
+//
+// time in seconds
+//
+
 struct Options
 {
+  Options(): size(800, 600), time(-1), score(-1)
+  {}
   bool demo;
   Size size;
   std::vector<int> teams;
   std::vector<std::string> names;
+  std::string logFile;
+  int time;
+  int score;
 };
 
 bool ParseCommandline(int argc, char* argv[], Options& options);

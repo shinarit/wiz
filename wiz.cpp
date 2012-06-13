@@ -43,6 +43,11 @@ Wiz::~Wiz()
 
 void Wiz::Init(const Options& options)
 {
+  logFile = options.logFile;
+  timeLimit = ((-1 != options.time) ? (options.time) : (INT_MAX));
+  scoreLimit = ((-1 != options.score) ? (options.score) : (INT_MAX));
+  startTime = std::time(0);
+
   Margin = std::min(DrawWrapper::GetSize().x, DrawWrapper::GetSize().y) / 10;
 
   std::vector<std::string>::const_iterator nit = options.names.begin();
@@ -117,6 +122,11 @@ void Wiz::DrawFrame()
   MoveAll();
   Clean();
   DrawScore();
+  if (timeLimit < std::time(0) - startTime)
+  {
+    std::cout << "Time is up\n";
+    ShutDown();
+  }
 }
 
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const
@@ -140,7 +150,11 @@ bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int tea
       if (Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
       {
         (*it)->Hit();
-        ++scores[owner];
+        if (scoreLimit <= ++scores[owner])
+        {
+          std::cout << "Score limit hit\n";
+          ShutDown();
+        }
         hit = true;
         break;
       }
@@ -312,6 +326,16 @@ Wiz::ShipList Wiz::GetPotentials(int team, Coordinate center, int dist) const
   ShipList res;
   std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), PotentialityChecker(team, center, dist));
   return res;
+}
+
+void Wiz::ShutDown() const
+{
+  std::cout << "Final score:\n";
+  for (int i(0); i < scores.size(); ++i)
+  {
+    std::cout << ships[i]->GetName() << ": " << scores[i] << '\n';
+  }
+  std::exit(0);
 }
 
 int Wiz::Margin;

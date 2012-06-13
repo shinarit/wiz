@@ -19,6 +19,7 @@
 #define WIZ_HPP
 
 #include <vector>
+#include <ctime>
 
 class Options;
 class Owned;
@@ -30,7 +31,7 @@ class Wiz
   public:
     Wiz();
     ~Wiz();
-    void Init(const Options &options);
+    void Init(const Options& options);
     void DrawFrame();
     bool CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const;
     void AddProjectile(Owned*);
@@ -60,11 +61,17 @@ class Wiz
 
     mutable LaserList projectileCache;
 
+    int timeLimit;
+    int scoreLimit;
+    std::string logFile;
+    time_t startTime;
+
     void MoveAll();
     void Clean();
     void DrawScore();
     void KillProjectile(Owned*);
     ShipList GetPotentials(int team, Coordinate center, int dist) const;
+    void ShutDown() const;
 };
 
 #endif // WIZ_HPP

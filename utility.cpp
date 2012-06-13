@@ -95,9 +95,9 @@ Coordinate Rotate90Ccw(const Coordinate& vektor)
   return Coordinate(-vektor.y, vektor.x);
 }
 
-const std::string usage = "usage: argv[0] --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [remote ai names, - for builtin]*";
+const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [remote ai names, - for builtin]*";
 
-#define RETURN_WITH_USAGE std::cerr << usage << '\n'; return false;
+#define RETURN_WITH_USAGE std::cerr << "usage: " << argv[0] << usage << '\n'; return false;
 
 bool ParseCommandline(int argc, char* argv[], Options& options)
 {
@@ -112,7 +112,10 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
   option longOptions[] = {
     {"mode", required_argument, 0, 'm'},
     {"size", required_argument, 0, 's'},
-    {"teamnum", required_argument, 0, 'n'}
+    {"teamnum", required_argument, 0, 'n'},
+    {"log", required_argument, 0, 'l'},
+    {"time", required_argument, 0, 't'},
+    {"score", required_argument, 0, 'p'}
   };
   int optionIndex;
   int c;
@@ -178,6 +181,24 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
         }
 
         teamflag = true;
+
+        break;
+      }
+      case 'l':
+      {
+        options.logFile = arg;
+
+        break;
+      }
+      case 't':
+      {
+        options.time = std::atoi(optarg);
+
+        break;
+      }
+      case 'p':
+      {
+        options.score = std::atoi(optarg);
 
         break;
       }
