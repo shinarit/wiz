@@ -21,8 +21,6 @@
 #include <sys/stat.h>       //mkfifo
 
 
-std::ofstream wizlog("/home/tetra/wizlog");
-
 const char FontName[] = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";// "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
 
 struct State
