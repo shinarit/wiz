@@ -57,16 +57,13 @@ int main(int argc, char *argv[])
       randum = Normalize(Coordinate(std::rand()%1000 - 500, std::rand()%1000 - 500), maxSpeed);
     }
 
-    out << "get speed\n";
     Coordinate speed = ipc.GetSpeed();
     ipc.SetSpeed(speed + randum);
-    //ipc.SetSpeed(Coordinate(10, 10));
 
     Skeleton::ShipList enemies = ipc.GetEnemies();
     if (!enemies.empty())
     {
       std::pair<int, Coordinate> enemy = enemies[std::rand() % enemies.size()];
-      Coordinate myc = ipc.GetCenter();
       ipc.Shoot(enemy.second);
     }
 

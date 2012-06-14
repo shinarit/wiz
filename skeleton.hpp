@@ -52,6 +52,7 @@ class Skeleton
 
     void Begin();
 
+    int GetTeam();
     Coordinate GetSpeed();
     bool SetSpeed(const Coordinate& speed);
     Coordinate GetCenter();
@@ -73,6 +74,7 @@ class Skeleton
     int deadTimer;
 
   private:
+    std::string GetLine();
     bool GetAck(const std::string& txt = "ack");
     bool GetCoordinate(Coordinate& coord, const std::string& txt);
 

@@ -32,13 +32,13 @@ void Skeleton::Begin()
   {
     m_out << "get context\n";
 
-    std::string str;
-    std::getline(m_in, str);
+    std::string str = GetLine();
     std::istringstream istr(str);
 
     istr >> str;
     if ("context" != str)
-    {      ;
+    {
+      ;
     }
 
     istr >> sizeX >> sizeY >> shipSize >> shipSpeed >> bulletLimit >> cooldown >> laserLength >> laserSpeed >> deadTimer;
@@ -47,10 +47,28 @@ void Skeleton::Begin()
   }
 }
 
+int Skeleton::GetTeam()
+{
+  m_out << "get team\n";
+
+  std::string str = GetLine();
+  std::istringstream istr(str);
+
+  istr >> str;
+  if ("team" != str)
+  {
+    ;
+  }
+
+  int team;
+  istr >> team;
+
+  return team;
+}
+
 Coordinate Skeleton::GetSpeed()
 {
-  //m_out << "get speed\n";
-  m_out.flush();
+  m_out << "get speed\n";
 
   Coordinate res;
   GetCoordinate(res, "speed");
@@ -61,7 +79,6 @@ Coordinate Skeleton::GetSpeed()
 bool Skeleton::SetSpeed(const Coordinate& speed)
 {
   m_out << "speed " << speed.x << ' ' << speed.y << '\n';
-  m_out.flush();
 
   return GetAck();
 }
@@ -90,8 +107,7 @@ Skeleton::ShipList Skeleton::GetEnemies()
   ShipList res;
 
   m_out << "get enemies\n";
-  std::string str;
-  std::getline(m_in, str);
+  std::string str = GetLine();
   std::istringstream istr(str);
 
   istr >> str;
@@ -119,8 +135,7 @@ Skeleton::ShipList Skeleton::GetTeammates()
   ShipList res;
 
   m_out << "get friends\n";
-  std::string str;
-  std::getline(m_in, str);
+  std::string str = GetLine();
   std::istringstream istr(str);
 
   istr >> str;
@@ -147,8 +162,7 @@ Skeleton::LaserList Skeleton::GetBullets()
   LaserList res;
 
   m_out << "get bullets\n";
-  std::string str;
-  std::getline(m_in, str);
+  std::string str = GetLine();
   std::istringstream istr(str);
 
   istr >> str;
@@ -177,18 +191,21 @@ void Skeleton::End()
   m_out << "end\n";
 }
 
-
-bool Skeleton::GetAck(const std::string& txt)
+std::string Skeleton::GetLine()
 {
   std::string str;
   std::getline(m_in, str);
-  return txt == str;
+  return str;
+}
+
+bool Skeleton::GetAck(const std::string& txt)
+{
+  return txt == GetLine();
 }
 
 bool Skeleton::GetCoordinate(Coordinate& coord, const std::string& txt)
 {
-  std::string str;
-  std::getline(m_in, str);
+  std::string str = GetLine();
   std::istringstream istr(str);
   istr >> str >> coord.x >> coord.y;
 
