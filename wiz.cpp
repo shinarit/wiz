@@ -12,6 +12,7 @@
 #include "flyerz.hpp"
 #include "wiz.hpp"
 
+#include <climits>
 #include <algorithm>
 #include <iterator>
 #include <set>
