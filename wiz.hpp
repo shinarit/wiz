@@ -37,6 +37,8 @@ class Wiz
     void AddProjectile(Owned*);
     void RemoveProjectile(Owned*);
     Coordinate PlaceMe(int team) const;
+    Color GetShipColor(int team) const;
+    Color GetLaserColor(int team) const;
 
     typedef std::vector<const Hitable*> ShipTravel;
     ShipTravel GetEnemies(int team) const;

@@ -20,11 +20,6 @@
 
 #include <iostream>
 
-
-//
-// (ship : ammo) color theme for teams, 0 for default
-//
-const Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}, {Colors::pink, Colors::purple}};
 const std::string randomNames[] =
 {
   "robot0x00",        "Stanley",  "GAURRR",   "muszmusz",   "d(O_O)b",          "Bob",          "Greyson",    "Robert Paulson",   "Jeronimo",             "Suzuki",
@@ -85,7 +80,7 @@ void Wiz::Init(const Options& options)
         randomAi = true;
       }
 
-      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), teamColors[teamCounter][0], teamColors[teamCounter][1], name, id++,*this, teamCounter);
+      DiskShip* shipPtr = new DiskShip(PlaceMe(teamCounter), GetShipColor(teamCounter), GetLaserColor(teamCounter), name, id++, *this, teamCounter);
       DiskShipAi* aiPtr;
       if (randomAi)
       {
@@ -192,6 +187,42 @@ Coordinate Wiz::PlaceMe(int team) const
     return Coordinate(screenSize.x - Margin + DrawWrapper::Random(100) - 50, Margin + DrawWrapper::Random(screenSize.y - 2 * Margin));
   }
   return Coordinate(Margin + DrawWrapper::Random(screenSize.x - 2 * Margin), Margin + DrawWrapper::Random(screenSize.y - 2 * Margin));
+}
+
+//
+// (ship : ammo) color theme for teams, 0 for default
+//  0 gets random, also teams above the given limit gets random too
+//
+const Color teamColors[][2] = {{Colors::red, Colors::green}, {Colors::blue, Colors::red}, {Colors::white, Colors::white}, {Colors::purple, Colors::pink}};
+const int PredefNum = sizeof(teamColors)/sizeof(teamColors[0]);
+
+Color GetRandomColor()
+{
+  return Color(DrawWrapper::Random(255), DrawWrapper::Random(255), DrawWrapper::Random(255));
+}
+
+Color Wiz::GetShipColor(int team) const
+{
+  if (0 == team || PredefNum < team)
+  {
+    return GetRandomColor();
+  }
+  else
+  {
+    return teamColors[team - 1][0];
+  }
+}
+
+Color Wiz::GetLaserColor(int team) const
+{
+  if (0 == team || PredefNum < team)
+  {
+    return GetRandomColor();
+  }
+  else
+  {
+    return teamColors[team - 1][1];
+  }
 }
 
 struct EnemyPredicate
