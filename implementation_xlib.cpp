@@ -21,8 +21,6 @@
 #include <sys/stat.h>       //mkfifo
 
 
-const char FontName[] = "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1";// "-adobe-helvetica-medium-o-normal--14-100-100-100-p-78-iso8859-1";
-
 struct State
 {
   Display* dpy;
@@ -193,11 +191,12 @@ void Init(int argc, char* argv[])
   gcv.background = state.bg = TranslateColor(Colors::black);
   gcv.fill_style = FillSolid;
 
-  Font fid = XLoadFont(state.dpy, FontName);
+  Font fid = XLoadFont(state.dpy, options.fontName.c_str());
+
   state.font = XQueryFont(state.dpy, fid);
   if (!state.font)
   {
-    std::cerr << "Could not load font: " << FontName << '\n';
+    std::cerr << "Could not load font: " << options.fontName << '\n';
     std::exit(1);
   }
   gcv.font = fid;

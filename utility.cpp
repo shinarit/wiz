@@ -95,7 +95,7 @@ Coordinate Rotate90Ccw(const Coordinate& vektor)
   return Coordinate(-vektor.y, vektor.x);
 }
 
-const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [remote ai names, - for builtin]*";
+const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [--font <font name>] [remote ai names, - for builtin]*";
 
 #define RETURN_WITH_USAGE std::cerr << "usage: " << argv[0] << usage << '\n'; return false;
 
@@ -115,7 +115,8 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
     {"teamnum", required_argument, 0, 'n'},
     {"log", required_argument, 0, 'l'},
     {"time", required_argument, 0, 't'},
-    {"score", required_argument, 0, 'p'}
+    {"score", required_argument, 0, 'p'},
+    {"font", required_argument, 0, 'f'}
   };
   int optionIndex;
   int c;
@@ -199,6 +200,12 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       case 'p':
       {
         options.score = std::atoi(optarg);
+
+        break;
+      }
+      case 'f':
+      {
+        options.fontName = arg;
 
         break;
       }
