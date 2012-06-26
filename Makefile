@@ -29,7 +29,7 @@ HEADERS = $(wildcard *.hpp) implementation_gdi.cpp implementation_xlib.cpp
 
 default: all
 
-all: wiz
+all: wiz wizai
 
 wiz: $(OBJS)
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS) $(CFLAGS)
@@ -48,7 +48,12 @@ utility.o: utility.cpp drawinterface.hpp flyerz.hpp
 
 %o: %cpp
 
+LIB_WIZAI = libwizai.so
+OBJ_WIZAI = skeleton.o
+wizai: $(OBJ_WIZAI)
+	$(CPP) -shared -fPIC $(OBJ_WIZAI) -o $(LIB_WIZAI)
+
 clean:
-	$(RM) *.o $(EXE) core
+	$(RM) *.o $(EXE) core $(LIB_WIZAI)
 
 
