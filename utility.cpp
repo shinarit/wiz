@@ -175,7 +175,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
           playerCount += num;
         }
 
-        if (str.bad())
+        if (!str)
         {
           std::cerr << "invalid argument for --teamnum: " << arg << '\n';
           RETURN_WITH_USAGE;
