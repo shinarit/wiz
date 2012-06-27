@@ -27,7 +27,7 @@ CPP_HACK  = $(CPP) $(LDFLAGS)
 
 HEADERS = $(wildcard *.hpp) implementation_gdi.cpp implementation_xlib.cpp
 
-default: all
+default: wiz
 
 all: wiz wizai
 
