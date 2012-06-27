@@ -34,7 +34,7 @@ Wiz::Wiz()
 
 Wiz::~Wiz()
 {
-  delete ships[0];
+  //TODO
 }
 
 void Wiz::Init(const Options& options)
@@ -60,6 +60,7 @@ void Wiz::Init(const Options& options)
 
   for (std::vector<int>::const_iterator tit = options.teams.begin(); options.teams.end() != tit; ++tit)
   {
+    teamScores.push_back(ScoreSorter());
     for (int i = 0; i < *tit; ++i)
     {
       std::string name = *nit++;
@@ -94,11 +95,13 @@ void Wiz::Init(const Options& options)
       }
       shipPtr->SetAi(aiPtr);
       ships.push_back(shipPtr);
+      scores.push_back(0);
+      teamScores.back().insert(ScoreType(&scores.back(), ships.back()));
     }
     ++teamCounter;
   }
 
-  scores = ScoreList(ships.size(), 0);
+//  scores = ScoreList(ships.size(), 0);
 }
 
 
@@ -372,3 +375,17 @@ void Wiz::ShutDown() const
 
 int Wiz::Margin;
 
+int ScoreType::GetScore() const
+{
+  return *m_score;
+}
+
+std::string ScoreType::GetName() const
+{
+  return m_ship->GetName();
+}
+
+bool operator<(const ScoreType& lhs, const ScoreType& rhs)
+{
+  return lhs.GetScore() > rhs.GetScore();
+}

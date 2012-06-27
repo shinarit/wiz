@@ -19,12 +19,29 @@
 #define WIZ_HPP
 
 #include <vector>
+#include <set>
 #include <ctime>
 
 class Options;
 class Owned;
 class Hitable;
 class Coordinate;
+
+class ScoreType
+{
+  public:
+    ScoreType(int* score, Hitable* ship): m_score(score), m_ship(ship)
+    {}
+    int GetScore() const;
+    std::string GetName() const;
+
+  private:
+    int*      m_score;
+    Hitable*  m_ship;
+};
+
+//inverse ordering instead of using rbegin/rend
+bool operator<(const ScoreType& lhs, const ScoreType& rhs);
 
 class Wiz
 {
@@ -58,6 +75,9 @@ class Wiz
     ProjectileList projectiles;
     typedef std::vector<int> ScoreList;
     mutable ScoreList scores;
+    typedef std::set<ScoreType> ScoreSorter;
+    typedef std::vector<ScoreSorter> TeamScoreList;
+    TeamScoreList teamScores;
 
     ProjectileList deads;
 
