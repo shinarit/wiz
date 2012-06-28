@@ -67,6 +67,7 @@ void DiskShip::Draw()
 void DiskShip::PrepareMove()
 {
   m_shot = false;
+  m_shoot = false;
   ++m_ticker;
   if (0 < m_cooldown)
   {
@@ -108,6 +109,15 @@ void DiskShip::ExecuteMove()
       m_center.x = 0 + shipSize;
     if(m_center.y - shipSize < 0)
       m_center.y = 0 + shipSize;
+
+    if (m_shoot)
+    {
+      Coordinate targetvector = m_target - m_center;
+      Coordinate step = Normalize(targetvector, 1.0);
+      Coordinate end = m_center + step * (shipSize + 1);
+      Coordinate begin = end + step * laserLength;
+      m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam(), m_id));
+    }
   }
 }
 
@@ -121,11 +131,9 @@ void DiskShip::Shoot(const Coordinate& target)
       m_bulletNum = 0;
     }
 
-    Coordinate targetvector = target - m_center;
-    Coordinate step = Normalize(targetvector, 1.0);
-    Coordinate end = m_center + step * (shipSize + 1);
-    Coordinate begin = end + step * laserLength;
-    m_frame.AddProjectile(new PulseLaser(begin, end, m_laserColor, m_frame, GetTeam(), m_id));
+    m_shoot = true;
+    m_target = target;
+
     m_shot = true;
   }
 }

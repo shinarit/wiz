@@ -86,6 +86,7 @@ class Owned: public Flyer
 };
 
 class DiskShipAi;
+class PulseLaser;
 
 class DiskShip: public Hitable
 {
@@ -136,6 +137,8 @@ class DiskShip: public Hitable
     int         m_textAlign;
 
     bool        m_shot;
+    bool        m_shoot;
+    Coordinate  m_target;
 
     DiskShipAi* m_ai;
 };
