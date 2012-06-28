@@ -96,7 +96,7 @@ void Wiz::Init(const Options& options)
       shipPtr->SetAi(aiPtr);
       ships.push_back(shipPtr);
       scores.push_back(0);
-      teamScores.back().insert(ScoreType(&scores.back(), ships.back()));
+      teamScores.back().insert(ScoreType(&scores[i+1], ships.back()));
     }
     ++teamCounter;
   }
@@ -208,7 +208,8 @@ Color Wiz::GetShipColor(int team) const
 {
   if (0 == team || PredefNum < team)
   {
-    return GetRandomColor();
+    return teamColors[0][0];
+    //return GetRandomColor();
   }
   else
   {
@@ -220,7 +221,8 @@ Color Wiz::GetLaserColor(int team) const
 {
   if (0 == team || PredefNum < team)
   {
-    return GetRandomColor();
+    return teamColors[0][1];
+    //return GetRandomColor();
   }
   else
   {
@@ -297,6 +299,42 @@ void DrawRectangle(Coordinate topleft, int width, int height, Color color)
 
 void Wiz::DrawScore()
 {
+  /*
+  Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1) + FontHeight / 2);
+  if (100 < startPoint.x)
+  {
+    if (0 > startPoint.y)
+    {
+      startPoint.y = FontHeight;
+    }
+
+    int team = 0;
+    if (1 < teamScores.size())
+    {
+      team = 1;
+    }
+
+    std::ostringstream ostr;
+    Coordinate topleft = startPoint - Coordinate(1, FontHeight);
+
+    for (TeamScoreList::iterator sit = teamScores.begin(); teamScores.end() != sit; ++sit)
+    {
+      for (ScoreSorter::iterator pit = sit->begin(); sit->end() != pit; ++pit)
+      {
+        ostr << pit->GetScore() << ": " << pit->GetName();
+        DrawWrapper::DrawText(ostr.str(), startPoint, Colors::pink);
+        startPoint += Coordinate(0, FontHeight + 1);
+        ostr.str("");
+        ostr.clear();
+      }
+      DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight * 2, teamColors[team][0]);
+      ++team;
+      topleft = startPoint - Coordinate(1, FontHeight * 2);
+    }
+    DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight, teamColors[team][0]);
+  }
+  */
+
   Coordinate startPoint(DrawWrapper::GetSize().x - 100, DrawWrapper::GetSize().y - ships.size() * (FontHeight + 1) + FontHeight / 2);
   if (100 < startPoint.x)
   {
