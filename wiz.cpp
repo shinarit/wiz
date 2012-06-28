@@ -11,6 +11,7 @@
 #include "drawinterface.hpp"
 #include "flyerz.hpp"
 #include "wiz.hpp"
+#include "ais.hpp"
 
 #include <climits>
 #include <algorithm>

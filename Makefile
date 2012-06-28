@@ -1,6 +1,6 @@
 CC = g++
 CPP = $(CC) -pedantic -Wall -U__STRICT_ANSI__
-COMMON_OBJS = wiz.o implementation.o utility.o flyerz.o
+COMMON_OBJS = wiz.o implementation.o utility.o flyerz.o ais.o
 
 ifdef SystemRoot
   RM = del /Q
@@ -34,16 +34,19 @@ all: wiz wizai
 wiz: $(OBJS)
 	$(CPP_HACK) -o $@ $(OBJS) $(HACK_LIBS) $(CFLAGS)
 
-wiz.o: wiz.cpp wiz.hpp flyerz.hpp drawinterface.hpp
+wiz.o: wiz.cpp wiz.hpp flyerz.hpp drawinterface.hpp ais.hpp
 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
-flyerz.o: flyerz.cpp wiz.hpp flyerz.hpp drawinterface.hpp
+flyerz.o: flyerz.cpp wiz.hpp flyerz.hpp drawinterface.hpp ais.hpp
 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
 implementation.o: implementation.cpp wiz.hpp drawinterface.hpp implementation_gdi.cpp implementation_xlib.cpp
 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
 utility.o: utility.cpp drawinterface.hpp flyerz.hpp
+	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
+
+ais.o: ais.cpp drawinterface.hpp flyerz.hpp ais.hpp
 	$(CPP) -c $(INCLUDES) $(DEFS) $(CFLAGS)  $<
 
 %o: %cpp
