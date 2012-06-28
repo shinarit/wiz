@@ -28,7 +28,7 @@ void Skeleton::Begin()
     ;
   }
 
-  if (first)
+  if (first || true)
   {
     m_out << "get context\n";
 
