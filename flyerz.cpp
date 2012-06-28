@@ -64,7 +64,7 @@ void DiskShip::Draw()
   }
 }
 
-void DiskShip::Move()
+void DiskShip::PrepareMove()
 {
   m_shot = false;
   ++m_ticker;
@@ -82,6 +82,19 @@ void DiskShip::Move()
   }
   else
   {
+    m_ai->Do();
+  }
+}
+
+void DiskShip::ExecuteMove()
+{
+  if (!m_dead)
+  {
+    if (Length(m_speed) > DiskShip::maxSpeed)
+    {
+      m_speed = Normalize(m_speed, DiskShip::maxSpeed);
+    }
+
     Size screenSize = ::DrawWrapper::GetSize();
 
     m_center.x = (m_center.x + m_speed.x);
@@ -95,13 +108,6 @@ void DiskShip::Move()
       m_center.x = 0 + shipSize;
     if(m_center.y - shipSize < 0)
       m_center.y = 0 + shipSize;
-
-    m_ai->Do();
-
-    if (Length(m_speed) > DiskShip::maxSpeed)
-    {
-      m_speed = Normalize(m_speed, DiskShip::maxSpeed);
-    }
   }
 }
 
@@ -346,7 +352,7 @@ void PulseLaser::Draw()
   DrawWrapper::DrawLine(m_front, m_back, m_color);
 }
 
-void PulseLaser::Move()
+void PulseLaser::PrepareMove()
 {
   m_front += m_speed;
 
@@ -363,6 +369,10 @@ void PulseLaser::Move()
   {
     m_frame.RemoveProjectile(this);
   }
+}
+
+void PulseLaser::ExecuteMove()
+{
 }
 
 CollisionDescriptor PulseLaser::GetCollision() const

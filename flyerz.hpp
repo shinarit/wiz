@@ -29,7 +29,8 @@ class Flyer
     virtual ~Flyer()
     {}
     virtual void Draw() = 0;
-    virtual void Move() = 0;
+    virtual void PrepareMove() = 0;
+    virtual void ExecuteMove() = 0;
 
     int GetTeam() const
     {
@@ -108,7 +109,8 @@ class DiskShip: public Hitable
 
     //from Flyer
     virtual void Draw();
-    virtual void Move();
+    virtual void PrepareMove();
+    virtual void ExecuteMove();
     //from Hitable
     virtual Coordinate GetCenter() const;
     virtual Coordinate::CoordType GetSize() const;
@@ -261,7 +263,8 @@ class PulseLaser: public Owned
     }
     //from Flyer
     virtual void Draw();
-    virtual void Move();
+    virtual void PrepareMove();
+    virtual void ExecuteMove();
 
     //from Owned
     virtual CollisionDescriptor GetCollision() const;

@@ -266,19 +266,21 @@ Wiz::LaserList Wiz::GetBullets() const
 void Wiz::MoveAll()
 {
   //TODO: C++11 feature
-  for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
-  {
-    (*it)->Draw();
-    (*it)->Move();
-  }
-
   LaserList::iterator lit = projectileCache.begin();
   for(ProjectileList::iterator it = projectiles.begin(); projectiles.end() != it; ++it)
   {
     (*it)->Draw();
-    (*it)->Move();
+    (*it)->PrepareMove();
+    (*it)->ExecuteMove();
     lit->second = (*it)->GetCollision();
     ++lit;
+  }
+
+  for(ShipList::iterator it = ships.begin(); ships.end() != it; ++it)
+  {
+    (*it)->Draw();
+    (*it)->PrepareMove();
+    (*it)->ExecuteMove();
   }
 }
 
