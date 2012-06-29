@@ -38,7 +38,7 @@ Wiz::~Wiz()
   //TODO
 }
 
-typedef DiskShipAiRanger DefaultAi;
+typedef DiskShipAiRandom DefaultAi;
 
 void Wiz::Init(const Options& options)
 {
@@ -131,36 +131,42 @@ void Wiz::DrawFrame()
   }
 }
 
+Coordinate::CoordType DistanceFromSegment(const Coordinate& begin, const Coordinate& end, const Coordinate& point)
+{
+  const double len = DistanceSqr(begin, end);
+  const double tmp = Dot(point - end, begin - end);
+  if (tmp < 0.0)
+  {
+    return Distance(point, end);
+  }
+  else if (tmp > 1.0)
+  {
+    return Distance(point, begin);
+  }
+  const Coordinate projection = end + tmp * (begin - end);
+  return Distance(point, projection);
+}
+
 bool Wiz::CheckCollision(const Coordinate& begin, const Coordinate& end, int team, int owner) const
 {
-  Coordinate vektor = begin - end;
-  Coordinate::CoordType len = Length(vektor);
-
+  const Coordinate vektor = begin - end;
   //get the potential guys
   ShipList potentials = GetPotentials(team, end + vektor / 2, DiskShip::shipSize + (DiskShip::laserLength + 1) / 2);
-
-  //calculating the step
-  Coordinate step = vektor * CheckDistance / len;
 
   bool hit = false;
 
   for (ShipList::const_iterator it = potentials.begin(); potentials.end() != it; ++it)
   {
-    Coordinate point = end;
-    for(int i(0); i < len / CheckDistance; ++i)
+    if (DistanceFromSegment(begin, end, (*it)->GetCenter()) <= (*it)->GetSize())
     {
-      if (Distance((*it)->GetCenter(), point) <= (*it)->GetSize())
+      (*it)->Hit();
+      if (scoreLimit <= ++scores[owner])
       {
-        (*it)->Hit();
-        if (scoreLimit <= ++scores[owner])
-        {
-          std::cout << "Score limit hit\n";
-          ShutDown();
-        }
-        hit = true;
-        break;
+        std::cout << "Score limit hit\n";
+        ShutDown();
       }
-      point += step;
+      hit = true;
+      break;
     }
   }
   return hit;

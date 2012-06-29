@@ -39,6 +39,12 @@ Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType& rhs)
   return Coordinate(lhs.x * rhs, lhs.y * rhs);
 }
 
+Coordinate operator*(const Coordinate::CoordType& lhs, const Coordinate& rhs)
+{
+  return rhs * lhs;
+}
+
+
 Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs)
 {
   return Coordinate(lhs.x / rhs, lhs.y / rhs);
@@ -65,20 +71,26 @@ Coordinate& Coordinate::operator/=(const Coordinate::CoordType& rhs)
   return *this;
 }
 
-inline Coordinate::CoordType Sqr(Coordinate::CoordType x)
-{
-  return x*x;
-}
-
 Coordinate::CoordType Length(const Coordinate& vektor)
 {
-  return std::sqrt(Sqr(vektor.x) + Sqr(vektor.y));
+  return std::sqrt(LengthSqr(vektor));
+}
+
+Coordinate::CoordType LengthSqr(const Coordinate& vektor)
+{
+  return Sqr(vektor.x) + Sqr(vektor.y);
 }
 
 Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs)
 {
   return Length(lhs - rhs);
 }
+
+Coordinate::CoordType DistanceSqr(const Coordinate& lhs, const Coordinate& rhs)
+{
+  return Length(lhs - rhs);
+}
+
 
 Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length)
 {
@@ -93,6 +105,11 @@ Coordinate Rotate90Cw(const Coordinate& vektor)
 Coordinate Rotate90Ccw(const Coordinate& vektor)
 {
   return Coordinate(-vektor.y, vektor.x);
+}
+
+Coordinate::CoordType Dot(const Coordinate& lhs, const Coordinate& rhs)
+{
+  return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
 const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [--font <font name>] [remote ai names, - for builtin]*";

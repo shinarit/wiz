@@ -69,13 +69,23 @@ Coordinate operator-(const Coordinate& op);
 Coordinate operator+(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator-(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate operator*(const Coordinate& lhs, const Coordinate::CoordType& rhs);
+Coordinate operator*(const Coordinate::CoordType& lhs, const Coordinate& rhs);
 Coordinate operator/(const Coordinate& lhs, const Coordinate::CoordType& rhs);
 
 Coordinate::CoordType Length(const Coordinate& vektor);
+Coordinate::CoordType LengthSqr(const Coordinate& vektor);
 Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs);
+Coordinate::CoordType DistanceSqr(const Coordinate& lhs, const Coordinate& rhs);
 Coordinate Normalize(const Coordinate& vektor, Coordinate::CoordType length);
 Coordinate Rotate90Cw(const Coordinate& vektor);
 Coordinate Rotate90Ccw(const Coordinate& vektor);
+Coordinate::CoordType Dot(const Coordinate& lhs, const Coordinate& rhs);
+
+template <class T>
+inline T Sqr(T x)
+{
+  return x*x;
+}
 
 typedef Coordinate Size;
 
