@@ -115,6 +115,17 @@ class DiskShipAiTest: public DiskShipAi
     virtual void Do();
 };
 
+class DiskShipAi3D: public DiskShipAi
+{
+  public:
+    DiskShipAi3D(DiskShip* toLead): DiskShipAi(toLead), up(true), m_center(-100, -100)
+    { }
+    virtual void Do();
+  private:
+    bool up;
+    Coordinate m_center;
+};
+
 class DiskShipAiRemote: public DiskShipAi
 {
   public:

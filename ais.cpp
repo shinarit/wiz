@@ -13,6 +13,8 @@
 
 #include <sstream>
 
+#include <iostream>
+
 //
 // DiskShipAiRandom functions
 //
@@ -95,6 +97,34 @@ void DiskShipAiTest::Do()
   }
   GetSpeed() = Coordinate();
 }
+
+
+//
+// DiskShipAi3D functions
+//
+
+void DiskShipAi3D::Do()
+{
+  Coordinate center = GetCenter();
+  if (DiskShip::maxSpeed > Distance(m_center, center))
+  {
+    up = !up;
+  }
+
+  Size size = DrawWrapper::GetSize();
+  if (up)
+  {
+    GetSpeed() = Coordinate(0, -500);
+    Shoot(Coordinate(size.x - 20, 20));
+  }
+  else
+  {
+    GetSpeed() = Coordinate(0, 500);
+    Shoot(Coordinate(size.x - 20, size.y - 20));
+  }
+  m_center = center;
+}
+
 
 //
 // DiskShipAiRemote functions
