@@ -12,6 +12,7 @@
 #include "ais.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 struct DistanceComparer
 {
@@ -199,12 +200,12 @@ CollisionDescriptor PulseLaser::GetCollision() const
 
 const Hitable* FindClosest(const Wiz::ShipTravel& list, Hitable* me)
 {
-  return *min_element(list.begin(), list.end(), DistanceComparer(me));
+  return *std::min_element(list.begin(), list.end(), DistanceComparer(me));
 }
 
 const Hitable* FindClosest(const Wiz::ShipTravel& list, const Coordinate& center)
 {
-  return *min_element(list.begin(), list.end(), DistanceComparer(center));
+  return *std::min_element(list.begin(), list.end(), DistanceComparer(center));
 }
 
 void RemoveMe(Wiz::ShipTravel& list, Hitable* me)
