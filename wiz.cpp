@@ -38,6 +38,8 @@ Wiz::~Wiz()
   //TODO
 }
 
+typedef DiskShipAiRanger DefaultAi;
+
 void Wiz::Init(const Options& options)
 {
   logFile = options.logFile;
@@ -86,7 +88,7 @@ void Wiz::Init(const Options& options)
       DiskShipAi* aiPtr;
       if (randomAi)
       {
-        aiPtr = new DiskShipAiRandom(shipPtr);
+        aiPtr = new DefaultAi(shipPtr);
       }
       else
       {
