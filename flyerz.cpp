@@ -12,6 +12,7 @@
 #include "ais.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 struct DistanceComparer
 {
