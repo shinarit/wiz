@@ -139,6 +139,10 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
   int c;
   while (-1 != (c = getopt_long(argc, argv, "m:s:n:", longOptions, &optionIndex)))
   {
+    if ( !optarg )
+    {
+      RETURN_WITH_USAGE;
+    }
     std::string arg(optarg);
     switch (c)
     {
