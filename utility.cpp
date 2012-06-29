@@ -118,6 +118,8 @@ const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 
 
 bool ParseCommandline(int argc, char* argv[], Options& options)
 {
+  opterr = 0;
+
   int playerCount = 0;
 
   const std::string fullscreen = "fullscreen";
@@ -139,7 +141,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
   int c;
   while (-1 != (c = getopt_long(argc, argv, "m:s:n:", longOptions, &optionIndex)))
   {
-    std::string arg(optarg);
     switch (c)
     {
       case 'm':
@@ -154,7 +155,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
         }
         else
         {
-          std::cerr << "invalid argument for --fullscreen: " << arg << '\n';
+          std::cerr << "invalid argument for --fullscreen: " << optarg << '\n';
           RETURN_WITH_USAGE;
         }
         modeflag = true;
@@ -165,12 +166,12 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
         int width;
         int height;
         char c;
-        std::istringstream str(arg);
+        std::istringstream str(optarg);
         str >> width >> c >> height;
 
-        if (str.bad())
+        if (!str.good())
         {
-          std::cerr << "invalid argument for --size: " << arg << '\n';
+          std::cerr << "invalid argument for --size: " << optarg << '\n';
           RETURN_WITH_USAGE;
         }
 
@@ -181,7 +182,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       case 'n':
       {
         int teamnum;
-        std::istringstream str(arg);
+        std::istringstream str(optarg);
         str >> teamnum;
         options.teams.reserve(teamnum);
         for (int i = 0; i < teamnum; ++i)
@@ -194,7 +195,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
 
         if (!str)
         {
-          std::cerr << "invalid argument for --teamnum: " << arg << '\n';
+          std::cerr << "invalid argument for --teamnum: " << optarg << '\n';
           RETURN_WITH_USAGE;
         }
 
@@ -204,7 +205,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       }
       case 'l':
       {
-        options.logFile = arg;
+        options.logFile = optarg;
 
         break;
       }
@@ -222,9 +223,13 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
       }
       case 'f':
       {
-        options.fontName = arg;
+        options.fontName = optarg;
 
         break;
+      }
+      case '?':
+      {
+        RETURN_WITH_USAGE;
       }
     }
   }
