@@ -88,7 +88,7 @@ Coordinate::CoordType Distance(const Coordinate& lhs, const Coordinate& rhs)
 
 Coordinate::CoordType DistanceSqr(const Coordinate& lhs, const Coordinate& rhs)
 {
-  return Length(lhs - rhs);
+  return LengthSqr(lhs - rhs);
 }
 
 

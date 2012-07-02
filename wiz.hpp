@@ -92,7 +92,7 @@ class Wiz
     void Clean();
     void DrawScore();
     void KillProjectile(Owned*);
-    ShipList GetPotentials(int team, Coordinate center, int dist) const;
+    ShipList GetPotentials(int team, const Coordinate& center, int dist) const;
     void ShutDown() const;
 };
 

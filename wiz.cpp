@@ -134,7 +134,7 @@ void Wiz::DrawFrame()
 Coordinate::CoordType DistanceFromSegment(const Coordinate& begin, const Coordinate& end, const Coordinate& point)
 {
   const double len = DistanceSqr(begin, end);
-  const double tmp = Dot(point - end, begin - end);
+  const double tmp = Dot(point - end, begin - end) / len;
   if (tmp < 0.0)
   {
     return Distance(point, end);
@@ -392,11 +392,11 @@ void Wiz::KillProjectile(Owned* projectile)
 
 struct PotentialityChecker
 {
-  PotentialityChecker(int team, Coordinate center, int dist): m_subpred(team), m_center(center), m_dist(dist)
+  PotentialityChecker(int team, const Coordinate& center, int dist): m_subpred(team), m_center(center), m_dist(Sqr(dist))
   { }
   bool operator()(const Hitable* ship)
   {
-    return m_subpred(ship) || Distance(ship->GetCenter(), m_center) > m_dist;
+    return m_subpred(ship) || DistanceSqr(ship->GetCenter(), m_center) > m_dist;
   }
 
   EnemyPredicate m_subpred;
@@ -405,7 +405,7 @@ struct PotentialityChecker
 };
 
 
-Wiz::ShipList Wiz::GetPotentials(int team, Coordinate center, int dist) const
+Wiz::ShipList Wiz::GetPotentials(int team, const Coordinate& center, int dist) const
 {
   ShipList res;
   std::remove_copy_if(ships.begin(), ships.end(), std::back_inserter(res), PotentialityChecker(team, center, dist));
