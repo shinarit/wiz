@@ -360,7 +360,7 @@ void Wiz::DrawScore()
     for (unsigned i = 0; i < ships.size(); ++i)
     {
       ostr << scores[i] << ": " << ships[i]->GetName();
-      DrawWrapper::DrawText(ostr.str(), startPoint, Colors::pink);
+      DrawWrapper::DrawText(ostr.str(), startPoint, ((ships[i]->Alive()) ? (Colors::pink) : (Colors::purple)));
       startPoint += Coordinate(0, FontHeight + 1);
       ostr.str("");
       ostr.clear();
