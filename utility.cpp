@@ -169,7 +169,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
         std::istringstream str(optarg);
         str >> width >> c >> height;
 
-        if (!str.good())
+        if (str.fail())
         {
           std::cerr << "invalid argument for --size: " << optarg << '\n';
           RETURN_WITH_USAGE;
