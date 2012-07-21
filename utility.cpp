@@ -112,7 +112,7 @@ Coordinate::CoordType Dot(const Coordinate& lhs, const Coordinate& rhs)
   return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
-const std::string usage = " --mode/-m {demo, fullscreen} --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [--font <font name>] [remote ai names, - for builtin]*";
+const std::string usage = " --teamnum/-n \"N n1 n2 n3 ... nK\" [--size/-s WIDTHxHEIGHT] [--log <file>] [--time <time limit in seconds>] [--score <score limit>] [--font <font name>] [remote ai names, - for builtin]*";
 
 #define RETURN_WITH_USAGE std::cerr << "usage: " << argv[0] << usage << '\n'; return false;
 
@@ -122,14 +122,9 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
 
   int playerCount = 0;
 
-  const std::string fullscreen = "fullscreen";
-  const std::string demo = "demo";
-
-  bool modeflag = false;
   bool teamflag = false;
 
   option longOptions[] = {
-    {"mode", required_argument, 0, 'm'},
     {"size", required_argument, 0, 's'},
     {"teamnum", required_argument, 0, 'n'},
     {"log", required_argument, 0, 'l'},
@@ -143,24 +138,6 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
   {
     switch (c)
     {
-      case 'm':
-      {
-        if (optarg == fullscreen)
-        {
-          options.demo = false;
-        }
-        else if (optarg == demo)
-        {
-          options.demo = true;
-        }
-        else
-        {
-          std::cerr << "invalid argument for --fullscreen: " << optarg << '\n';
-          RETURN_WITH_USAGE;
-        }
-        modeflag = true;
-        break;
-      }
       case 's':
       {
         int width;
@@ -236,7 +213,7 @@ bool ParseCommandline(int argc, char* argv[], Options& options)
 
   options.names.insert(options.names.end(), &argv[optind], &argv[argc]);
 
-  if (!modeflag || !teamflag)
+  if (!teamflag)
   {
     RETURN_WITH_USAGE;
   }

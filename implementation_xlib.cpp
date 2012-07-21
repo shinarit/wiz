@@ -155,16 +155,9 @@ void Init(int argc, char* argv[])
   // Create the window
 
   Size resolution;
-  if (options.demo)
+  if (0 != options.size.x)
   {
-    if (0 != options.size.x)
-    {
-      resolution = options.size;
-    }
-    else
-    {
-      resolution = Size(800, 600);  //default size
-    }
+    resolution = options.size;
   }
   else
   {

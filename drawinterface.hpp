@@ -95,9 +95,8 @@ typedef Coordinate Size;
 
 struct Options
 {
-  Options(): size(800, 600), fontName("-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"),  time(-1), score(-1)
+  Options(): size(0, 0), fontName("-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"),  time(-1), score(-1)
   {}
-  bool demo;
   Size size;
   std::vector<int> teams;
   std::vector<std::string> names;

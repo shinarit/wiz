@@ -81,11 +81,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
   RegisterClassEx(&WndClsEx);
 
-  if (options.demo)
-  {
-    size = options.size;
-  }
-  else
+  size = options.size;
+  if (0 == size.x)
   {
     size.x = GetSystemMetrics(SM_CXFULLSCREEN);
     size.y = GetSystemMetrics(SM_CYFULLSCREEN);
