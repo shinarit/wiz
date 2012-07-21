@@ -368,13 +368,13 @@ void Wiz::DrawScore()
 
       if (ships[i]->GetTeam() != team)
       {
-        DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight * 2, teamColors[team][0]);
+        DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight * 2, GetShipColor(team));
 
         team = ships[i]->GetTeam();
         topleft = startPoint - Coordinate(1, FontHeight * 2);
       }
     }
-    DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight, teamColors[team][0]);
+    DrawRectangle(topleft, 100, startPoint.y - topleft.y - FontHeight, GetShipColor(team));
   }
 }
 
