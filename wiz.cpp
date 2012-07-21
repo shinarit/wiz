@@ -12,6 +12,7 @@
 #include "flyerz.hpp"
 #include "wiz.hpp"
 #include "ais.hpp"
+#include "events.hpp"
 
 #include <climits>
 #include <algorithm>
@@ -415,7 +416,7 @@ Wiz::ShipList Wiz::GetPotentials(int team, const Coordinate& center, int dist) c
 void Wiz::ShutDown() const
 {
   std::cout << "Final score:\n";
-  for (int i(0); i < scores.size(); ++i)
+  for (unsigned i(0); i < scores.size(); ++i)
   {
     std::cout << ships[i]->GetName() << ": " << scores[i] << '\n';
   }
