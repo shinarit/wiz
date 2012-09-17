@@ -22,6 +22,8 @@ else
   endif
 endif
 
+CFLAGS += -std=c++0x -Wall -Weffc++ -pedantic
+
 HACK_OBJS	= screenhack.o fps.o resources.o visual.o usleep.o yarandom.o xmu.o
 CPP_HACK  = $(CPP) $(LDFLAGS)
 
