@@ -9,7 +9,7 @@
 //
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <map>
 #include <cstdlib>
 #include <ctime>
@@ -403,8 +403,8 @@ struct IpcImplementation
   const std::string inName;
   const std::string logName;
 
-  boost::shared_ptr<std::ostream> m_out;
-  boost::shared_ptr<std::istream> m_in;
+  std::shared_ptr<std::ostream> m_out;
+  std::shared_ptr<std::istream> m_in;
 };
 
 Ipc::Ipc(const std::string& name): m_impl(new IpcImplementation(name))
