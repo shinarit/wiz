@@ -47,28 +47,7 @@ public:
     setPixel(x, y, ' ');
   }
   void drawLine(int x1, int y1, int x2, int y2)
-  {/*
-   function line(x0, y0, x1, y1)
-     d x := ab*s(x1-x0)
-     dy := abs(y1-y0)
-     if x0 < x1 then sx := 1 else sx := -1
-       if y0 < y1 then sy := 1 else sy := -1
-         err := dx-dy
-
-         loop
-         setPixel(x0,y0)
-         if x0 = x1 and y0 = y1 exit loop
-           e2 := 2*err
-          if e2 > -dy then
-             err := err - dy
-             x0 := x0 + sx
-          end if
-          if e2 <  dx then
-            err := err + dx
-            y0 := y0 + sy
-          end if
-               end loop
-*/
+  {
     int dx = std::abs(x1 - x2);
     int dy = std::abs(y1 - y2);
 
@@ -97,10 +76,44 @@ public:
       }
     }
   }
+  void drawCircle(int x0, int y0, int radius)
+  {
+    int f = 1 - radius;
+    int ddF_x = 1;
+    int ddF_y = -2 * radius;
+    int x = 0;
+    int y = radius;
+
+    setPixel(x0, y0 + radius);
+    setPixel(x0, y0 - radius);
+    setPixel(x0 + radius, y0);
+    setPixel(x0 - radius, y0);
+
+    while(x < y)
+    {
+      if(f >= 0)
+      {
+        y--;
+        ddF_y += 2;
+        f += ddF_y;
+      }
+      x++;
+      ddF_x += 2;
+      f += ddF_x;
+      setPixel(x0 + x, y0 + y);
+      setPixel(x0 - x, y0 + y);
+      setPixel(x0 + x, y0 - y);
+      setPixel(x0 - x, y0 - y);
+      setPixel(x0 + y, y0 + x);
+      setPixel(x0 - y, y0 + x);
+      setPixel(x0 + y, y0 - x);
+      setPixel(x0 - y, y0 - x);
+    }
+  }/*
   void drawCircle(int x, int y, int r)
   {
 
-  }
+  }*/
 
   void print()
   {
