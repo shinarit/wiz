@@ -159,6 +159,8 @@ class Ipc
   public:
     Ipc(const std::string& name);
     ~Ipc();
+    Ipc(const Ipc&) = default;
+    Ipc& operator=(const Ipc&) = default;
 
     //
     // msg should NOT include \n
