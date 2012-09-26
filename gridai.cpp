@@ -5,7 +5,7 @@
 #ifdef __linux__
 # include <sys/ioctl.h>
 #elif defined _WIN32
-//what to include on windows?
+# include <windows.h>
 #endif
 
 struct Size
@@ -27,7 +27,16 @@ Size getConsoleDimensions()
   row = w.ws_row;
 
 #elif defined _WIN32
-
+/*
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+  if(GetConsoleScreenBufferInfo(GetStdHandle( STD_OUTPUT_HANDLE ), &csbi))
+  {
+    std::cerr << "Console Buffer Width: " << csbi.dwSize.X << '\n';
+    std::cerr << "Console Buffer Height: " << csbi.dwSize.Y << '\n';
+  }
+  */
+  col = 80;
+  row = 50;
 #endif
 
   return Size{col, row};
@@ -109,11 +118,7 @@ public:
       setPixel(x0 + y, y0 - x);
       setPixel(x0 - y, y0 - x);
     }
-  }/*
-  void drawCircle(int x, int y, int r)
-  {
-
-  }*/
+  }
 
   void print()
   {
