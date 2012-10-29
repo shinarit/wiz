@@ -1,0 +1,3 @@
+AI-challange application, based on the xscreensaver Blaster (just much better, not some ugly crap C code)
+
+works through named pipes for communication, not working on Windows yet (but built-in stuff is fine there)
